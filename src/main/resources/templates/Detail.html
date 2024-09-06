@@ -11,20 +11,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./login.css">
 <meta charset="UTF-8">
-<title>메인화면</title>
+<title>메인화면</title><!-- border: 1px solid red;-->
 <style>
-<!-- 주석-->
 a {
   color: inherit;
   text-decoration: none;
 }
-  .s9-4 {
-    padding: 20px;
-    font-size: 1.4rem;
-    font-weight: bold; 
-    
+.s9-4 {
+  padding: 20px;
+  font-size: 1.4rem;
+  font-weight: bold; 
   }
-
 .gf {
   font-family: "Nanum Brush Script", cursive; 
   font-style: normal;
@@ -36,16 +33,14 @@ a {
   height: 100px;
   padding-top: 40px; 
   padding-left:10vw;  
-  border: 1px solid red;
+    
 }
-.divDw1 {
-margin-top : 50px;
+.divDw1 { 
   width : 100%;
   height: 336px;
   background-color:#FAFAFA; 
   padding:50px; 
-  padding-left:18%;
-   
+  padding-left:18%; 
 }
 .divDw2 {
 width:200px;
@@ -53,12 +48,15 @@ height:200px;
 border-width:5px; 
 margin-left:20px; 
 float: left;
-text-align: center; 
+text-align: center;   
 } 
+ .divDw3 { 
+margin-top:140px;
+padding-left:16%; 
+}
 .divBtn1{  
-  height: 100px;
-  padding-top: 140px; 
   padding-left:10vw; 
+  margin-bottom: 5px; 
 }
 
 .img1{
@@ -66,6 +64,14 @@ width:200px;
 height:200px; 
 border-radius:50%; 
 border-width:5px; 
+}
+.gf1 {
+ font-size: 10px;
+ color:gray;
+ 
+}
+.gf1:hover {
+    background-color: #fdb3b3;
 }
 .gff {
   font-family: "Nanum Brush Script", cursive;
@@ -115,18 +121,14 @@ footer{
 	 .divDw {
 	 width : 0vw;
 	 height: 100px;
-	 padding-top: 40px; 
-	 padding-left:10vw; 
-	   
+	 padding-left:10vw;  
 	} 
-	.divDw1 {
-	margin-top : 50px;
+	.divDw1 { 
 	  width : 100%;
 	  height:220px;
 	  background-color:#FAFAFA; 
 	  padding:50px; 
-	  padding-left:18%;
-	   
+	  padding-left:18%; 
 	}
 	.divDw2 {
 	width:100px;
@@ -164,10 +166,14 @@ footer{
 	    </div>  
   </div>
 </div>
+<div class="divDw3">
+  <a a href="#" id="loginBtn" class="gf1"> 홈</a> / <a a href="#" id="loginBtn" class="gf1"> 한국</a> /
+  <a a href="#" id="loginBtn" class="gf1"> 델리</a> / <a a href="#" id="loginBtn" class="gf1">카테고리</a> 
+</div>
  <div class="divBtn1 container mt-3">
- 	<button type="button" class="btn btn-light">Primary</button>
- 	<button type="button" class="btn btn-light">Primary</button>
- 	<button type="button" class="btn btn-light">Primary</button>
+ 	<button type="button" class="btn btn-light">Filters</button>
+ 	<button type="button" class="btn btn-light">Pure Veg</button>
+ 	<button type="button" href="#" id="CuisinesBtn" class="btn btn-light">Cuisines</button>
  </div>
  
 	<div class="divDw1">
@@ -193,7 +199,7 @@ footer{
 		  </div>  
 	</div>
 
-  <div class="title1"style="">
+  <div class="title1" >
   	<h1>Food Delivery Restaurants in Delhi NCR</h1>
   </div> 
 	<div class="container mt-5">
@@ -229,6 +235,19 @@ footer{
 	                <button type="submit" class="btn">로그인</button>
 	                <br> <br>
 	                계정이 없으신가요? <a href="#" onclick="showSignupForm()">회원가입</a>
+	            </form>
+	   	 	</div>
+	   	 </div>
+	</div>	
+	<!-- CuisinesBtn --> 
+  <div id="modal1" class=modal1 style="display: none;">
+        <div class="modal-content" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.4);"> 
+            <div id="modal-body">
+	               <h2>요리 검색</h2>
+	            <form id="CuisinesForm"> 
+	                <input type="text1" placeholder="오늘은 치킨"> 
+	                <button type="submit" class="btn">검색</button>
+	                <br>  
 	            </form>
 	   	 	</div>
 	   	 </div>

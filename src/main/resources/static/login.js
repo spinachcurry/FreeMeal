@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
     const modal = document.getElementById("modal");
+    const modal1 = document.getElementById("modal1");
     const loginBtn = document.getElementById("loginBtn");
     const signupBtn = document.getElementById("signupBtn");
+    const cuisinesBtn = document.getElementById("CuisinesBtn");
     const closeBtn = document.getElementById("closeBtn");
 
     // 회원가입 버튼 클릭 시 모달 열고 로그인 폼 보이기
@@ -15,20 +17,41 @@ document.addEventListener("DOMContentLoaded", function() {
         modal.style.display = "block";
         showSignupForm();  // 로그인 폼을 기본으로 보이게 설정
     });
+    
+   // Cuisines 버튼 클릭 시 모달 열기
+    cuisinesBtn.addEventListener("click", function() {
+        modal1.style.display = "block";
+        CuisinesForm();// CuisinesForm 폼을 기본으로 보이게 설정
+    });
 
     // 닫기 버튼 클릭 시 모달 닫기
     closeBtn.addEventListener("click", function() {
         modal.style.display = "none";
+        modal1.style.display = "none";
     });
 
-    // 모달 외부 클릭 시 모달 닫기
-    window.addEventListener("click", function(event) {
+     window.addEventListener("click", function(event) {
+        // 클릭한 요소가 modal 또는 modal1인 경우 닫기
         if (event.target === modal) {
             modal.style.display = "none";
         }
+         if (event.target === modal1) {
+            modal1.style.display = "none";
+        }
     });
 });
-
+    // 로그인 폼으로 모달 내용을 변경하는 함수
+function CuisinesForm() {  
+	const modalBody = document.getElementById("modal-body");
+        modalBody.innerHTML = ` 
+           <h2>요리 검색</h2>
+        <form id="CuisinesForm"> 
+            <input type="text1" placeholder="오늘은 치킨이다"> 
+            <button type="submit" class="btn">검색</button>  
+        </form>
+	   	  `;
+   
+}
 // 로그인 폼으로 모달 내용을 변경하는 함수
 function showLoginForm() {
     const modalBody = document.getElementById("modal-body");
