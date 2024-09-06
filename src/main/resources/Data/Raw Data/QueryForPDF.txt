@@ -18,7 +18,7 @@ chr(9) & chr(9) & "else 0," & Chr(13) & Chr(10) & _
 chr(9) & "deleteNullRows = (myTable as table, offset as number, end as number) =>" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & "if offset < end then" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & "if countNull(Record.FieldValues(myTable{offset}), 0) > 3 then" & Chr(13) & Chr(10) & _
-chr(9) & chr(9) & chr(9) & chr(9) & "@deleteNullRows(Table.RemoveRows(myTable, offset), offset + 1, end)" & Chr(13) & Chr(10) & _
+chr(9) & chr(9) & chr(9) & chr(9) & "@deleteNullRows(Table.RemoveRows(myTable, offset), offset, end - 1)" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & "else" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & "@deleteNullRows(myTable, offset + 1, end)" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & "else " & Chr(13) & Chr(10) & _
