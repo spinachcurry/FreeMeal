@@ -12,4 +12,11 @@ public class WebController {
 	public String main() {
 		return "main";
 	}
-}
+	
+	@GetMapping("/detail")
+		public String detail() {
+			return "detail";
+		}
+	}
+	
+
