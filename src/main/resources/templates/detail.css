@@ -1,0 +1,183 @@
+.s9-4 {
+    padding: 20px;
+    font-size: 1.4rem;
+    font-weight: bold;
+  }
+
+  .gf {
+    font-family: "Gamja Flower", cursive;
+    font-size: 120px;
+  }
+
+  .gff {
+    font-family: "Gamja Flower", cursive;
+    font-size: 50px;
+  }
+
+  .gfff {
+    font-family: "Gamja Flower", cursive;
+    font-weight: 500;
+    font-size: 30px;
+  }
+
+  .gamja-flower-regular {
+    font-family: "Gamja Flower", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  .gamja-flower-small {
+    font-family: "Gamja Flower", sans-serif;
+    font-weight: 100;
+    font-style: normal;
+  }
+  
+  
+/* 페이지 상단 */
+.header {
+    font-size: 120px;
+    /* background-color: #ff0000; */
+    color: #000000;
+    text-align: center;
+    padding: 20px 0;
+}
+.header h1 {
+    margin: 0;
+    font-size: 36px;
+}
+
+/* 이미지 컬렉션 섹션 */
+/* styles.css */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.inspiration-section {
+    text-align: center;
+    padding: 50px 20px;
+    background-color: #f8f8f8;
+}
+
+.gamja-flower-regular {
+    margin: 0;
+    font-size: 40px;
+    font-weight: normal;
+}
+
+.icon-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 60px; /* Adjust the gap between icons */
+    text-align: center;
+}
+
+.icon-container {
+    text-align: center; /* 아이콘과 텍스트를 중앙 정렬 */
+}
+
+.icon {
+    width: 100px; /* Adjust the size of the icons */
+    height: 100px; /* Adjust the size of the icons */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Hide any overflowing parts of the image */
+    border-radius: 50%; /* Optionally, give it a circular shape */
+
+}
+
+.icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.icon-text {
+    font-size: 16px; /* 텍스트 크기를 조정 */
+    color: #000; /* 텍스트 색상 */
+    margin: 0; /* 기본 마진 제거 */
+}
+
+.slider-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+
+.slide {
+    width: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: auto;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+        .icon {
+        max-width: 60px;
+    }
+}
+
+
+/* <!-- 컬렉션 섹션 --> */  
+
+    .container {
+        width: 80%;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .slider {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .slider .collection-item {
+        margin: 10px;
+        width: 300px;
+        text-align: center;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .slider .collection-item img {
+        width: 100%;
+        height: 200px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        object-fit: cover;
+    }
+
+    /* Hover 효과 */
+    .slider .collection-item:hover {
+        transform: scale(1.05); /* 사이즈 변경 없이 확대 */
+    }
+
+    /* 슬라이더 컨트롤 버튼 */
+    .prev, .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .prev {
+        left: 0;
+    }
+
+    .next {
+        right: 0;
+    }
