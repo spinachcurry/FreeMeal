@@ -46,7 +46,7 @@ chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""부서"") 
 chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""방법"") then ""방법""" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""인원"") then ""인원""" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""액"") then ""금액""" & Chr(13) & Chr(10) & _
-chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""번"") then ""번호""" & Chr(13) & Chr(10) & _
+chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""순번"") then ""연번""" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""일"") then ""날짜""" & Chr(13) & Chr(10) &
 chr(9) & chr(9) & chr(9) & chr(9) & "else if Text.Contains(colText, ""시"") then ""시간""" & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & "else colText," & Chr(13) & Chr(10) & _
@@ -61,7 +61,7 @@ chr(9) & chr(9) & chr(9) & "ColumnUnifiedTable = if List.Contains(NewColumnList,
 chr(9) & chr(9) & chr(9) & "extractNumber = (rowText) => if Type.Is(Value.Type(rowText), type text) then Text.Select(rowText, {""0""..""9""}) else rowText," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & "TransfromedTable = Table.TransformColumns(ColumnUnifiedTable," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{" & Chr(13) & Chr(10) & _
-chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""번호"", Number.From}," & Chr(13) & Chr(10) & _
+chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""연번"", Number.From}," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""인원"", each extractNumber(_)}," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""날짜"", Text.From}," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""시간"", Text.From}," & Chr(13) & Chr(10) & _
@@ -73,7 +73,7 @@ chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "MissingField.UseNull" & Chr(13) & 
 chr(9) & chr(9) & chr(9) & chr(9) & ")," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & "TypeTransfromedTable = Table.TransformColumnTypes(TransfromedTable," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{" & Chr(13) & Chr(10) &
-chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""번호"", Int64.Type}," & Chr(13) & Chr(10) & _
+chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""연번"", Int64.Type}," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""인원"", Int64.Type}," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""날짜"", type date}," & Chr(13) & Chr(10) & _
 chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & chr(9) & "{""시간"", type time}," & Chr(13) & Chr(10) & _
