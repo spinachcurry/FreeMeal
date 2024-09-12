@@ -1,4 +1,4 @@
-let
+let //아직 안 함
 	wait = (seconds as number, action as function) =>
 		if (List.Count(List.Generate(() => DateTimeZone.LocalNow() + #duration(0, 0, 0, seconds), (x) => DateTimeZone.LocalNow() < x,  (x) => x)) = 0) then null else action(),
 	Pause = wait(3, DateTime.LocalNow),
@@ -18,7 +18,7 @@ let
 				else
 					myTable,
 			NullColumnDelTable = deleteNullColumn(NullIndexDelTable, RawColumnList, 0),
-			FirstRow = Table.PositionOfAny(NullColumnDelTable, {[Column1 = "1"], [Column1 = 1]}, 0, "Column1"),
+			LastRow = List.Count(Table.ToList(NullColumnDelTable)),
 			countNull = (myList as list, offset as number) =>
 				if offset < List.Count(myList) then
 					if myList{offset} = null or myList{offset} = "" then
