@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Poor+Story&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="detail.css">
+    <link rel="stylesheet" href="../css/detail.css">
 
     <meta charset="UTF-8">
     <title>디테일</title>
@@ -42,41 +42,35 @@
 <body>
 
     <section style="padding: 20px 0; margin: 0;" class="text-center">
-        <h1 class="gamja-flower-regular">오늘 뭐 먹지?</h1>
+        <h1 class="">오늘 뭐 먹지?</h1>
      </section>
 
     <!-- 카테고리별 음식 아이콘 부분 -->
     <div class="icon-section text-center mt-5">
         <!-- Korean Cuisine Icon -->
-        <div class="icon" data-image="/static/korean-cuisine-icon.png">
-            <img src="..\static\img\korean.png" alt="Korean Cuisine">
-        </div>
-        <div>
-            <p class="icon-text">한식</p>
+        <div class="icon"   >
+            <img src="../../static/img/korean.png" alt="Korean Cuisine">
         </div>
 
         <!-- Japanese Cuisine Icon -->
         <div class="icon" data-image="/static/japanese.png">
-            <img src="../static/img/japanese.png" alt="Japanese Cuisine">
+            <img src="../../static/img/japanese.png" alt="Japanese Cuisine">
         </div>
         <!-- Chinese Cuisine Icon -->
         <div class="icon" data-image="/static/chinese-cuisine-icon.png">
-            <img src="../static/img/chinese.png" alt="Chinese Cuisine">
+            <img src="../../static/img/chinese.png" alt="Chinese Cuisine">
         </div>
         <!-- Western Cuisine Icon -->
         <div class="icon" data-image="/static/western-cuisine-icon.png">
-            <img src="../static/img/western.png" alt="Western Cuisine">
+            <img src="../../static/img/western.png" alt="Western Cuisine">
         </div>
         <!-- Asian Cuisine Icon -->
         <div class="icon" data-image="/static/asian-cuisine-icon.png">
-            <img src="../static/img/asiancuisine.png" alt="Asian Cuisine">
+            <img src="../../static/img/asiancuisine.png" alt="Asian Cuisine">
         </div>
     </div>
 
-    <div class="slider-container">
-        <div class="slider">
-            <div class="slide"><img src="" alt="Selected Image" id="slider-image"></div>
-        </div>
+    <div class="space">
     </div>
 
     <hr style="border: outset 10px red;">
@@ -85,7 +79,7 @@
 
     <!-- 상단 섹션 -->
     <div class="header">
-        <h1 class="gamja-flower-regular">자주가는 동네 핫플!</h1>
+        <h1 class="">자주가는 동네 핫플!</h1>
     </div>
 
     </style>
@@ -96,20 +90,20 @@
         <div class="slider" id="slider">
             <!-- 예시 컬렉션 아이템 -->
             <div class="collection-item">
-                <img src="..\static\img\i1.avif" alt="컬렉션 1">
+                <img src="../../static/img/i1.avif" alt="컬렉션 1">
                 <h3 class="gamja-flower-small">우울할 땐 고기 앞으로</h3>
             </div>
             <div class="collection-item">
-                <img src="..\static\img\i1.avif" alt="컬렉션 2">
-                <h3 class="gamja-flower-small">탄수로 시작 탄수로 끝</h3>
+                <img src="../../static/img/i1.avif" alt="컬렉션 2">
+                <h3 class="">탄수로 시작 탄수로 끝</h3>
             </div>
             <div class="collection-item">
-                <img src="..\static\img\i1.avif" alt="컬렉션 3">
-                <h3 class="gamja-flower-small">튀기면 신발도 맛없없</h3>
+                <img src="../../static/img/i1.avif" alt="컬렉션 3">
+                <h3 class="">튀기면 신발도 맛없없</h3>
             </div>
             <div class="collection-item">
-                <img src="..\static\img\i1.avif" alt="컬렉션 4">
-                <h3 class="gamja-flower-small">동대문 엽기떡볶이</h3>
+                <img src="../../static/img/i1.avif" alt="컬렉션 4">
+                <h3 class="">동대문 엽기떡볶이</h3>
             </div>
         </div>
         <button class="prev" onclick="moveSlider(-1)">&#10094;</button>

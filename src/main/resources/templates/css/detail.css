@@ -1,32 +1,10 @@
-.s9-4 {
-    padding: 20px;
-    font-size: 1.4rem;
-    font-weight: bold;
-  }
-
-  .gf {
-    font-family: "Gamja Flower", cursive;
-    font-size: 120px;
-  }
-
-  .gff {
-    font-family: "Gamja Flower", cursive;
-    font-size: 50px;
-  }
-
-  .gfff {
-    font-family: "Gamja Flower", cursive;
-    font-weight: 500;
-    font-size: 30px;
-  }
-
-  .gamja-flower-regular {
+h1 {
     font-family: "Gamja Flower", sans-serif;
     font-weight: 400;
     font-style: normal;
   }
 
-  .gamja-flower-small {
+h3{
     font-family: "Gamja Flower", sans-serif;
     font-weight: 100;
     font-style: normal;
@@ -79,53 +57,29 @@ body {
 }
 
 .icon {
-    width: 100px; /* Adjust the size of the icons */
-    height: 100px; /* Adjust the size of the icons */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden; /* Hide any overflowing parts of the image */
-    border-radius: 50%; /* Optionally, give it a circular shape */
-
+    width: 150px; /* Adjust the size of the icons */
+    /* height: 150px; Adjust the size of the icons */
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+    /* overflow: hidden; Hide any overflowing parts of the image */
 }
 
 .icon img {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    /* height: 100%; */
+    /* object-fit: contain; */
 }
 
-.icon-text {
-    font-size: 16px; /* 텍스트 크기를 조정 */
-    color: #000; /* 텍스트 색상 */
-    margin: 0; /* 기본 마진 제거 */
-}
-
-.slider-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 50px;
-}
-
-
-.slide {
-    width: 100%;
-}
-
-.slide img {
-    width: 100%;
-    height: auto;
-}
 
 /* Responsive Styles */
 @media (max-width: 768px) {
-        .icon {
-        max-width: 60px;
+    .icon {
+    max-width: 60px;    
     }
 }
 
-
-/* <!-- 컬렉션 섹션 --> */  
+/* 자주가는 동네핫플 */  
 
     .container {
         width: 80%;
@@ -144,7 +98,7 @@ body {
         width: 300px;
         text-align: center;
         background-color: white;
-        border-radius: 8px;
+        /* border-radius: 50px; */
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         transition: transform 0.3s;
     }
@@ -162,7 +116,7 @@ body {
         transform: scale(1.05); /* 사이즈 변경 없이 확대 */
     }
 
-    /* 슬라이더 컨트롤 버튼 */
+    /*슬라이더 컨트롤 버튼*/
     .prev, .next {
         position: absolute;
         top: 50%;
@@ -180,4 +134,8 @@ body {
 
     .next {
         right: 0;
+    }
+
+    .space{
+        height: 80px;
     }
