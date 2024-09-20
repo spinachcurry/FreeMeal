@@ -23,5 +23,5 @@ public class RawDataDTO {
 	String areaNm;
 	
 	@DateTimeFormat(pattern = "yyyy-mm-dd")
-	Date visitDate;
+	Date date;
 }
