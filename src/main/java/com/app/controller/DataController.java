@@ -54,9 +54,10 @@ public class DataController {
 	@Autowired
 	private DataService dataService;
 	
-	@GetMapping(value="/", produces = "application/json; charset=UTF-8")
-	public ResponseEntity<String> test() {		
-		return ResponseEntity.ok(dataService.insertData());
+	@GetMapping(value="/")
+	public String test() {
+		dataService.insertData();
+		return "TEST 중!";
 	}
 }
 	

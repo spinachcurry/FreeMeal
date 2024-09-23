@@ -19,4 +19,5 @@ public interface DataMapper {
 			+ "VALUE (#{title},#{link},#{category},#{description},#{telephone},#{address},#{roadAddress},#{mapx},#{mapy},#{price},#{party},#{visitDate})")
 	public int setOwnData(DataDTO ownDTO); // 기본적인 매뻐 완성!
 	
+	
 }
