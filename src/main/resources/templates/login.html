@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+ <title>Login111</title>
+</head>
+	<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .login-container label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+<body>
+	 <div class="login-container">
+	        <h2>Login2222</h2> 
+	        <form action="/login" method="post"> 
+	            <label for="userID">User ID</label>
+	            <input type="text" id="userID" name="userID" required>
+	
+	            <label for="userPW">Password</label>
+	            <input type="password" id="userPW" name="userPW" required>
+	
+	            <button type="submit">Login</button>
+	        </form>
+	    </div> 
+</body>
+</html>
