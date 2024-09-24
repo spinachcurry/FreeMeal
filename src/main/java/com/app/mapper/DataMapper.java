@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.app.dto.DataDTO;
 import com.app.dto.RawDataDTO;
@@ -19,5 +20,12 @@ public interface DataMapper {
 			+ "VALUE (#{title},#{link},#{category},#{description},#{telephone},#{address},#{roadAddress},#{mapx},#{mapy},#{price},#{party},#{visitDate})")
 	public int setOwnData(DataDTO ownDTO); // 기본적인 매뻐 완성!
 	
-	
+	//하루에 얼마나 카운팅 되었는가
+	@Select("SELECT count FROM call_count WHERE `count date` = ${today}")
+	public List<Integer> getCount(String today);
+
+	//데이터베이스 메모장~.~
+	@Insert("INSERT INTO call_count (`count date`, `count`) VALUES(#{countdate} , #{count}) "
+			+ "ON DUPLICATE KEY UPDATE count = #{count}") 
+	public int setCount(String countdate, int count);
 }

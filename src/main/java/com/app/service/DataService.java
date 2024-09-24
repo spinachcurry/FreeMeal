@@ -2,6 +2,8 @@ package com.app.service;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -28,21 +30,36 @@ public class DataService {
 	@Autowired
 	private DataMapper dataMapper;
 	//우선 인덱스 하나로 데이터 가져오는지 혹은 없는지 확인 여부
+	private final int MaxCount = 25000;
 	public void insertData() {
 		List<RawDataDTO> rawData = dataMapper.getRawData();
 //		log.info("마리아에서 가져온 것: {}", rawData.get(index).getAreaNm() + " " + rawData.get(index).getStoreNm());
 		
 		//for(int index = 0; index < rawData.size(); index++) {		
+		int callCount; //지금까지 카운팅 된 수로 시작점 지정 >> 밖에다 적어 놓기로! >> database에 기록해두는것.
+		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd");
+		Date now = new Date();
+		String currentDate = format.format(now); 
+		
+		if(!dataMapper.getCount(currentDate).isEmpty()) {
+			log.info("처음이야?");
+			callCount = dataMapper.getCount(currentDate).getFirst();
+		}else{
+			log.info("처음이다 왜?");
+			callCount = 0;
+		}
 		try {
 			for(RawDataDTO getOne : rawData ) {
 				TimeUnit.MILLISECONDS.sleep(100);
-				/*네이버 API 25,000개 호출 카운팅 확인 코드*/
-				int callCount;
-				
-				
+				if(callCount >= MaxCount) {
+					log.info("멈출 때가 됐다");
+					break; // 중간점검: 25000개를 다 사용했을 때! >> 강종
+
+				}
 				String dataFromNaver = naverSearchList(getOne.getAreaNm() + " " + getOne.getStoreNm());
 //				log.info("네이버에서 가져온 것: {}", dataFromNaver);
-				
+				callCount++;
+					 	
 				Gson gson = new Gson();
 				GsonDTO nData = gson.fromJson(dataFromNaver, GsonDTO.class);
 				
@@ -75,6 +92,11 @@ public class DataService {
 				}
 				log.info("확인하며 공부하기^^ : {}", ourData);
 				
+				//카운팅 다 끝났을 때! 종료 지점 >> update 0925 할 일
+				/**********************내일은 여기다***********************/
+				
+				
+				
 		//			값이 null 이면 insert 안하도록 만들어보기
 		//			① 배열에 저장된 값의 타입과 반복문에서 사용할 변수명 : 배열객체 이름
 				if(ourData != null) {
@@ -94,7 +116,7 @@ public class DataService {
 		
 	}
 	
-	
+
 	private String naverSearchList(String text) {
 		
 		String clientId = "Mybp3tJ8oOogHiifoV6Y";
