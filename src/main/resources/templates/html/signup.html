@@ -1,36 +1,73 @@
-<h2 class="text-center mb-4">회원가입</h2>
-<form action="/signup" method="post">
-    <div class="mb-3">
-        <label for="ID" class="form-label">ID</label><br>
-        <input type="text" class="form-control" id="userId" name="userId" placeholder="ID" required>
-    </div>
-    <div class="mb-3">
-        <label for="password" class="form-label">PASSWORD</label><br>
-        <input type="password" class="form-control" id="password" name="password" placeholder="PASSWORD" required>
-    </div>
-    <div class="mb-3">
-        <label for="username" class="form-label">Name</label><br>
-        <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
-    </div>
-     <div class="mb-3">
-        <label for="username" class="form-label">Nickname</label><br>
-        <input type="text" class="form-control" id="userNnm" name="userNnm" placeholder="Nickname" required>
-    </div>
-    <div class="mb-3">
-        <label for="username" class="form-label">phon</label><br>
-        <input type="text" class="form-control" id="phone" name="phone" placeholder="phon" required>
-    </div>
-    <div class="mb-3">
-        <label for="Email" class="form-label">Email</label><br>
-        <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
-    </div>
-    <div class="form-check mb-3">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
-        <label class="form-check-label" for="flexCheckDefault" style="font-size:12px;">
-            "꽁밥”의 이용 약관, 개인정보 보호정책 및 콘텐츠 정책에 동의합니다.
-        </label>
-    </div>
-    <div class="mb-3">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">회원가입</h2>
+   <!-- 자바스크립트 alert 창을 통해 중복된 아이디 오류 메시지 출력 -->
+        <script th:if="${session.duplicateError != null}" th:inline="javascript">
+            var errorMessage = /*[[${session.duplicateError}]]*/ null;
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        </script>
+       
+
+          <form action="/signup" method="post">
+            <!-- ID 입력 -->
+            <div class="mb-3">
+                <label for="userId" class="form-label">ID</label>
+                <input type="text" class="form-control" id="userId" name="userId" placeholder="ID"
+                       th:value="${userDTO != null ? userDTO.userId : ''}" required>
+            </div>
+            
+            <!-- 비밀번호 입력 -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password"
+                       th:value="${userDTO != null ? userDTO.password : ''}" required>
+            </div>
+            
+            <!-- 이름 입력 -->
+            <div class="mb-3">
+                <label for="name" class="form-label">이름</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="이름"
+                       th:value="${userDTO != null ? userDTO.name : ''}" required>
+            </div>
+            
+            <!-- 닉네임 입력 -->
+            <div class="mb-3">
+                <label for="userNnm" class="form-label">닉네임</label>
+                <input type="text" class="form-control" id="userNnm" name="userNnm" placeholder="닉네임"
+                       th:value="${userDTO != null ? userDTO.userNnm : ''}" required>
+            </div>
+
+            <!-- 전화번호 입력 -->
+            <div class="mb-3">
+                <label for="phone" class="form-label">전화번호</label>
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="전화번호"
+                       th:value="${userDTO != null ? userDTO.phone : ''}" required>
+            </div>
+
+            <!-- 이메일 입력 -->
+            <div class="mb-3">
+                <label for="email" class="form-label">이메일</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="이메일"
+                       th:value="${userDTO != null ? userDTO.email : ''}" required>
+            </div>
+
+            <!-- 약관 동의 체크박스 -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" value="" id="termsCheck" required>
+                <label class="form-check-label" for="termsCheck">
+                    "꽁밥”의 이용 약관, 개인정보 보호정책 및 콘텐츠 정책에 동의합니다.
+                </label>
+            </div>
+<div class="mb-3">
         <textarea cols="50" rows="5" readonly="readonly" class="form-control">
        
 회사 꽁밥(이하 “회사” 이라 한다)은 「개인정보보호법」제15조 제1항 제1호, 제17조 제1항 제1호, 제23조 제1호 따라 아래와 같이 개인정보의 수집. 이용에 관하여 귀하의 동의를 얻고자 합니다.
@@ -80,9 +117,16 @@
   
         </textarea>
     </div>
-    <button type="submit" class="btn btn-primary w-100">회원가입</button>
-    <br><br>
-    <p class="text-center">이미 계정이 있으신가요? <a href="login">로그인</a></p>
-</form>  
+            <!-- 회원가입 버튼 -->
+            <button type="submit" class="btn btn-primary w-100">회원가입</button>
+        </form>
+
+        <!-- 로그인 페이지로 이동 링크 -->
+        <p class="text-center mt-3">이미 계정이 있으신가요? <a href="/login">로그인</a></p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

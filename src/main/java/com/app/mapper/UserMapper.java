@@ -29,8 +29,11 @@ public interface UserMapper {
 	@Insert ("INSERT INTO `Users` ("
 			+ "  `userId`, `password`, `name`, `user_Nnm`, `phone`, `email`, `createDate`, `modifiedDate`,  `review`"
 			+ ") VALUES ("
-			+ "   #{userId}, #{password}, #{name}, #{user_Nnm}, #{phone}, #{email}, NOW(), NOW(),  'This is a sample review.' "
+			+ "   #{userId}, #{password}, #{name}, #{userNnm}, #{phone}, #{email}, NOW(), NOW(),  'This is a sample review.' "
 			+ ");")
-	public UserDTO signup(UserDTO dto);
+	public int signup(UserDTO dto);
+	
+	@Select("SELECT COUNT(*) FROM Users WHERE userId = #{userId}")
+	int checkUserIdDuplicate(String userId);
 	
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.app.mapper.UserMapper;
 import com.app.userDTO.RoleDTO;
@@ -36,43 +37,41 @@ public class LoginService {
 				.build();
 	}
 	
-	
-//	public UserResultDTO signup(UserDTO userDTO) {
-//	    UserResultDTO result = new UserResultDTO();
-//	    
-//	    // 사용자 추가 로직
-//	    int insertedRows = userMapper.signup(userDTO);
-//	    
-//	    if (insertedRows > 0) {
-//	        result.setStatus(true);
-//	        result.setMessage("회원가입이 성공했습니다."); // 성공 메시지
-//	    } else {
-//	        result.setStatus(false);
-//	        result.setMessage("회원가입에 실패했습니다."); // 실패 메시지
-//	    }
-//	    return result;
-//	}
-	
-	
 	public UserResultDTO signup(UserDTO userDTO) {
 	    UserResultDTO userResultDTO = new UserResultDTO();
-	    log.info("---서비스단을 타고 있습니다.---");
+
 	    try {
-	        // 매퍼를 사용하여 사용자 등록
-	    	log.info("---실패 1번을 탄다..---");
-	        userMapper.signup(userDTO); 
-	        // 성공 시 결과 설정
-	        userResultDTO.setStatus(true);
-	        userResultDTO.setMessage("회원가입이 완료되었습니다."); // 성공 메시지
-	        userResultDTO.setUserDTO(userDTO); // 등록된 사용자 정보 설정
+	        // 아이디 중복 체크
+	        int count = userMapper.checkUserIdDuplicate(userDTO.getUserId());
+	        if (count > 0) {
+	            // 중복된 아이디가 있을 경우 실패 처리
+	            log.info("중복된 아이디: {}", userDTO.getUserId());
+	            userResultDTO.setStatus(false);
+	            userResultDTO.setMessage("중복된 아이디가 있습니다.");
+	            return userResultDTO;
+	        }
+
+	        // 중복이 없을 경우 회원가입 처리
+	        int result = userMapper.signup(userDTO);
+	        log.info("---Mapper에서 받은 반환값: {}---", result);
+
+	        if (result > 0) {
+	            // 성공 시 결과 설정
+	            userResultDTO.setStatus(true);
+	            userResultDTO.setMessage("회원가입이 완료되었습니다.");
+	            userResultDTO.setUserDTO(userDTO); // 등록된 사용자 정보 설정
+	        } else {
+	            // 실패 시 결과 설정
+	            userResultDTO.setStatus(false);
+	            userResultDTO.setMessage("회원가입에 실패하였습니다.");
+	        }
 	    } catch (Exception e) {
-	        // 실패 시 결과 설정
-	    	log.info("---실패 2번을 탄다.---");
+	        log.error("---회원가입 실패 이유: {}", e.getMessage(), e);
 	        userResultDTO.setStatus(false);
-	        userResultDTO.setMessage("회원가입에 실패하였습니다: " + e.getMessage()); // 실패 메시지
+	        userResultDTO.setMessage("회원가입에 실패하였습니다: " + e.getMessage());
 	    }
 
-	    return userResultDTO; // 결과 반환
+	    return userResultDTO;
 	}
 	
 	

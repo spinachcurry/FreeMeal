@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <title>꽁밥</title>
   <meta charset="utf-8">
@@ -12,6 +12,8 @@
 <link rel="stylesheet" href="login.css">  
 <link rel="stylesheet" href="../css/mainDetail.css">
 <meta charset="UTF-8">
+ 
+    
 <title>메인화면</title>
 </head>
 <body>
@@ -27,9 +29,22 @@
 	        <li><a class="dropdown-item" href="#">강서구</a></li>
 	      </ul>
 	      <input type="text" class="form-control s9-4" placeholder="너는 먹을 때가 제일 예뻐">  
-           <div class="divDw"> 
-          		 <a href="login" id="loginBtn" class=".gf"> 로그인</a>   |   <a href="signup" id="signupBtn" class=".gf"> 회원가입</a>
-           </div> 
+           	 <!-- 로그인 여부에 따라 다른 내용 표시 -->
+	        <div class="divDw">
+	            <!-- 세션에 userId가 있을 경우 환영 메시지와 로그아웃 버튼 -->
+	            <div th:if="${userId != null}">
+	                <p>환영합니다, 사용자 ID: <span th:text="${userId}"></span></p>
+	                <form action="/logout" method="post">
+	                    <button type="submit" class="btn btn-primary">로그아웃</button>
+	                </form>
+	            </div>
+	            <!-- 세션에 userId가 없을 경우 로그인 및 회원가입 링크 표시 -->
+	            <div th:if="${userId == null}">
+	                <a href="login" id="loginBtn" class="gf">로그인</a> | 
+	                <a href="signup" id="signupBtn" class="gf">회원가입</a>
+	            </div>
+	        </div>
+        	
 	    </div>  
     </div>
   </div>
