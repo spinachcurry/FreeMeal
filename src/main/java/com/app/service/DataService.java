@@ -33,8 +33,8 @@ public class DataService {
 	@Autowired
 	private DataMapper dataMapper;
 	//우선 인덱스 하나로 데이터 가져오는지 혹은 없는지 확인 여부
-	private final int MaxCount = 25000;
-	public void insertData() {
+	public final int MaxCount = 25000;
+	public String insertData() {
 		List<RawDataDTO> rawData = dataMapper.getRawData();
 //		log.info("마리아에서 가져온 것: {}", rawData.get(index).getAreaNm() + " " + rawData.get(index).getStoreNm());
 		
@@ -46,7 +46,7 @@ public class DataService {
 		Map<String, Object> map = new HashMap<>();
 		log.info("오늘 날짜: {}", toDay);
 		
-		log.info(" : {}", dataMapper.getCount(toDay));
+//		log.info(" : {}", dataMapper.getCount(toDay));
 		if(!dataMapper.getCount(toDay).isEmpty()) {
 			log.info("처음이야?");
 			callCount = dataMapper.getCount(toDay).get(0);
@@ -62,7 +62,7 @@ public class DataService {
 					map.put("countdate", toDay);
 					map.put("count", callCount);
 					dataMapper.setCount(map);
-					break; // 중간점검: 25000개를 다 사용했을 때! >> 강종
+					return "오늘 25,000번 다 혔슈. 어따 되다 되야"; // 중간점검: 25000개를 다 사용했을 때! >> 강종
 				}
 				String dataFromNaver = naverSearchList(getOne.getAreaNm() + " " + getOne.getStoreNm());
 //				log.info("네이버에서 가져온 것: {}", dataFromNaver);
@@ -79,7 +79,7 @@ public class DataService {
 					if(!"한식".equals(category)  && !"음식점".equals(category)) continue;
 					if(!nItem.getAddress().contains(getOne.getAreaNm())) continue; //네이버 데이터 & rawData 내의 지역 불일치하면 다음으로 긔긔
 			
-					//dto 빌드 >> for 문 멈추기! >> 오로지 신라 삼계탕만을 위한 for문
+					//dto 빌드 >> for 문 멈추기!
 					ourData = DataDTO.builder()
 							.title(nItem.getTitle().replace("<b>", "").replace("</b>", ""))
 							.link(nItem.getLink())
@@ -90,7 +90,7 @@ public class DataService {
 							.roadAddress(nItem.getRoadAddress())
 							.mapx(nItem.getMapx())
 							.mapy(nItem.getMapy())
-							
+							//raw data 에서 온 항목
 							.price(getOne.getPrice())
 							.party(getOne.getParty())
 							.visitDate(getOne.getDate())
@@ -110,16 +110,19 @@ public class DataService {
 				else log.info("널뛴다! : {}", ourData);
 			}
 			
-			//카운팅은 이미 종료! >> update 뭘 업데이트 하냐? 얼마나 카운팅 됐는지 날짜별 업뎃! >> 항상 '오늘'날짜로 업데이트 하는거지!
-			/**********************내일은 여기다***********************/
+			//카운팅은 이미 종료! >>
+			//update 뭘 업데이트 하냐? 얼마나 카운팅 됐는지 날짜별 업뎃!
+			//>> 항상 '오늘'날짜로 업데이트 하는거지!
+			/**********************내일은 여기다****************/
 			map.put("countdate", toDay);
 			map.put("count", callCount);
 			log.info("확인용: {}", map);
-			dataMapper.setCount(map);		
+			dataMapper.setCount(map);	
 			
+			return "오늘 " + callCount + "번까지 무탈히 잘 끝났슈.";
 		}
 		 catch (InterruptedException e) {
-				e.printStackTrace();
+			return "오류 났슈.";
 		}
 	}
 

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import com.app.dto.DataDTO;
 import com.app.dto.RawDataDTO;
@@ -29,6 +30,10 @@ public interface DataMapper {
 			+ "VALUES (#{countdate} , #{count}) "
 			+ "ON DUPLICATE KEY UPDATE count = VALUES(count)") 
 	public int setCount(Map<String, Object> map);
-
 	
+	//광수가 주는 새로운 raw data를 돌릴 때 기존 test freemeal에서 돌린 것들은 제외하고 새로 돌리는 맵핑
+	//	@Update("UPDATE root_data SET no = #{no} WHERE no = #{no + 1`})")
+	 
+
 }
+

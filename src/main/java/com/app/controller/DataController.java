@@ -2,6 +2,8 @@ package com.app.controller;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.app.mapper.DataMapper;
 import com.app.service.DataService;
 
 @RestController
@@ -52,13 +55,16 @@ public class DataController {
 		}
 
 	@Autowired
+	private DataMapper dataMapper;
+	
+	@Autowired
 	private DataService dataService;
 	
 	@GetMapping(value="/")
 	public String test() {
-		dataService.insertData();
-		return "TEST 중!";
+		return dataService.insertData();
 	}
+	
 }
 	
 
