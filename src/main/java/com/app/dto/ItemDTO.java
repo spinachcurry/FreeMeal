@@ -24,5 +24,6 @@ public class ItemDTO {
 	private String roadAddress;
 	private int mapx;
 	private int mapy;
+
 	
 }

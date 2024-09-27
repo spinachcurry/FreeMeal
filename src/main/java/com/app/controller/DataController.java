@@ -2,8 +2,6 @@ package com.app.controller;
 
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
@@ -18,8 +16,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.app.mapper.DataMapper;
 import com.app.service.DataService;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestController
 @RequestMapping
+@RequiredArgsConstructor
 public class DataController {
 
 	@GetMapping(value = "/search", produces = "application/json; charset=UTF-8")
@@ -59,12 +62,13 @@ public class DataController {
 	
 	@Autowired
 	private DataService dataService;
-	
+
 	@GetMapping(value="/")
 	public String test() {
 		return dataService.insertData();
 	}
-	
+
+
 }
 	
 

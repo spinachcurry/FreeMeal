@@ -23,7 +23,6 @@ import com.app.dto.RawDataDTO;
 import com.app.mapper.DataMapper;
 import com.google.gson.Gson;
 
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,8 +35,9 @@ public class DataService {
 	public final int MaxCount = 25000;
 	public String insertData() {
 		List<RawDataDTO> rawData = dataMapper.getRawData();
-//		log.info("마리아에서 가져온 것: {}", rawData.get(index).getAreaNm() + " " + rawData.get(index).getStoreNm());
-		
+		if(rawData.size() < 1) {
+			return "새로운 데이터가 없습니다.";
+		}
 		//for(int index = 0; index < rawData.size(); index++) {		
 		int callCount; //지금까지 카운팅 된 수로 시작점 지정 >> 밖에다 적어 놓기로! >> database에 기록해두는것.
 		SimpleDateFormat format = new SimpleDateFormat ("yyyy-MM-dd");
@@ -56,6 +56,7 @@ public class DataService {
 		}
 		try {
 			for(RawDataDTO getOne : rawData ) {
+				dataMapper.check(getOne.getNo());
 				TimeUnit.MILLISECONDS.sleep(100);
 				if(callCount >= MaxCount) {
 					log.info("멈출 때가 됐다");
@@ -94,11 +95,12 @@ public class DataService {
 							.price(getOne.getPrice())
 							.party(getOne.getParty())
 							.visitDate(getOne.getDate())
+							.areaNm(getOne.getAreaNm())
 							.build();
 					break;
 				}
-				log.info("확인하며 공부하기^^ : {}", ourData);			
-								
+				log.info("확인하며 공부하기^^ : {}", ourData);
+				
 		//			값이 null 이면 insert 안하도록 만들어보기
 		//			① 배열에 저장된 값의 타입과 반복문에서 사용할 변수명 : 배열객체 이름
 				if(ourData != null) {
@@ -127,7 +129,6 @@ public class DataService {
 	}
 
 	private String naverSearchList(String text) {
-		
 		String clientId = "Mybp3tJ8oOogHiifoV6Y";
 		String clientSecret = "mntjlH4J1B";
 		URI uri = UriComponentsBuilder
@@ -149,11 +150,8 @@ public class DataService {
 	                .build();
 	        
 	        RestTemplate restTemplate = new RestTemplate();
-	        
 	        ResponseEntity<String> responseEntity = restTemplate.exchange(req, String.class);
-	        
 //	        String responseBody = responseEntity.getBody();
-	        
 	        return responseEntity.getBody();
 		}
 	
