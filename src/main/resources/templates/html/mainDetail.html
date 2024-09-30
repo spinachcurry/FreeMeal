@@ -33,7 +33,7 @@
 	        <div class="divDw">
 	            <!-- 세션에 userId가 있을 경우 환영 메시지와 로그아웃 버튼 -->
 	            <div th:if="${userId != null}">
-	                <p>환영합니다, 사용자 ID: <span th:text="${userId}"></span></p>
+	                <p>환영합니다, 사용자 ID: <a href="myPage"><span th:text="${userId}"></span></a></p>
 	                <form action="/logout" method="post">
 	                    <button type="submit" class="btn btn-primary">로그아웃</button>
 	                </form>

@@ -36,4 +36,7 @@ public interface UserMapper {
 	@Select("SELECT COUNT(*) FROM Users WHERE userId = #{userId}")
 	int checkUserIdDuplicate(String userId);
 	
+	@Select("SELECT `userId`, `password`, `user_Nnm`, `phone`, `email` FROM Users WHERE userId = #{userId}")
+	public List<UserDTO> findOne(String userId);
+	
 }
