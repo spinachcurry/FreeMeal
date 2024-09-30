@@ -21,10 +21,13 @@ public interface StoreMapper {
 			+ "GROUP BY `title`, `areaNm`")
 	public List<StoreDTO> storeList();
 	
-	
-	//가게 하나 선택(가게 상세 페이지)
-	@Select("SELECT * FROM test_freemeal WHERE no = #{no}")
-	public Map findOne(int no);
+	//가게 상세 페이지
+	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `mapx`, `mapx`, `address`, `roadAddress`, `category`, `description`, "
+			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
+			+ "FROM test_freemeal "
+			+ "WHERE title = #{title} " 
+			+ "GROUP BY `title`, `areaNm`" )
+	public List<StoreDTO> storeDetail(String title);
 	
 	
 }

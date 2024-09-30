@@ -77,7 +77,7 @@ public class DataService {
 				
 				for(ItemDTO nItem : nData.getItems()) {
 					String category = nItem.getCategory().split(">")[0];
-					if(!"한식".equals(category)  && !"음식점".equals(category)) continue;
+					if(!"한식".equals(category)  && !"음식점".equals(category) && !"분식".equals(category)) continue;
 					if(!nItem.getAddress().contains(getOne.getAreaNm())) continue; //네이버 데이터 & rawData 내의 지역 불일치하면 다음으로 긔긔
 			
 					//dto 빌드 >> for 문 멈추기!

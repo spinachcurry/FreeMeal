@@ -17,9 +17,7 @@ import com.app.mapper.DataMapper;
 import com.app.service.DataService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
