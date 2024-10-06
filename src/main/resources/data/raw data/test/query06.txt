@@ -1,0 +1,18 @@
+let
+	Source = Excel.CurrentWorkbook(){[Name="가족정책과"]}[Content],
+	TypeTransfromedTable = Table.TransformColumnTypes(Source,
+		{
+			{"연번", Int64.Type},
+			{"인원", Int64.Type},
+			{"날짜", type date},
+			{"시간", type time},
+			{"금액", Currency.Type},
+			{"사용자", Text.Type},
+			{"장소", Text.Type},
+			{"부서", Text.Type},
+			{"목적", Text.Type}
+		}
+	),
+	ErrorCorrectedTable = Table.ReplaceErrorValues(TypeTransfromedTable, {{"날짜", null}, {"시간", null}})
+in
+	ErrorCorrectedTable
