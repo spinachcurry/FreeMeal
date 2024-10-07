@@ -1,7 +1,10 @@
 package com.app.userDTO;
 
 import java.time.LocalDateTime;
-import java.util.List; 
+import java.util.List;
+
+import org.springframework.data.annotation.Transient;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-	
+	 @Transient
+	private List<RoleDTO> userRoles; 
 	private int userNo;
 	private String userId;
     private String password;
@@ -22,7 +26,7 @@ public class UserDTO {
     private LocalDateTime modifiedDate; // 읽기 전용으로 사용할 수 있음
     private String status;
     private String review;
-    private List<RoleDTO> userRoles; 
+    private String profileImageUrl;
 	
 
 }

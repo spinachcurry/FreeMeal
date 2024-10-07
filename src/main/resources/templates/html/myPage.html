@@ -3,141 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>프로필 수정</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            width: 40%;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        label {
-            display: block;
-            margin: 15px 0 5px;
-            font-size: 14px;
-            color: #333;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="tel"],
-        input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        .profile-image {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .profile-image img {
-            border-radius: 50%;
-            margin-right: 10px;
-            width: 80px;
-            height: 80px;
-        }
-    </style> 
+    <title>마이 페이지</title>
+    
+   
 </head>
 <body>
 
 <div class="container">
-    <h1>프로필 수정</h1>
-<span th:text="${user_Nnm}"/><span th:text="${userId}"/>
-<span th:text="${$phone}"/><span th:text="${email}"/><span th:text="${password}"/>
-    <!-- 프로필 이미지 업로드 -->
-    <form action="/myPage" method="post" >
-	    <div class="profile-image">
-	        <img src="default-profile.png" alt="Profile Image" id="profilePreview"> <!-- 기본 이미지 또는 현재 사용자 프로필 이미지 -->
-	        <input type="file" id="profileImage" accept="image/*" onchange="previewImage(event)">
-	    </div>
-	
-	    <!-- 닉네임 입력 -->
-	    <label for="nickname">닉네임</label>
-	    <input type="text" id="user_Nnm" name="user_Nnm" placeholder="[[${user_Nnm}]]" required>
-		
-	    <!-- 폰 번호 입력 -->
-	    <label for="phone">전화번호</label>
-	    <input type="tel" id="phone" name="phone" placeholder="010-0000-0000" required>
-	
-		<!-- 이메일 변경 -->
-	    <label for="confirmPassword">이메일</label>
-	    <input type="email" id="email" name="email" placeholder="이메일을 입력하세요" required>
-	
-		<!-- 비밀번호 확인 -->
-	    <label for="confirmPassword">비밀번호 확인</label>
-	    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="비밀번호를 다시 입력하세요"  onkeyup="comparePasswords()" required>
-	 	<div id="passwordMessage"></div>
-	 	
-	    <!-- 비밀번호 변경 -->
-	    <label for="password">새 비밀번호</label>
-	    <input type="password" id="password" name="password" placeholder="새 비밀번호를 입력하세요" required>
-	
-	    <!-- 수정 버튼 -->
-	    <button type="submit">프로필 수정</button>
-	   <a href="mainDetail"> <button type="button">수정 취소</button></a>
-	</div>
-</form>
-<script>
-    // 프로필 이미지 미리보기 기능
-    function previewImage(event) {
-        const profilePreview = document.getElementById('profilePreview');
-        profilePreview.src = URL.createObjectURL(event.target.files[0]);
-    }
-    
-    function comparePasswords() {
-        // 세션에서 받아온 비밀번호 (서버에서 전달된 값)
-        var originalPassword = [[${password}]] // 서버에서 전달된 세션 값
-
-        // 입력된 비밀번호 확인 필드 값
-        var confirmPassword = document.getElementById('confirmPassword').value;
-
-        // 비밀번호 비교
-        if (confirmPassword == originalPassword) {
-            document.getElementById('passwordMessage').innerHTML = "비밀번호가 일치합니다.";
-            document.getElementById('passwordMessage').style.color = "green";
-        } else { 
-            document.getElementById('passwordMessage').innerHTML = "비밀번호가 일치하지 않습니다.";
-            document.getElementById('passwordMessage').style.color = "red";
-        }
-    }
-    
-</script>
-
+    <h1>마이 페이지</h1>
+    <!-- 기본 이미지 또는 현재 사용자 프로필 이미지 -->
+  	 <img th:src="${profileImageUrl}"/> 
+    <p>사용자 ID: <a href="myPage"><span th:text="${userId}"></span></a>님, 환영합니다.</p>
+     <a href="updateUserInfo">회원정보 수정</a>
+    <a href="#">내가 찜한 가게</a>
 </body>
 </html>

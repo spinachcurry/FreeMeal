@@ -54,46 +54,54 @@ public class LoginService {
 	            .message(message)
 	            .userDTO(foundUser)
 	            .build();
-	}
+	} 
 	
-	public UserResultDTO signup(UserDTO userDTO) {
-	    UserResultDTO userResultDTO = new UserResultDTO();
+	    @Transactional
+	    public UserResultDTO signup(UserDTO userDTO) {
+	        UserResultDTO userResultDTO = new UserResultDTO();
 
-	    try {
-	        // 아이디 중복 체크
-	        int count = userMapper.checkUserIdDuplicate(userDTO.getUserId());
-	        if (count > 0) {
-	            // 중복된 아이디가 있을 경우 실패 처리
-	            log.info("중복된 아이디: {}", userDTO.getUserId());
-	            userResultDTO.setStatus(false);
-	            userResultDTO.setMessage("중복된 아이디가 있습니다.");
-	            return userResultDTO;
+	        // 기본값 설정
+	        if (userDTO.getStatus() == null) {
+	            userDTO.setStatus("1");
+	        }
+	        if (userDTO.getReview() == null) {
+	            userDTO.setReview("This is a sample review.");
+	        }
+	        if (userDTO.getProfileImageUrl() == null) {
+	            userDTO.setProfileImageUrl("/uploads/default.png");
 	        }
 
-	        // 중복이 없을 경우 회원가입 처리
-	        int result = userMapper.signup(userDTO);
-	        log.info("---Mapper에서 받은 반환값: {}---", result);
+	        try {
+	            // 아이디 중복 체크
+	            int count = userMapper.checkUserIdDuplicate(userDTO.getUserId());
+	            if (count > 0) {
+	                // 중복된 아이디일 경우, 실패로 처리
+	                userResultDTO.setStatus(false);
+	                userResultDTO.setMessage("중복된 아이디가 있습니다.");
+	                return userResultDTO;
+	            }
 
-	        if (result > 0) {
-	            // 성공 시 결과 설정
-	            userResultDTO.setStatus(true);
-	            userResultDTO.setMessage("회원가입이 완료되었습니다.");
-	            userResultDTO.setUserDTO(userDTO); // 등록된 사용자 정보 설정
-	        } else {
-	            // 실패 시 결과 설정
+	            // 회원가입 처리
+	            int result = userMapper.signup(userDTO);
+	            if (result > 0) {
+	                // 성공적으로 가입된 경우
+	                userResultDTO.setStatus(true);
+	                userResultDTO.setMessage("회원가입이 완료되었습니다.");
+	                userResultDTO.setUserDTO(userDTO); // 등록된 사용자 정보 설정
+	            } else {
+	                // 실패한 경우
+	                userResultDTO.setStatus(false);
+	                userResultDTO.setMessage("회원가입에 실패하였습니다.");
+	            }
+	        } catch (Exception e) {
+	            // 예외 발생 시 로그로 기록하고 실패 메시지 설정
+	            log.error("회원가입 중 오류 발생 - 파라미터 값: {}", userDTO, e);
 	            userResultDTO.setStatus(false);
-	            userResultDTO.setMessage("회원가입에 실패하였습니다.");
+	            userResultDTO.setMessage("회원가입에 실패하였습니다. 오류 메시지: " + e.getMessage());
 	        }
-	    } catch (Exception e) {
-	        log.error("---회원가입 실패 이유: {}", e.getMessage(), e);
-	        userResultDTO.setStatus(false);
-	        userResultDTO.setMessage("회원가입에 실패하였습니다: " + e.getMessage());
-	    }
 
-	    return userResultDTO;
-	}
-	
-	
+	        return userResultDTO;
+	    } 
 	public UserResultDTO findOne(UserDTO userDTO) {
 	    UserResultDTO userResultDTO = new UserResultDTO();
 
@@ -111,7 +119,9 @@ public class LoginService {
 	    }
 
 	    return userResultDTO;
-	}
-	
-	
+	} 
+
+	  public void updateUser(UserDTO userDTO) {
+	        userMapper.updateUser(userDTO);
+	    }  
 }
