@@ -57,7 +57,7 @@ public class DataService {
 		try {
 			for(RawDataDTO getOne : rawData ) {
 				dataMapper.check(getOne.getNo());
-				TimeUnit.MILLISECONDS.sleep(100);
+				TimeUnit.MILLISECONDS.sleep(150);
 				if(callCount >= MaxCount) {
 					log.info("멈출 때가 됐다");
 					map.put("countdate", toDay);
@@ -89,8 +89,8 @@ public class DataService {
 							.telephone(nItem.getTelephone())
 							.address(nItem.getAddress())
 							.roadAddress(nItem.getRoadAddress())
-							.mapx(nItem.getMapx())
-							.mapy(nItem.getMapy())
+							.lng(nItem.getMapx())
+							.lat(nItem.getMapy())
 							//raw data 에서 온 항목
 							.price(getOne.getPrice())
 							.party(getOne.getParty())
@@ -111,6 +111,10 @@ public class DataService {
 				}
 				else log.info("널뛴다! : {}", ourData);
 			}
+			
+			// 지도 소수점 변경
+			int updateCount = dataMapper.mapLocation();
+			log.info("맵 위치 경로 소수점 변경 횟수 : {}", updateCount);
 			
 			//카운팅은 이미 종료! >>
 			//update 뭘 업데이트 하냐? 얼마나 카운팅 됐는지 날짜별 업뎃!

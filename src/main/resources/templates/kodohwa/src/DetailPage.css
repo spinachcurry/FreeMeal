@@ -1,0 +1,32 @@
+
+
+.image-section {
+    width:auto;
+    height:220px;
+    overflow:hidden;
+    margin:0 0;
+}
+
+
+.btn-primary {
+    margin-left: 10px;
+}
+
+.detail-page {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.header {
+    text-align: center;
+}
+
+.menu-section, .review-section, .footer {
+    margin: 20px 0;
+}
+
+.review {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+}

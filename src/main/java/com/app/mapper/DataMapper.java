@@ -15,12 +15,12 @@ import com.app.dto.RawDataDTO;
 public interface DataMapper {
 	
 	// 기본적인 매뻐 완성!
-	@Insert("INSERT INTO test_freemeal (`title`,`link`, `category`, `description`, `telephone`, `address`, `roadAddress`, `mapx`, `mapy`, `price`,`party`,`visitDate`) "
-			+ "VALUE (#{title},#{link},#{category},#{description},#{telephone},#{address},#{roadAddress},#{mapx},#{mapy},#{price},#{party},#{visitDate})")
+	@Insert("INSERT INTO test_freemeal (`title`,`link`, `category`, `description`, `telephone`, `address`, `roadAddress`, `lng`, `lat`, `price`,`party`,`visitDate`) "
+			+ "VALUE (#{title},#{link},#{category},#{description},#{telephone},#{address},#{roadAddress},#{lng},#{lat},#{price},#{party},#{visitDate})")
 	public int setOwnData(DataDTO ownDTO); 
 	
 	//로데이타에서 합칠 항목만 쏙쏙 셀렉트문
-	@Select("SELECT `no`, `date`, `storeNm`, `party`, `price`, `areaNm` FROM root_data WHERE `check` = 0 ")
+	@Select("SELECT `no`, `date`, `storeNm`, `party`, `price`, `areaNm` FROM root_data WHERE `check` = 1 ")
 	public List<RawDataDTO> getRawData(); 
 	
 	//하루에 얼마나 카운팅 되었는가
@@ -37,7 +37,8 @@ public interface DataMapper {
 	@Update("UPDATE root_data SET `check` = 1 WHERE `no` = #{no}")
 	public int check(int no);
 	
-	
+	@Update("UPDATE test_freemeal SET lng = (lng / 10000000), lat = (lat / 10000000)")
+	public int mapLocation();
 	
 	
 }
