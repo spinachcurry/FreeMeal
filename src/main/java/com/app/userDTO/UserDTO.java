@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserDTO {
-	 @Transient
+	
 	private List<RoleDTO> userRoles; 
 	private int userNo;
 	private String userId;

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import com.app.mapper.UserMapper;
+import com.app.userDTO.ReviewDTO;
 import com.app.userDTO.RoleDTO;
 import com.app.userDTO.UserDTO;
 import com.app.userDTO.UserResultDTO;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class LoginService {
+	
 	@Autowired
 	private UserMapper userMapper;
 	
@@ -102,26 +104,42 @@ public class LoginService {
 
 	        return userResultDTO;
 	    } 
-	public UserResultDTO findOne(UserDTO userDTO) {
-	    UserResultDTO userResultDTO = new UserResultDTO();
+	    
+	    public UserResultDTO findOne(UserDTO userDTO) {
+	        UserResultDTO userResultDTO = new UserResultDTO();
 
-	    // 매퍼 호출하여 사용자 정보 가져오기
-	    List<UserDTO> userInfo = userMapper.findOne(userDTO.getUserId());
+	        // 매퍼 호출하여 사용자 정보 가져오기
+	        List<UserDTO> userInfo = userMapper.findOne(userDTO.getUserId());
 
-	    if (userInfo != null && !userInfo.isEmpty()) {
-	        UserDTO user = userInfo.get(0);  // 첫 번째 사용자의 정보를 가져옴
+	        if (userInfo != null && !userInfo.isEmpty()) {
+	            UserDTO user = userInfo.get(0); // 첫 번째 사용자의 정보를 가져옴
 
-	        // UserResultDTO에 정보 채우기
-	        userResultDTO.setUserDTO(user);  // UserDTO 객체를 UserResultDTO에 추가
-	        userResultDTO.setStatus(true);  // 찾은 결과가 있으므로 상태를 true로 설정
-	    } else {
-	        userResultDTO.setStatus(false);  // 사용자를 찾지 못했을 경우 상태를 false로 설정
+	            // 사용자 권한 목록 가져오기
+	            List<RoleDTO> roles = userMapper.findByRoles(user.getStatus()); // 권한 정보 조회
+	            user.setUserRoles(roles); // UserDTO 객체에 권한 설정
+
+	            // UserResultDTO에 정보 채우기
+	            userResultDTO.setUserDTO(user);
+	            userResultDTO.setStatus(true); // 찾은 결과가 있으므로 상태를 true로 설정
+	        } else {
+	            userResultDTO.setStatus(false); // 사용자를 찾지 못했을 경우 상태를 false로 설정
+	        }
+
+	        return userResultDTO;
 	    }
-
-	    return userResultDTO;
-	} 
-
-	  public void updateUser(UserDTO userDTO) {
-	        userMapper.updateUser(userDTO);
-	    }  
+ 
+  public void updateUser(UserDTO userDTO) {
+        userMapper.updateUser(userDTO);
+    }   
+	//리뷰 받아오기
+    public List<ReviewDTO> getReviewsByStatus(String userId) {
+        return userMapper.findReviewsByStatus(userId);
+    }
+    //리뷰 업데이트하기
+    public boolean updateReview(ReviewDTO reviewDTO) {
+        int updatedRows = userMapper.updateReview(reviewDTO);
+        return updatedRows > 0;
+    }
+	    
+	    
 }

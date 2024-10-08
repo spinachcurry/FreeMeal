@@ -7,17 +7,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
 
+import com.app.userDTO.ReviewDTO;
 import com.app.userDTO.UserDTO;
 import com.app.userDTO.UserResultDTO;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
 import io.jsonwebtoken.io.Decoders; 
@@ -33,7 +39,9 @@ import lombok.extern.slf4j.Slf4j;
   
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,6 +62,21 @@ public class LoginController {
 	 // 파일 저장 경로를 application.properties에서 불러오기
     @Value("${file.upload-dir}")
     private String uploadDir;
+    
+    @GetMapping("/view")
+    public ResponseEntity<?> view(@RequestParam("url") String url) {
+		try {
+		      String path = uploadDir.concat("/").concat(url);
+		      File file = new File(path);
+		      return ResponseEntity.ok()
+		        .contentLength(file.length())
+		        .contentType(MediaType.parseMediaType("image/png"))
+		        .body(new InputStreamResource(new FileInputStream(file)));
+		    } catch (Exception e) {
+		      e.printStackTrace();
+		      return ResponseEntity.notFound().build();
+		    }
+    }
  
     @GetMapping("/mainDetail")
     public String mainDetail(HttpServletRequest req, Model model) {
@@ -64,8 +87,8 @@ public class LoginController {
         String phone = null;
         String password = null;
         String email = null;
-        String profileImageUrl = null;
-        String jwtToken = null;  // JWT 토큰도 가져오기
+        String profileImageUrl = null; 
+        String jwtToken = null;  // JWT 토큰도 가져오기review
 
         if (session != null) {
             userId = (String) session.getAttribute("userId");
@@ -81,7 +104,7 @@ public class LoginController {
         model.addAttribute("user_Nnm", user_Nnm);
         model.addAttribute("userId", userId);
         model.addAttribute("phone", phone);
-        model.addAttribute("email", email);
+        model.addAttribute("email", email); 
         model.addAttribute("password", password);
         model.addAttribute("profileImageUrl", profileImageUrl);
         model.addAttribute("jwtToken", jwtToken);  // JWT 토큰도 모델에 추가
@@ -198,13 +221,15 @@ public class LoginController {
         String password = null; 
         String profileImageUrl = null; 
         String email = null;
-        String jwtToken = null;  // JWT 토큰도 가져오기
+        String review = null;
+        String jwtToken = null;  // JWT 토큰도 가져오기 review
 
         if (session != null) {
             userId = (String) session.getAttribute("userId");
             user_Nnm = (String) session.getAttribute("user_Nnm");  // 닉네임 가져오기
             phone = (String) session.getAttribute("phone");        // 전화번호 가져오기
             email = (String) session.getAttribute("email");        // 이메일 가져오기
+            review = (String) session.getAttribute("review");        // 한마디 가져오기
             password = (String) session.getAttribute("password");  // 비밀번호 가져오기
             profileImageUrl = (String) session.getAttribute("profileImageUrl");  // 비밀번호 가져오기
             jwtToken = (String) session.getAttribute("jwtToken");  // JWT 토큰을 세션에서 가져옴
@@ -215,6 +240,7 @@ public class LoginController {
         model.addAttribute("userId", userId);
         model.addAttribute("phone", phone);
         model.addAttribute("email", email);
+        model.addAttribute("review", review);
         model.addAttribute("password", password);
         model.addAttribute("profileImageUrl", profileImageUrl);
         model.addAttribute("jwtToken", jwtToken);  // JWT 토큰도 모델에 추가 
@@ -223,26 +249,22 @@ public class LoginController {
         return "html/updateUserInfo";
     }
      
+    @ResponseBody
     @PostMapping("/updateUser")
-    public ResponseEntity<String> updateUser( 
+    public Map<String, Object> updateUser( 
             HttpServletRequest req,
             @RequestParam("userId") String userId,
             @RequestParam("user_Nnm") String user_Nnm,
             @RequestParam("phone") String phone,
             @RequestParam("email") String email,
-            @RequestParam("password") String password,
+            @RequestParam("review") String review,
+            @RequestParam("password") String password, 
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             Model model) {
-
+    	Map<String, Object> resultMap = new HashMap<>();
+    	boolean check = true;
         String uploadDir = System.getProperty("user.dir") + "/uploads/";
         String profileImageUrl = null;
-
-        System.out.println("Received user data:");
-        System.out.println("userId: " + userId);
-        System.out.println("user_Nnm: " + user_Nnm);
-        System.out.println("phone: " + phone);
-        System.out.println("email: " + email);
-        System.out.println("password: " + password);
 
         if (profileImage != null && !profileImage.isEmpty()) {
             try {
@@ -260,32 +282,39 @@ public class LoginController {
                 File destinationFile = new File(directory, fileName);
                 profileImage.transferTo(destinationFile);
 
-                profileImageUrl = "/uploads/" + fileName;
+                profileImageUrl = fileName;
                 System.out.println("File successfully uploaded to: " + profileImageUrl);
 
             } catch (IOException e) {
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드에 실패했습니다: " + e.getMessage());
+//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드에 실패했습니다: " + e.getMessage());
+                resultMap.put("msg", "파일 업로드에 실패했습니다: " + e.getMessage());
+                check = false;
             }
-        } else {
-            System.out.println("No profile image uploaded.");
+        } 
+
+        resultMap.put("state", check);
+        
+        if(check) {
+	        // UserDTO 생성 및 업데이트 호출
+	        UserDTO userDTO = new UserDTO();
+	        userDTO.setUserId(userId);
+	        userDTO.setUser_Nnm(user_Nnm);
+	        userDTO.setPhone(phone); 
+	        userDTO.setEmail(email);
+	        userDTO.setReview(review);
+	        userDTO.setPassword(password);
+	        userDTO.setProfileImageUrl(profileImageUrl);
+	
+	        // 서비스 단 호출
+	        loginService.updateUser(userDTO);
+	        System.out.println("Profile update successful.");
+	
+	        // 프로필 업데이트가 성공적으로 완료된 경우
+	        resultMap = getUserData(req);
         }
-
-        // UserDTO 생성 및 업데이트 호출
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(userId);
-        userDTO.setUser_Nnm(user_Nnm);
-        userDTO.setPhone(phone);
-        userDTO.setEmail(email);
-        userDTO.setPassword(password);
-        userDTO.setProfileImageUrl(profileImageUrl);
-
-        // 서비스 단 호출
-        loginService.updateUser(userDTO);
-        System.out.println("Profile update successful.");
-
-        // 프로필 업데이트가 성공적으로 완료된 경우
-        return ResponseEntity.ok("프로필이 성공적으로 업데이트되었습니다.");
+                
+        return resultMap;
     }
 
     private String getFileExtension(String originalFilename) {
@@ -297,37 +326,87 @@ public class LoginController {
         }
     }
 
-    
-    @GetMapping("/getUserData")
-    public ResponseEntity<UserDTO> getUserData(HttpServletRequest request) {
-        // 세션에서 userId를 가져옴
-        String userId = (String) request.getSession().getAttribute("userId");
+//    @ResponseBody
+//    @GetMapping("/getUserData")
+    public Map<String, Object> getUserData(HttpServletRequest request) {
+    	Map<String, Object> response = new HashMap<>();
+    	response.put("status", false);
+    	// 세션에서 userId를 가져옴
+    	String token = request.getHeader("Authorization");
+    	System.out.println("Token" + token);
+    	if(token != null && isValidToken(token)) {
+    		
+	        String userId = getUser(token);
+	        // 세션에 userId가 없을 경우, 로그인되지 않은 상태로 처리
+	        if (userId == null) {
+	//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+	        	response.put("status", false);
+	        } else {
+		        // UserDTO 객체를 생성하고 userId를 설정
+		        UserDTO userDTO = new UserDTO();
+		        userDTO.setUserId(userId);
+		        // 사용자 정보 조회
+		        UserResultDTO userResultDTO = loginService.findOne(userDTO);
+		        // 조회된 사용자 정보 반환 또는 404 Not Found
+		        if (userResultDTO.isStatus()) {
+		            response.put("status", true);
+		            response.put("user", userResultDTO.getUserDTO());
+		        } 
+	        }
 
-        // 세션에 userId가 없을 경우, 로그인되지 않은 상태로 처리
-        if (userId == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+		} else { 
+			response.put("msg", "사용자 Token이 만료 되었습니다.");
+    	}
+        return response;
+    }
 
-        // UserDTO 객체를 생성하고 userId를 설정
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(userId);
-
-        // 사용자 정보 조회
-        UserResultDTO userResultDTO = loginService.findOne(userDTO);
-
-        // 조회된 사용자 정보 반환 또는 404 Not Found
-        if (userResultDTO.isStatus()) {
-            return ResponseEntity.ok(userResultDTO.getUserDTO());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    //리뷰 불러오기Review
+    @GetMapping("/getReviewsByStatus")
+    public ResponseEntity<?> getReviewsByStatus(@RequestParam("userId") String userId) {
+    	System.out.println("==========================="+userId);
+        try {
+            List<ReviewDTO> reviews = loginService.getReviewsByStatus(userId);
+            if (reviews == null || reviews.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
+            }
+            return ResponseEntity.ok(reviews);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace(); // 예외 로그 출력
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
+        } catch (Exception e) {
+            e.printStackTrace(); // 예외 로그 출력
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
         }
     }
+    // 리뷰 수정 요청 처리
+    @PostMapping("/updateReview")
+    public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO) {
+        try {
+            // 리뷰 업데이트 수행
+            boolean isUpdated = loginService.updateReview(reviewDTO);
+
+            if (isUpdated) {
+                // 업데이트 성공
+                return ResponseEntity.ok().body("리뷰가 성공적으로 수정되었습니다.");
+            } else {
+                // 업데이트 실패 (예: 해당 리뷰가 존재하지 않는 경우)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없습니다.");
+            }
+        } catch (Exception e) {
+            // 예외 처리 및 오류 응답
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("리뷰를 수정하는 중 오류가 발생했습니다.");
+        }
+    }
+
 
 	//토큰용 
     private String setToken(Map<String, String> paramMap) {
 		// 키 생성
-		String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";
-		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(strKey));
+//		String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";
+//		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(strKey));
 //		SecretKey key = Keys.hmacShaKeyFor("shellfolder123456789DevJWT123456789".getBytes());
 		
 		// 유효 날짜 생성
@@ -351,9 +430,49 @@ public class LoginController {
 		            .setSubject("UserInfo") // 주제 설정
 		            .setExpiration(date.getTime()) // 만료 시간 설정
 		            .setIssuedAt(Calendar.getInstance().getTime()) // 발행 시간 설정
-		            .signWith(key, SignatureAlgorithm.HS256) // 서명 알고리즘 설정
+		            .signWith(getKey(), SignatureAlgorithm.HS256) // 서명 알고리즘 설정
 		            .compact(); // JWT 생성 및 반환
 	}
     
+    private Claims getToken(String token) {
+		return Jwts.parser()
+				.verifyWith(getKey())
+				.build()
+				.parseSignedClaims(token)
+				.getPayload();
+	}
+	
+    private String getUser(String token) {
+		return getToken(token).get("name", String.class);
+	}
+	
+	private SecretKey getKey() {
+		// 키 생성
+		String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";
+		return Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(strKey));
+	}
+	
+	public boolean isValidToken(String token) {
+	    try {
+	        Claims claims = getToken(token);
+	        log.info("===============================================");
+	        log.info("|ExpireTime\t: {}|", claims.getExpiration());
+	        log.info("|IIssuedTime\t: {}|", claims.getIssuedAt());
+	        log.info("|RealTime\t: {}|", Calendar.getInstance().getTime());
+	        log.info("===============================================");
+	        return true;
+	    } catch (ExpiredJwtException exception) {
+	    	log.info("==============");
+	    	log.error("Token Expired");
+	    } catch (JwtException exception) {
+	    	log.info("==============");
+	    	log.error("Token Tampered");
+	    } catch (NullPointerException exception) {
+	    	log.info("==============");
+	    	log.error("Token is null");
+	    }
+	    log.info("==============");
+	    return false;
+	}
     
 }
