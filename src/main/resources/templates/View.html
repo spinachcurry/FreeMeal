@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Kakao 지도 시작하기</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div>
+    <input type="hidden" id="select_count" value="3">
+    <input id="lunch_recommend" type="button" value="맛집 추천"/>
+</div>
+
+<div id="lunch_list">
+    <!-- lunch list area -->
+</div>
+
+<!-- TODO : appkey 변수화 작업 필요-->
+<script type="text/javascript"
+        src="//dapi.kakao.com/v2/maps/sdk.js?appkey={APPKEY}&libraries=services"></script>
+<script>
+
+    $('#lunch_recommend').click(function () {
+        if ("geolocation" in navigator) {	/* geolocation 사용 가능 */
+            navigator.geolocation.getCurrentPosition(function (data) {
+
+                const latitude = data.coords.latitude;
+                const longitude = data.coords.longitude;
+                const page = $('#select_count').val();
+
+                searchLunchReccomend(latitude, longitude, page);
+            }, function (error) {
+                alert(error);
+            }, {
+                enableHighAccuracy: true,
+                timeout: Infinity,
+                maximumAge: 0
+            });
+        } else {	/* geolocation 사용 불가능 */
+            alert('geolocation 사용 불가능');
+        }
+    });
+
+    function searchLunchReccomend(latitude, longitude, page) {
+
+        // 이미 한번이라도 호출했던 리스트 제거
+        $('.lunch_list_content').remove();
+
+        for (var i=1; i<parseInt(page)+1; i++) {
+            const jsonData = {
+                latitude: latitude,
+                longitude: longitude,
+                page: i
+            }
+
+            $.ajax({
+                type: "post",
+                url: "/lunch",
+                data: jsonData,
+                dataType: "json",
+                success: function (result) {
+                    const lunchDiv = $('#lunch_list');
+                    const resultList = Object.values(result)[0];
+
+                    resultList.forEach(function (item) {
+
+                        // 특정 카테고리 예외처리
+                        if (checkCategoryName(item.category_name)) {
+                            return;
+                        }
+
+                        const address = item.address_name;
+                        const url = item.place_url;
+                        const phone = item.phone;
+                        const x = item.x;
+                        const y = item.y;
+                        const name = item.place_name;
+                        const div = '<div class="lunch_list_content" ' + 'data-address=' + address + 'data-url=' + url + 'data-x=' + x + 'data-y=' + y + 'data-phone=' + phone + '>' + name + '</div>'
+                        lunchDiv.append(div);
+                    });
+
+                    $('#lunch_recommend').hide();
+                    $('#random_recommend').show();
+                },
+                error: function (e) {
+                    alert("Fail");
+                    console.log(e);
+                }
+            });
+        }
+    }
+
+
+</script>
+</body>
+</html>

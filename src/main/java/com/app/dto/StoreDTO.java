@@ -23,8 +23,8 @@ public class StoreDTO {
 	String address;
 	String roadAddress;
 	String areaNm;
-	int mapx;
-	int mapy;
+	double lng;
+	double lat;
 	int totalPrice;
 	int totalParty;
 }

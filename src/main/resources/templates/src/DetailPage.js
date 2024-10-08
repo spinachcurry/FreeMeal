@@ -1,5 +1,6 @@
 // DetailPage.js
 import React, { useState } from 'react';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'swiper/swiper-bundle.css'; // Swiper 스타일
 import './DetailPage.css';
 import KakaoMap from './components/KakaoMap'; // NaverMap 컴포넌트 import
@@ -15,10 +16,6 @@ const images = [
 ];
 
 const DetailPage = () => {
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-
-    const handleMouseEnter = () => setDropdownOpen(true);
-    const handleMouseLeave = () => setDropdownOpen(false);
 
     // 맨 위로 가기
     const scrollToTop = () => {
@@ -31,7 +28,7 @@ const DetailPage = () => {
                 <div>
                     <ul className='nav justify-content-end'>
                         <nav className='navbar navbar-expand-sm navbar-dark'>
-                            <div className="container-fluid">
+                            <div className="container-fluid fixed-top">
                                 <a className='rounded-pill' href="#">
                                     <img src='/logo.png' alt="로고자리" /> 
                                 </a>
@@ -46,40 +43,26 @@ const DetailPage = () => {
                         </li>
                     </ul>
 
-                            <div className="container-fluid input-group mt-3 mb-3"  style={{ margin: '0 30vw', width: '40vw' }}>
-                                {/* 지역 선택 버튼 */}
-                                <button
-                                    type="button"
-                                    className="btn btn-outline-primary dropdown-toggle"
-                                    data-bs-toggle="dropdown" // Bootstrap의 dropdown 기능 사용
-                                >
-                                    지역 선택
-                                </button>
+                    <div className="container-fluid input-group mt-3 mb-3"  style={{ margin: '0 30vw', width: '40vw' }}>
+                        <button type="button" className="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" style={{backgroundColor:'red'}}
+                        >지역 선택  </button>
 
-                                {/* 드롭다운 목록 */}
-                                <ul className="dropdown-menu" style={{ width: '200px' }}>
-                                    <li><a className="dropdown-item" href="#">강남구</a></li>
-                                    <li><a className="dropdown-item" href="#">강동구</a></li>
-                                    <li><a className="dropdown-item" href="#">강서구</a></li>
-                                    <li><a className="dropdown-item" href="#">양천구</a></li>
-                                    <li><a className="dropdown-item" href="#">마포구</a></li>
-                                    <li><a className="dropdown-item" href="#">종로구</a></li>
-                                </ul>
-
-                                {/* 텍스트 입력 및 버튼 */}
-                                <input
-                                    type="text"
-                                    className="form-control s9-3"
-                                    placeholder="오늘 뭐 먹지?"
-                                />
-                                <button
-                                    type="button"
-                                    className="btn btn-primary"
-                                    style={{ flex: 0.4, backgroundColor: 'red', border: 'red' }}
-                                >
-                                    검색
-                                </button>
-                         </div>
+                        {/* 드롭다운 목록 */}
+                        <ul className="dropdown-menu" style={{ width: '200px' }}>
+                            <li><a className="dropdown-item" href="#">강남구</a></li>
+                            <li><a className="dropdown-item" href="#">강동구</a></li>
+                            <li><a className="dropdown-item" href="#">강서구</a></li>
+                            <li><a className="dropdown-item" href="#">양천구</a></li>
+                            <li><a className="dropdown-item" href="#">마포구</a></li>
+                            <li><a className="dropdown-item" href="#">종로구</a></li>
+                        </ul>
+                        {/* 텍스트 입력 및 버튼 */}
+                        <input
+                            type="text" className="form-control s9-3" placeholder="오늘 뭐 먹지?"/>
+                        <button
+                            type="button" className="btn btn-primary" style={{ flex: 0.4, backgroundColor: 'red', border: 'red' }}
+                        >검색 </button>
+                    </div>
                     <br />
                     <h1>유미 곱창</h1>
                     <p>잡내 없이 신선한 곱창</p>
@@ -96,20 +79,23 @@ const DetailPage = () => {
                     />
                 ))}
             </div>
-
-            <div className="menu-section">
-                <h2>메뉴</h2>
-                <ul>
-                    <li>곱창 - 15,000원</li>
-                    <li>막창 - 18,000원</li>
-                    <li>볶음밥 - 3,000원</li>
-                </ul>
+            <br></br>
+            <div className='store-info' style={{border:'solid 1px white'}}> <h4>둘이 먹다가 하나가 죽어도 모를 맛</h4>
+                <div className="menu-section">
+                    <h2>메뉴 목록</h2>
+                    <ul>
+                        <li>곱창 - 15,000원</li>
+                        <li>막창 - 18,000원</li>
+                        <li>볶음밥 - 3,000원</li>
+                    </ul>
+                </div>
             </div>
-
             <div className="map-section" style={{ border: '1px solid black', padding: '10px', margin: '20px 0' }}>
                 <KakaoMap />
+                <div className=''></div>
             </div>
 
+                
             <ReviewSection />
 
             <footer className="footer">

@@ -11,7 +11,7 @@ const ReviewSection = () => {
 
     return (
 
-        <div className="container-fluid review-section">
+        <div className="container-fluid review-section" style={{border:'1px solid white'}}>
             <h4>리뷰</h4>
             <table className="table table-dark table-hover text-center">
         <thead>

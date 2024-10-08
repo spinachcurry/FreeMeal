@@ -9,7 +9,7 @@ const CustomMarker = ({link, img, title}) => {
             <img src={img} alt='이미지' style={{width: '50px', height:'50px', borderRadius: '25px', border: '1px solid #000'}} onMouseOver={()=> setShow(false)}/>
             <div style={{display: show? 'none': '', position: 'absolute', top: '0', left: '70px'}} onMouseOut={()=>setShow(true)}>
                 <h1 style={{height: '50px', color:'black'}}>{title}</h1>
-                <a href={link} target='_blank'>홈페이지</a>
+                <a href={link} target='_blasnk'>홈페이지</a>
                 <button type='button' onClick={() => setShow(true)}>닫기</button>
             </div>
         </>

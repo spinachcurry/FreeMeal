@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './MainPage.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react'; 
 import { Navigation, Pagination } from 'swiper/modules'; 
 import 'swiper/swiper-bundle.css'; 
@@ -8,17 +8,31 @@ import 'swiper/swiper-bundle.css';
 
 const MainPage = () => {
 
-    const [dropdownOpen, setDropdownOpen] = useState(false);
-    // const [dropdownOpenReigon, setDropDownOpenRegion] = useState("지역 선택"); // 선택된 지역을 관리
-    
-    // const handleDropdownToggle = () => {
-    //     setDropdownOpen(!dropdownOpen);  // 드롭다운 토글
-    //   };
+    // 근처 가게 목록
+    // const [latitude, setLatitude] = useState("");
+    // const [longitude, setLongitude] = useState("");
+    const [location, setLocation] = useState({
+        latitude : null,
+        longitude : null
+    })
+    useEffect = (() => {
+        if(window.navigator.geolocation) {  // geolocation 지원할 경우 현재 위치 get
+            window.navigator.geolocation.getCurrentPosition(success,error);
+        }
+    },[location]);
 
-    //   const handleSelectRegion = (region) => {
-    //     setDropDownOpenRegion(region); // 지역을 선택했을 때 호출
-    //     setDropdownOpen(false); // 드롭다운 닫기
-    //   };
+    function success(event) {
+    // 성공했을 때 처리할 콜백 함수
+        setLatitude(event.coords.latitude);   // 위도
+        setLongitude(event.coords.longitude);  // 경도
+        console.log(latitude);
+        console.log(longitude);
+    }
+    function error(event) {
+    // 실패 했을 때 처리할 콜백 함수
+    }
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const handleMouseEnter = () => setDropdownOpen(true);
     const handleMouseLeave = () => setDropdownOpen(false);
@@ -191,40 +205,36 @@ const MainPage = () => {
                 </ul>
                 <h1 className="gff">꽁밥</h1>
                 <p className="secTitle">우리동네 믿고 먹는 맛집 대장!</p>
-                <div className="container-fluid input-group mt-3 mb-3"  style={{ margin: '0 30vw', width: '40vw' }}>
-                        {/* 지역 선택 버튼 */}
-                        <button
-                            type="button"
-                            className="btn btn-primary dropdown-toggle" style={{backgroundColor:'red'}}
-                            data-bs-toggle="dropdown" // Bootstrap의 dropdown 기능 사용
-                        >
-                            지역 선택
-                        </button>
 
-                        {/* 드롭다운 목록 */}
-                        <ul className="dropdown-menu" style={{ width: '200px' }}>
-                            <li><a className="dropdown-item" href="#">강남구</a></li>
-                            <li><a className="dropdown-item" href="#">강동구</a></li>
-                            <li><a className="dropdown-item" href="#">강서구</a></li>
-                            <li><a className="dropdown-item" href="#">양천구</a></li>
-                            <li><a className="dropdown-item" href="#">마포구</a></li>
-                            <li><a className="dropdown-item" href="#">종로구</a></li>
-                        </ul>
+
+
+                <div className="container-fluid input-group mt-3" style={{ margin: '0 30vw', width: '40vw' }}>
+                        {/* 지역 선택 select 박스 */}
+                        <select className="form-select" aria-label="지역 선택" style={{ textAlign:'center',backgroundColor: 'red', color: 'white', border:'none'}}>
+                            <option value="" style={{backgroundColor:'white', color:'black'}}> 지역 선택</option>
+                            <option value="강남구" style={{backgroundColor:'white', color:'black'}}>강남구</option>
+                            <option value="강동구" style={{backgroundColor:'white', color:'black'}}>강동구</option>
+                            <option value="강서구" style={{backgroundColor:'white', color:'black'}}>강서구</option>
+                            <option value="양천구" style={{backgroundColor:'white', color:'black'}}>양천구</option>
+                            <option value="마포구" style={{backgroundColor:'white', color:'black'}}>마포구</option>
+                            <option value="종로구" style={{backgroundColor:'white', color:'black'}}>종로구</option>
+                        </select>
 
                         {/* 텍스트 입력 및 버튼 */}
                         <input
                             type="text"
                             className="form-control s9-3"
                             placeholder="오늘 뭐 먹지?"
+                            style={{ width:'15vw'}}
                         />
                         <button
                             type="button"
                             className="btn btn-primary"
-                            style={{flex: 0.5, backgroundColor: 'red', border: 'red' }}
+                            style={{ flex: 0.5, backgroundColor: 'red', border: 'red' }}
                         >
                             검색
                         </button>
-              </div>
+                </div>
             </div>
 
             <div>
