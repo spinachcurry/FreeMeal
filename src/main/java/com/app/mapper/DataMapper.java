@@ -20,7 +20,7 @@ public interface DataMapper {
 	public int setOwnData(DataDTO ownDTO); 
 	
 	//로데이타에서 합칠 항목만 쏙쏙 셀렉트문
-	@Select("SELECT `no`, `date`, `storeNm`, `party`, `price`, `areaNm` FROM root_data WHERE `check` = 1 ")
+	@Select("SELECT `no`, `date`, `storeNm`, `party`, `price`, `areaNm` FROM root_data WHERE `check` = 0")
 	public List<RawDataDTO> getRawData(); 
 	
 	//하루에 얼마나 카운팅 되었는가
@@ -37,6 +37,7 @@ public interface DataMapper {
 	@Update("UPDATE root_data SET `check` = 1 WHERE `no` = #{no}")
 	public int check(int no);
 	
+	//mapx, mapy 소수점 단위 맞춤 뭐리
 	@Update("UPDATE test_freemeal SET lng = (lng / 10000000), lat = (lat / 10000000)")
 	public int mapLocation();
 	

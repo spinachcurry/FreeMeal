@@ -35,6 +35,6 @@ public interface StoreMapper {
 			+ "FROM test_freemeal "
 			+ "WHERE lng < #{maxLng} AND lng > #{minLng} AND lat < #{maxLat} AND lat > #{minLat} " 
 			+ "GROUP BY `title`, `areaNm`")
-	public List<StoreDTO> nearStoreList(Map<String, Double> lng);
+	public List<StoreDTO> storeNearby(Map<String, Double> location);
 }
 

@@ -1,6 +1,7 @@
 package com.app.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,5 +30,17 @@ public class StoreService {
 				return list.get(0);
 			}
 	}
+	
+	//메인페이지 >> 내 근처 가게
+	public StoreDTO storeNearby(Map<String, Double> location) {
+		log.info("나오는지 확인 : {}");
+		List<StoreDTO> list = storeMapper.storeNearby(location);
+			return StoreDTO.builder()
+							.lat(1)
+							.lng(1)
+							.build();
+	}
 
 }
+	
+	

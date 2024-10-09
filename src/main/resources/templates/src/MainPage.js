@@ -2,35 +2,53 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './MainPage.css';
 import React, { useState, useEffect } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react'; 
-import { Navigation, Pagination } from 'swiper/modules'; 
+import { Navigation, Pagination } from 'swiper/modules';
+import axios from 'axios';
 import 'swiper/swiper-bundle.css'; 
 // import { Link } from 'react-router-dom';
 
 const MainPage = () => {
 
     // 근처 가게 목록
-    // const [latitude, setLatitude] = useState("");
-    // const [longitude, setLongitude] = useState("");
     const [location, setLocation] = useState({
-        latitude : null,
-        longitude : null
-    })
-    useEffect = (() => {
-        if(window.navigator.geolocation) {  // geolocation 지원할 경우 현재 위치 get
-            window.navigator.geolocation.getCurrentPosition(success,error);
-        }
-    },[location]);
+        latitude: null,
+        longitude: null
+    });
+
+    const [check, setCheck] = useState(false);
 
     function success(event) {
-    // 성공했을 때 처리할 콜백 함수
-        setLatitude(event.coords.latitude);   // 위도
-        setLongitude(event.coords.longitude);  // 경도
-        console.log(latitude);
-        console.log(longitude);
-    }
+        setLocation({
+            latitude: event.coords.latitude,
+            longitude: event.coords.longitude
+        });
+        console.log("성공인가?");
+        if(location.latitude !== null && location.longitude !== null){
+            console.log(location.latitude);
+            console.log(location.longitude);
+            let url = "http://localhost:8080/storeNearby";            
+            axios.post(url, location)
+                 .then((res)=> {
+                    console.log("성공이어라!");
+                    console.log(res);
+                    })
+                 .catch(()=>console.log("오류 났대요~"));
+        }else{
+            setCheck(!check);
+        }
+    };
+
     function error(event) {
     // 실패 했을 때 처리할 콜백 함수
-    }
+        console.log("위치 가져오기 실패")
+    };
+
+    //유미 숙제 한번만 깔끔하게 가져오게 만들어라
+    useEffect(() => { //await 를 줘서 시간 딜레이를 주기로 해! 0.3초! location해서 계속 가져오니까! 
+        if(window.navigator.geolocation) {  // geolocation 지원할 경우 현재 위치 get
+            window.navigator.geolocation.getCurrentPosition(success, error);
+        }
+    },[check]);
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -45,7 +63,7 @@ const MainPage = () => {
 
     const restaurants1 = [
         {
-                id: 1,
+            id: 1,
             name: "파스타 왕국",
             description: "분위기도 맛도 좋아요.",
             rating: "⭐️⭐️⭐️⭐️",
@@ -53,7 +71,7 @@ const MainPage = () => {
             imgSrc: "./static/img/pasta.jpg",
         },
         {
-                id: 1,
+            id: 1,
             name: "파스타 왕국",
             description: "분위기도 맛도 좋아요.",
             rating: "⭐️⭐️⭐️⭐️",
