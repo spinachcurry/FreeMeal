@@ -44,13 +44,14 @@ public class StoreController {
 		return storeService.storeDetail(title);
 	}
 	
+	//메인 페이지에 보여줄 3개의 大카테고리(지역별,가격별,방문별)
 	@PostMapping("/storeNearby")
-	public String storeNearby(@RequestBody Map<String, Object> location) {
+	public Map<String, List<StoreDTO>> storeNearby(@RequestBody Map<String, Object> location) {
 		log.info("location: {}", location);
-		return "성공이다!"; //storeService.storeNearby(location);
+		return storeService.storeNearby(location);
 	}
 	
-		
+	
 }
 
 	

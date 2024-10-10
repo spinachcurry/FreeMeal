@@ -1,3 +1,11 @@
+.nav-link {
+  cursor: pointer;
+  color: white; /* 따옴표 없이 사용 */
+  font-weight: 1000; /* 카멜케이스가 아닌 일반 CSS 표기법 사용 */
+  z-index: 9999; /* z-index 값 적용 */
+  position: relative; /* z-index가 적용되도록 설정 */
+}
+
 /* Footer */
 .main-page {
   padding: 20px;

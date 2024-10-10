@@ -5,33 +5,111 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import axios from 'axios';
 import 'swiper/swiper-bundle.css'; 
+import { Link , useNavigate } from 'react-router-dom';
+import Signup from './MyPage/Signup';
+
 // import { Link } from 'react-router-dom';
 
 const MainPage = () => {
 
-    // 근처 가게 목록
+    // 근처 가게 목록 (좌표 확인 가능 여부)
     const [location, setLocation] = useState({
         latitude: null,
         longitude: null
+        
     });
+//전체 지도 데이터
+    const [stores, setStores] = useState([
+        {
+            id: null,
+            title: "",
+            address: "",
+            rating: "⭐️⭐️⭐️⭐️",
+            imgSrc:""
+        }
+    ]);
 
+//총 가격 내림차순 지도 데이터(비싼 순서)
+    const [fancyStores, setFancyStores] = useState([
+        {
+            id: null,
+            title: "",
+            address: "",
+            rating: "⭐️⭐️⭐️⭐️",
+            imgSrc:""
+        }
+    ]);
+
+//많이 방문한 순서 지도 데이터
+    const [footStores, setFootStores] = useState([
+        {
+            id: null,
+            title: "",
+            address: "",
+            rating: "⭐️⭐️⭐️⭐️",
+            imgSrc:""
+        }
+    ]);
+    
     const [check, setCheck] = useState(false);
-
+    
+    
     function success(event) {
         setLocation({
-            latitude: event.coords.latitude,
-            longitude: event.coords.longitude
+            // latitude: event.coords.latitude,
+            // longitude: event.coords.longitude
+            latitude: 37.556758733429,
+            longitude: 127.15696441277
         });
-        console.log("성공인가?");
         if(location.latitude !== null && location.longitude !== null){
             console.log(location.latitude);
             console.log(location.longitude);
             let url = "http://localhost:8080/storeNearby";            
             axios.post(url, location)
                  .then((res)=> {
-                    console.log("성공이어라!");
-                    console.log(res);
-                    })
+                    console.log(res.data);
+                    let store1 = [];
+                    for(let i = 0; i < res.data.nearbyStore.length; i++){
+                        let store = {
+                            id: i,
+                                title: res.data.nearbyStore[i].title,
+                                address: res.data.nearbyStore[i].address,
+                                rating: "⭐️⭐️⭐️⭐️",
+                                imgSrc:""
+                        }
+                        store1.push(store);
+                    }
+                    setStores(store1);
+
+                    let store2 = [];
+                    for(let i = 0; i < res.data.highPrice.length; i++){
+                        let store = {
+                            id: i,
+                                title: res.data.highPrice[i].title,
+                                address: res.data.highPrice[i].address,
+                                rating: "⭐️⭐️⭐️⭐️",
+                                imgSrc:""
+                        }
+                        store2.push(store);
+                    }
+                    setFancyStores(store2);
+                    
+                    let store3 = [];
+                    for(let i = 0; i < res.data.footStores.length; i++){
+                        let store = {
+                            id: i,
+                                title: res.data.footStores[i].title,
+                                address: res.data.footStores[i].address,
+                                rating: "⭐️⭐️⭐️⭐️",
+                                imgSrc:""
+                        }
+                        console.log(store);
+                        store3.push(store);
+                    }
+                    console.log("tmp array: ", store3);
+                    setFootStores(store3);
+                    console.log("stores: ", stores);
+                })
                  .catch(()=>console.log("오류 났대요~"));
         }else{
             setCheck(!check);
@@ -43,12 +121,13 @@ const MainPage = () => {
         console.log("위치 가져오기 실패")
     };
 
-    //유미 숙제 한번만 깔끔하게 가져오게 만들어라
+    //back  이랑(sts)연결 성공
     useEffect(() => { //await 를 줘서 시간 딜레이를 주기로 해! 0.3초! location해서 계속 가져오니까! 
         if(window.navigator.geolocation) {  // geolocation 지원할 경우 현재 위치 get
             window.navigator.geolocation.getCurrentPosition(success, error);
         }
     },[check]);
+
 
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -60,142 +139,41 @@ const MainPage = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-
-    const restaurants1 = [
-        {
-            id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-            id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        // ... (다른 맛집 데이터)
-    ];
-
-    const restaurants2 = [
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        // ... (다른 맛집 데이터)
-    ];
-
-    const restaurants3 = [
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        {
-                id: 1,
-            name: "파스타 왕국",
-            description: "분위기도 맛도 좋아요.",
-            rating: "⭐️⭐️⭐️⭐️",
-            address: "위치: 서울시 서대문구 창천동 11",
-            imgSrc: "./static/img/pasta.jpg",
-        },
-        // ... (다른 맛집 데이터)
-    ];
-
-
+    /////////////////////여기부터 로그인 관련/////////////////////////
+       // 로그인 관련  // 사용자 상태 및 위치 상태
+        const navigate = useNavigate();
+        const [user, setUser] = useState(null);
+        const [isSignupOpen, setSignupModalOpen] = useState(false);
+      
+        // 회원가입, 로그인, 로그아웃 핸들러
+        const handleSignupOpen = () => setSignupModalOpen(true);
+        const handleSignupClose = () => setSignupModalOpen(false);
+        const handleLoginOpen = () => { 
+            navigate('/login');
+        }
+        // 로그인된 사용자 정보 로드
+        useEffect(() => {
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+                setUser(JSON.parse(storedUser));
+            }
+        }, []);
+        //로그아웃시 토큰 삭제
+        const handleLogout = () => {
+            setUser(null);
+            localStorage.removeItem('user');
+            localStorage.removeItem('jwtToken');
+          };
+          useEffect(() => {
+            if (user) {
+              navigator.geolocation.getCurrentPosition(success);
+            }
+          }, [user, check]);
+   /////////////////////////여기까지 로그인 관련/////////////////////////
+    
+    
     return (
-        <div className="container-fluid p-0 bg-dark text-white text-center" style={{ height: '2500px', background: '#f0f0f0' }}>
+        <div className="container-fluid p-0 bg-dark text-white text-center" style={{ height: '2000px', background: '#f0f0f0' }}>
             <img src="/static/img/back.jpg" className="img-fluid p-0" style={{ width: '100%', maxHeight: '60vh', opacity: 0.4, objectFit: 'cover' }} alt="배경 이미지" />
 
             <div style={{ position: 'absolute', top: '0vh', width: '100%', left: 0 }}>
@@ -214,17 +192,28 @@ const MainPage = () => {
                             )}
                         </div>
                     </nav>
-                    <li className="nav">
-                        <a className="nav-link" style={{ color: 'white', fontWeight: '1000' }} href="#">로그인</a>
+                    {user ? (
+                    <li className="nav-item">
+                        <p className="nav-link" style={{ color: 'white', fontWeight: '1000' }}>
+                        환영합니다, <Link to="/myPage" style={{ color: 'white' }}>{user.userId}</Link>님 
+                        <a onClick={handleLogout} className="btn btn-primary"> 로그아웃</a> </p> 
                     </li>
-                    <li className="nav">
-                        <a className="nav-link" style={{ color: 'white', fontWeight: '1000' }} href="#">회원가입</a>
-                    </li>
-                </ul>
+                ) : ( 
+                    <>
+                        <li className="nav-item">
+                        {/* <li className="nav-item">?</li> */}
+                        <a onClick={handleLoginOpen} className="nav-link" > 로그인 </a>
+                        </li>
+                        <li className="nav-item">
+                        <a onClick={handleSignupOpen} className="nav-link" >회원가입</a>
+                        </li>
+                    </>
+                )}
+                 {isSignupOpen && <Signup onClose={handleSignupClose} />}
+                </ul>   
+
                 <h1 className="gff">꽁밥</h1>
                 <p className="secTitle">우리동네 믿고 먹는 맛집 대장!</p>
-
-
 
                 <div className="container-fluid input-group mt-3" style={{ margin: '0 30vw', width: '40vw' }}>
                         {/* 지역 선택 select 박스 */}
@@ -256,50 +245,47 @@ const MainPage = () => {
             </div>
 
             <div>
-                <h2 style={{ textAlign: 'left', fontSize: '25px' }}>당신을 위한 이 지역 맛집 추천</h2>
+                <h2 style={{ textAlign: 'left', fontSize: '25px' }}>나와 가장 가까운 맛집 추천</h2>
                 <Swiper modules={[Navigation, Pagination]} spaceBetween={30} slidesPerView={4} navigation className="swiper-container">
-                    {restaurants1.map((restaurant) => (
-                        <SwiperSlide key={restaurant.id} className="swiper-slide">
+                    {stores.map((store) => (
+                        <SwiperSlide key={store.id} className="swiper-slide">
                             <div className="restaurant-item">
-                                <img src={restaurant.imgSrc} alt={restaurant.name} />
-                                <h3>{restaurant.name}</h3>
-                                <p>{restaurant.description}</p>
-                                <span>{restaurant.rating}</span>
-                                <p>{restaurant.address}</p>
+                                <Link to=""><img src={store.imgSrc} alt={store.title}/></Link>
+                                <h3>{store.title}</h3>
+                                <span>{store.rating}</span>
+                                <p>{store.address}</p>
                             </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
             </div>
-            <p></p>
+            <br></br>
             <div>
-                <h2 style={{ textAlign: 'left', fontSize: '25px' }}>가격대별 맛집 추천</h2>
+                <h2 style={{ textAlign: 'left', fontSize: '25px' }}>구매 금액 가장 높은 맛집 추천</h2>
                 <Swiper modules={[Navigation, Pagination]} spaceBetween={30} slidesPerView={4} navigation className="swiper-container">
-                    {restaurants2.map((restaurant) => (
-                        <SwiperSlide key={restaurant.id} className="swiper-slide">
+                    {fancyStores.map((store) => (
+                        <SwiperSlide key={store.id} className="swiper-slide">
                             <div className="restaurant-item">
-                                <img src={restaurant.imgSrc} alt={restaurant.name} />
-                                <h3>{restaurant.name}</h3>
-                                <p>{restaurant.description}</p>
-                                <span>{restaurant.rating}</span>
-                                <p>{restaurant.address}</p>
+                            <Link to=""><img src={store.imgSrc} alt={store.title}/></Link>
+                                <h3>{store.title}</h3>
+                                <span>{store.rating}</span>
+                                <p>{store.address}</p>
                             </div>
                         </SwiperSlide>
                     ))}
                 </Swiper>
             </div>
-            <p></p>
+            <br></br>
             <div>
-                <h2 style={{ textAlign: 'left', fontSize: '25px' }}>방문자별 맛집 추천</h2>
+                <h2 style={{ textAlign: 'left', fontSize: '25px' }}>방문이 가장 많은 맛집 추천</h2>
                 <Swiper modules={[Navigation, Pagination]} spaceBetween={30} slidesPerView={4} navigation className="swiper-container">
-                    {restaurants3.map((restaurant) => (
-                        <SwiperSlide key={restaurant.id} className="swiper-slide">
+                    {footStores.map((store) => (
+                        <SwiperSlide key={store.id} className="swiper-slide">
                             <div className="restaurant-item">
-                                <img src={restaurant.imgSrc} alt={restaurant.name} />
-                                <h3>{restaurant.name}</h3>
-                                <p>{restaurant.description}</p>
-                                <span>{restaurant.rating}</span>
-                                <p>{restaurant.address}</p>
+                            <Link to=""><img src={store.imgSrc} alt={store.title}/></Link>
+                                <h3>{store.title}</h3>
+                                <span>{store.rating}</span>
+                                <p>{store.address}</p>
                             </div>
                         </SwiperSlide>
                     ))}
