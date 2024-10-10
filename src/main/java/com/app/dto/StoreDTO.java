@@ -1,7 +1,5 @@
 package com.app.dto;
 
-import java.util.Date;
-import org.springframework.format.annotation.DateTimeFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,9 +13,8 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class DataDTO {
+public class StoreDTO {
 	
-	int no;
 	String title;
 	String link;
 	String category;
@@ -28,9 +25,6 @@ public class DataDTO {
 	String areaNm;
 	double lng;
 	double lat;
-	int price;
-	int party;
-	
-	@DateTimeFormat(pattern = "yyyy-mm-dd")
-	Date visitDate;
+	int totalPrice;
+	int totalParty;
 }

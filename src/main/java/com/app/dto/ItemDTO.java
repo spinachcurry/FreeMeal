@@ -22,7 +22,8 @@ public class ItemDTO {
 	private String telephone;
 	private String address;
 	private String roadAddress;
-	private int mapx;
-	private int mapy;
+	private double mapx;
+	private double mapy;
+
 	
 }

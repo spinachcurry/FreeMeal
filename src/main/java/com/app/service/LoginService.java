@@ -140,6 +140,10 @@ public class LoginService {
         int updatedRows = userMapper.updateReview(reviewDTO);
         return updatedRows > 0;
     }
-	    
+	   
+  //가게 상세리뷰 받아오기 
+    public List<ReviewDTO> findStoreReviews() {
+        return userMapper.FindStoreOne();
+    }
 	    
 }

@@ -54,7 +54,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Controller
 @RequestMapping
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3000")// React 클라이언트 주소 
+@CrossOrigin(origins = "http://localhost:3001")// React 클라이언트 주소 
 public class LoginController {
 	
 	@Autowired
@@ -325,9 +325,7 @@ public class LoginController {
             return ""; // 확장자 없음
         }
     }
-
-//    @ResponseBody
-//    @GetMapping("/getUserData")
+ 
     public Map<String, Object> getUserData(HttpServletRequest request) {
     	Map<String, Object> response = new HashMap<>();
     	response.put("status", false);
@@ -338,8 +336,7 @@ public class LoginController {
     		
 	        String userId = getUser(token);
 	        // 세션에 userId가 없을 경우, 로그인되지 않은 상태로 처리
-	        if (userId == null) {
-	//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+	        if (userId == null) { 
 	        	response.put("status", false);
 	        } else {
 		        // UserDTO 객체를 생성하고 userId를 설정
@@ -402,13 +399,32 @@ public class LoginController {
     }
 
 
+  //가게상세 리뷰 불러오기
+    @GetMapping("/reviews")
+    public ResponseEntity<?> getStoreReviews() {
+        try {
+            List<ReviewDTO> storeReviews = loginService.findStoreReviews();
+ 
+            System.out.println("StoreReviews: " + storeReviews);
+
+            if (storeReviews == null || storeReviews.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
+            }
+            return ResponseEntity.ok(storeReviews);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
+        }
+    }
+    
+    
 	//토큰용 
     private String setToken(Map<String, String> paramMap) {
-		// 키 생성
-//		String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";
-//		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(strKey));
-//		SecretKey key = Keys.hmacShaKeyFor("shellfolder123456789DevJWT123456789".getBytes());
-		
+		  
 		// 유효 날짜 생성
 		Calendar date = Calendar.getInstance();
 		date.add(Calendar.MINUTE, 10);

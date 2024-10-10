@@ -21,21 +21,19 @@ public interface UserMapper {
 			+ "AND password = #{password} ")
 	public UserDTO findByUser(UserDTO userDTO);
 	
-	
 	@Select(" SELECT r.roleNm "
 			+ "	 FROM Users AS ur "
-			+ "		INNER JOIN role AS r "
-			+ "		ON ur.status = r.roleNo "
-			+ "		 WHERE ur.status = #{userNo} ")
+			+ "	 INNER JOIN role AS r "
+			+ "	 ON ur.status = r.roleNo "
+			+ "	 WHERE ur.status = #{userNo} ")
 	public List<RoleDTO> findByRoles(String status);
 	 
 	@Insert("INSERT INTO `Users` (" 
-	+"  `userId`, `password`, `name`, `user_Nnm`, `phone`, `email`, `createDate`, `modifiedDate`, "
-	+" `status`, `review`, `profileImageUrl`" 
-	+" ) VALUES (" 
-	+"   #{userId}, #{password}, #{name}, #{user_Nnm}, #{phone}, #{email}, NOW(), NOW(), " 
-	+ " #{status}, #{review}, #{profileImageUrl}" 
-	+");")
+			+"  `userId`, `password`, `name`, `user_Nnm`, `phone`, `email`, `createDate`, `modifiedDate`, "
+			+"  `status`, `review`, `profileImageUrl`" 
+			+"  ) VALUES (" 
+			+"  #{userId}, #{password}, #{name}, #{user_Nnm}, #{phone}, #{email}, NOW(), NOW(), " 
+			+"  #{status}, #{review}, #{profileImageUrl} ); ")
 	int signup(UserDTO dto);
 	
 	@Select("SELECT COUNT(*) FROM Users WHERE userId = #{userId}")
@@ -48,15 +46,40 @@ public interface UserMapper {
 		  + "password = #{password}, review= #{review}, profileImageUrl = #{profileImageUrl} WHERE userId = #{userId}")
     void updateUser(UserDTO userDTO);
 	
-	@Select("  SELECT r.reviewNo, r.storeId, ur.userId, r.menuId, r.rating, r.content ,r.createDate"
-			+ "	FROM Users AS ur "
-			+ "	INNER JOIN Reviews AS r "
-			+ "	ON ur.userId = #{userId} ")
-	List<ReviewDTO> findReviewsByStatus(@Param("userId") String userId);
-
-	@Update("UPDATE Reviews " +
-			"SET content = #{content}, rating = #{rating}, createDate = NOW() " +
-			"WHERE reviewNo = #{reviewNo}")
+	@Select("  SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
+			+ "re.userId, re.content, re.modifiedDate, re.status "
+			+ "FROM test_freemeal AS tf "
+			+ "INNER JOIN Reviews AS re "
+			+ "ON tf.address = re.address "
+			+ "WHERE re.userId = #{userId} "
+			+ "GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status"
+			+ "ORDER BY re.modifiedDate DESC; ")
+	List<ReviewDTO> findReviewsByStatus(@Param("userId") String userId); 
+	
+	@Update("UPDATE Reviews " 
+			+ "SET content = #{content}, rating = #{rating}, createDate = NOW() " 
+			+ "WHERE reviewNo = #{reviewNo}")
 	int updateReview(ReviewDTO reviewDTO);
+	
+	//////가게 상세 페이지 불러오기(리뷰용)
+	@Select("SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
+			+ "re.userId, re.content, re.modifiedDate, re.status "
+			+ "FROM test_freemeal AS tf "
+			+ "INNER JOIN Reviews AS re "
+			+ "ON tf.address = re.address "
+			+ "WHERE tf.address = '서울특별시 강동구 성내동 556' "
+			+ "GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status; ")
+	List<ReviewDTO> FindStoreOne();
+	
+//////가게 상세 리뷰 불러오기 
+//	@Select("SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
+//			+ "re.userId, re.content, re.modifiedDate, re.status "
+//			+ "FROM test_freemeal AS tf "
+//			+ "INNER JOIN Reviews AS re "
+//			+ "ON tf.address = re.address "
+//			+ "WHERE tf.address = '서울특별시 강동구 성내동 556' "
+//			+ "GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status; ")
+//	List<ReviewDTO> FindStoreReview(); 
+	
 }
 

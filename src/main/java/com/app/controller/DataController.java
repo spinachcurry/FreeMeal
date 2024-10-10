@@ -13,10 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.app.mapper.DataMapper;
 import com.app.service.DataService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping
+@RequiredArgsConstructor
 public class DataController {
 
 	@GetMapping(value = "/search", produces = "application/json; charset=UTF-8")
@@ -52,13 +56,17 @@ public class DataController {
 		}
 
 	@Autowired
-	private DataService dataService;
+	private DataMapper dataMapper;
 	
+	@Autowired
+	private DataService dataService;
+
 	@GetMapping(value="/")
 	public String test() {
-		dataService.insertData();
-		return "TEST 중!";
+		return dataService.insertData();
 	}
+
+
 }
 	
 

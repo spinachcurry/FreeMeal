@@ -1,6 +1,9 @@
 package com.app.userDTO;
  
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.app.dto.StoreDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewDTO {
 	
+	private List<StoreDTO> store;
 	private int reviewNo;                  // 리뷰 ID
     private String storeId;                // 스토어 ID
     private String userId;                 // 사용자 ID

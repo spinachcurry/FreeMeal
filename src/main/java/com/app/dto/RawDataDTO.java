@@ -16,7 +16,7 @@ import lombok.ToString;
 public class RawDataDTO {
 	
 //	date storeNm party price areaNm
-
+	int no;
 	String storeNm;
 	int price;
 	int party;
