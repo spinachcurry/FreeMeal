@@ -29,12 +29,27 @@ public interface StoreMapper {
 			+ "GROUP BY `title`, `areaNm`" )
 	public List<StoreDTO> storeDetail(String title);
 	
-	//내 근처 가게 목록
+	// 가격별(내림차순) 정렬 쿼리
+	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
+			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
+			+ "FROM test_freemeal GROUP BY `title`, `areaNm` "
+			+ "ORDER BY `totalPrice` DESC limit 10")
+	public List<StoreDTO> highPrice();
+
+	// 방문별 정렬 쿼리
+	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
+			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
+			+ "FROM test_freemeal GROUP BY `title`, `areaNm` "
+			+ "ORDER BY `totalParty` DESC limit 10")
+	public List<StoreDTO> footStores();
+
+	// 내 근처 가게 목록 쿼리
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM test_freemeal "
 			+ "WHERE lng < #{maxLng} AND lng > #{minLng} AND lat < #{maxLat} AND lat > #{minLat} " 
-			+ "GROUP BY `title`, `areaNm`")
+			+ "GROUP BY `title`, `areaNm` limit 10")
 	public List<StoreDTO> storeNearby(Map<String, Double> location);
+
 }
 

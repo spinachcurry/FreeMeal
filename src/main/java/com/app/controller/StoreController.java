@@ -32,26 +32,35 @@ public class StoreController {
 	@Autowired
 	private StoreService storeService;
 
-	//전체 가게 목록
+	// 전체 가게 목록 (예시, 필요에 따라 제거 가능)
 	@GetMapping(value="/storeList")
 	public List<StoreDTO> storeList() {
 		return storeMapper.storeList();
 	}
-	
-	//가게 상세 페이지 >> 프론트에서 돌려주면 보여주는 것!
+
+	// 가게 상세 정보
 	@GetMapping("/storeDetail")
 	public StoreDTO storeDetail(@RequestParam("store") String title) {
 		return storeService.storeDetail(title);
 	}
-	
+
+	// 메인 페이지에서 지역, 가격, 방문별 추천 가게 목록
 	@PostMapping("/storeNearby")
-	public String storeNearby(@RequestBody Map<String, Object> location) {
-		log.info("location: {}", location);
-		return "성공이다!"; //storeService.storeNearby(location);
-	}
-	
+	public Map<String, List<StoreDTO>> storeNearby(@RequestBody Map<String, Object> location) {
+		log.info("Received location: {}", location);
+		log.info("Longitude: {}", location.get("longitude"));
+		log.info("Latitude: {}", location.get("latitude"));
 		
+		// 예시로 생성된 데이터에 대한 로그를 추가
+		Map<String, List<StoreDTO>> result = storeService.storeNearby(location);
+		log.info("Returned Data: {}", result);
+		
+		return result;
+	}
+
+
+	
+	
 }
 
 	
-

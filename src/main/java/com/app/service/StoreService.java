@@ -1,5 +1,7 @@
 package com.app.service;
 
+import java.io.Console;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,16 +33,27 @@ public class StoreService {
 			}
 	}
 	
-	//메인페이지 >> 내 근처 가게
-	public StoreDTO storeNearby(Map<String, Double> location) {
-		log.info("나오는지 확인 : {}");
-		List<StoreDTO> list = storeMapper.storeNearby(location);
-			return StoreDTO.builder()
-							.lat(1)
-							.lng(1)
-							.build();
+	public Map<String, List<StoreDTO>> storeNearby(Map<String, Object> location) {
+		Map<String, List<StoreDTO>> bigMap = new HashMap<>(); 
+		
+		double range = 0.5;
+		Map<String, Double> nearMap = new HashMap<>();
+		System.out.println("------" + nearMap);
+		log.info("--1" + nearMap);
+		
+		nearMap.put("maxLng", Double.valueOf(location.get("longitude").toString()) + range);	
+		nearMap.put("minLng", Double.valueOf(location.get("longitude").toString()) - range);	
+		nearMap.put("maxLat", Double.valueOf(location.get("latitude").toString()) + range);	
+		nearMap.put("minLat", Double.valueOf(location.get("latitude").toString()) - range);	
+		
+		log.info("Calculated nearMap values: {}", nearMap);
+		bigMap.put("nearbyStore", storeMapper.storeNearby(nearMap));
+		bigMap.put("highPrice", storeMapper.highPrice());
+		bigMap.put("footStores", storeMapper.footStores());
+		return bigMap;
 	}
 
+	
 }
 	
 	

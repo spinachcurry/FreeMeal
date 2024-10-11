@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import com.app.dto.DataDTO;
+import com.app.userDTO.DidsDTO;
 import com.app.userDTO.ReviewDTO;
 import com.app.userDTO.RoleDTO;
 import com.app.userDTO.UserDTO;  
@@ -46,6 +47,7 @@ public interface UserMapper {
 	@Update("UPDATE Users SET user_Nnm = #{user_Nnm}, phone = #{phone}, email = #{email}, "
 		  + "password = #{password}, review= #{review}, profileImageUrl = #{profileImageUrl} WHERE userId = #{userId}")
     void updateUser(UserDTO userDTO);
+	
 	 //리뷰(유저용)신고미포
 	@Select( " SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
 						+ "	re.reviewNo, re.userId, re.content, re.modifiedDate, re.status "
@@ -72,16 +74,16 @@ public interface UserMapper {
 			+ "WHERE reviewNo = #{reviewNo} ")
 	int updateReview(ReviewDTO reviewDTO);
 	
-	//////가게 상세 페이지 불러오기(리뷰용)
+	//////가게 상세 페이지리뷰 불러오기(리뷰용)
 	@Select("	SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
 			+ "			re.reviewNo, re.userId, re.content, re.modifiedDate,re.createDate, re.status "
 			+ "			FROM test_freemeal AS tf "
 			+ "			INNER JOIN Reviews AS re "
 			+ "			ON tf.address = re.address "
-			+ "			WHERE tf.address = '서울특별시 강동구 성내동 556' AND STATUS ='일반'"
+			+ "			WHERE tf.address = #{address} AND STATUS ='일반'"
 			+ "			GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status"
 			+ " 		ORDER BY re.modifiedDate DESC; ")
-	List<ReviewDTO> FindStoreOne();
+	List<ReviewDTO> FindStoreOne(@Param("address") String address);
 	   
 	@Insert("INSERT INTO Reviews (address, userId, content, createDate, modifiedDate) " +
 	        "VALUES (#{address}, #{userId}, #{content}, NOW(), NOW())")
@@ -89,8 +91,21 @@ public interface UserMapper {
 	
 	@Update("UPDATE Reviews SET STATUS = '신고' WHERE reviewNo =#{reviewNo} ")
 	int updateReport(ReviewDTO reviewNo);
-	
-	
+	//찜하기 
+	 @Insert(" INSERT INTO Dibs (userId, address, status) " 
+	        + " VALUES (#{userId}, #{address}, #{status}) " 
+	        + " ON DUPLICATE KEY UPDATE status = #{status} ")
+	int insertDibs(@Param("userId") String userId, @Param("address") String address, @Param("status") int status);
+	//찜을 했을 때
+	@Select("SELECT * FROM Dibs "
+			+ "WHERE userId=#{userId} and address =#{address} and  STATUS = '1' ")
+	List<DidsDTO> selectDibs(@Param("userId") String userId, @Param("address") String address) ;
+	//찜 카운트
+	@Select("SELECT COUNT(userId) AS COUNT " +
+	        "FROM Dibs " +
+	        "WHERE STATUS = '1' AND address = #{address}")
+	int countDibs(@Param("address") String address);
 
+	
 }
 

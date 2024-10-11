@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import com.app.mapper.UserMapper;
+import com.app.userDTO.DidsDTO;
 import com.app.userDTO.ReviewDTO;
 import com.app.userDTO.RoleDTO;
 import com.app.userDTO.UserDTO;
@@ -132,9 +134,7 @@ public class LoginService {
   public void updateUser(UserDTO userDTO) {
         userMapper.updateUser(userDTO);
     }   
-  public LoginService(ObjectMapper objectMapper) {
-      this.objectMapper = objectMapper;
-  } 
+  
   //리뷰 받아오기  (유저)
   public String getReviewsByStatus(String userId) {
       List<ReviewDTO> reviews = userMapper.findReviewsByStatus(userId);
@@ -159,17 +159,29 @@ public class LoginService {
     public boolean updateReview(ReviewDTO reviewDTO) {
         int updatedRows = userMapper.updateReview(reviewDTO);
         return updatedRows > 0;
-    }
-	   
-  //가게 상세리뷰 받아오기 
-    public List<ReviewDTO> getAllReviews() {
-        return userMapper.FindStoreOne();
-    }  // 리뷰 작성(상점) 
+    } 
+    //가게 상세리뷰 받아오기 
+    public List<ReviewDTO> getAllReviews(@Param("address") String address) {
+        return userMapper.FindStoreOne(address);
+    }  
+    // 리뷰 작성(상점) 
     public int addReview(ReviewDTO review) {
         return userMapper.insertReview(review);
     } 
     //리뷰신고
     public int updateReport(ReviewDTO reviewNo) {
         return userMapper.updateReport(reviewNo);
+    }
+    //찜하기
+    public int addDibs(String userId, String address, int didStatus) {
+        return userMapper.insertDibs(userId, address, didStatus);
+    }
+  //찜하기 이미 찜했을 때
+    public List<DidsDTO> selectDibs(String userId, String address) {
+        return userMapper.selectDibs(userId, address);
+    }
+    //찜 카운트
+    public int getDibsCount(String address) {
+        return userMapper.countDibs(address);
     }
 }
