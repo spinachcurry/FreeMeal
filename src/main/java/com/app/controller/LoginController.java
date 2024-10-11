@@ -54,7 +54,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @Controller
 @RequestMapping
 @Slf4j
-@CrossOrigin(origins = "http://localhost:3001")// React 클라이언트 주소 
+@CrossOrigin(origins = "http://localhost:3000")// React 클라이언트 주소 
 public class LoginController {
 	
 	@Autowired
@@ -359,26 +359,43 @@ public class LoginController {
 
     //리뷰 불러오기Review
     @GetMapping("/getReviewsByStatus")
-    public ResponseEntity<?> getReviewsByStatus(@RequestParam("userId") String userId) {
-    	System.out.println("==========================="+userId);
+    public ResponseEntity<?> getReviewsByStatus(@RequestParam("userId") String userId,
+                                                @RequestParam("status") String status) {
+        System.out.println("===========================" + userId);
+        System.out.println("===========================" + status);
+
         try {
-            List<ReviewDTO> reviews = loginService.getReviewsByStatus(userId);
-            if (reviews == null || reviews.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
-            }
-            return ResponseEntity.ok(reviews);
+	            String reviews;
+	            
+	            if ("1".equals(status)||"2".equals(status)) {
+	                reviews = loginService.getReviewsByStatus(userId);
+	            } else if ("3".equals(status)) {
+	                reviews = loginService.getReviewsStatus(userId);
+	            } else {
+	                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 status 값입니다.");
+	            }
+	            
+	            if (reviews == null || reviews.isEmpty()) {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
+	            }
+	            
+	            return ResponseEntity.ok(reviews);
+            
         } catch (IllegalArgumentException e) {
-            e.printStackTrace(); // 예외 로그 출력
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
         } catch (Exception e) {
-            e.printStackTrace(); // 예외 로그 출력
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
         }
     }
+
+    
     // 리뷰 수정 요청 처리
     @PostMapping("/updateReview")
     public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO) {
+    	log.info("-----------"+reviewDTO);
         try {
             // 리뷰 업데이트 수행
             boolean isUpdated = loginService.updateReview(reviewDTO);
@@ -398,30 +415,53 @@ public class LoginController {
         }
     }
 
-
   //가게상세 리뷰 불러오기
-    @GetMapping("/reviews")
-    public ResponseEntity<?> getStoreReviews() {
-        try {
-            List<ReviewDTO> storeReviews = loginService.findStoreReviews();
- 
-            System.out.println("StoreReviews: " + storeReviews);
+    // 리뷰 목록을 반환하는 GET 엔드포인트
+    @GetMapping("/getReviews")
+    public ResponseEntity<List<ReviewDTO>> getReviews() {
+        List<ReviewDTO> reviews = loginService.getAllReviews();
+        if (reviews.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(reviews);
+    }
 
-            if (storeReviews == null || storeReviews.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
+    // 새로운 리뷰를 추가하는 POST 엔드포인트
+    @PostMapping("/addReview")
+    public ResponseEntity<String> addReview(@RequestBody ReviewDTO review) {
+        try {
+            int insertedCount = loginService.addReview(review);
+            if (insertedCount > 0) {
+            	log.info("------------"+ insertedCount);
+                return ResponseEntity.ok("리뷰가 성공적으로 추가되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("리뷰 추가에 실패했습니다.");
             }
-            return ResponseEntity.ok(storeReviews);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
+                    .body("리뷰를 추가하는 중 오류가 발생했습니다.");
         }
     }
-    
-    
+ // 리뷰 수정 요청 처리
+    @PostMapping("/report")
+    public ResponseEntity<String> reportReview(@RequestBody ReviewDTO reviewNo) {
+        try {
+            int result = loginService.updateReport(reviewNo);
+            
+            if (result > 0) {
+                return ResponseEntity.ok("리뷰가 성공적으로 신고되었습니다.");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 신고에 실패했습니다.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 신고 처리 중 오류가 발생했습니다.");
+        }
+    }
+
+     
 	//토큰용 
     private String setToken(Map<String, String> paramMap) {
 		  

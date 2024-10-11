@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
+import com.app.dto.DataDTO;
 import com.app.userDTO.ReviewDTO;
 import com.app.userDTO.RoleDTO;
 import com.app.userDTO.UserDTO;  
@@ -45,41 +46,51 @@ public interface UserMapper {
 	@Update("UPDATE Users SET user_Nnm = #{user_Nnm}, phone = #{phone}, email = #{email}, "
 		  + "password = #{password}, review= #{review}, profileImageUrl = #{profileImageUrl} WHERE userId = #{userId}")
     void updateUser(UserDTO userDTO);
-	
-	@Select("  SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
-			+ "re.userId, re.content, re.modifiedDate, re.status "
-			+ "FROM test_freemeal AS tf "
-			+ "INNER JOIN Reviews AS re "
-			+ "ON tf.address = re.address "
-			+ "WHERE re.userId = #{userId} "
-			+ "GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status"
-			+ "ORDER BY re.modifiedDate DESC; ")
+	 //리뷰(유저용)신고미포
+	@Select( " SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
+						+ "	re.reviewNo, re.userId, re.content, re.modifiedDate, re.status "
+						+ "	FROM test_freemeal AS tf "
+						+ "	INNER JOIN Reviews AS re  "
+						+ "	ON tf.address = re.address  "
+						+ "	WHERE re.userId = #{userId} AND re.STATUS ='일반' "
+						+ "	GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status "
+						+ "	ORDER BY re.modifiedDate DESC;")
 	List<ReviewDTO> findReviewsByStatus(@Param("userId") String userId); 
+	//리뷰(관리자)신고만
+	@Select( " SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
+			+ "	re.reviewNo, re.userId, re.content, re.modifiedDate, re.status "
+			+ "	FROM test_freemeal AS tf "
+			+ "	INNER JOIN Reviews AS re  "
+			+ "	ON tf.address = re.address  "
+			+ "	WHERE re.userId = #{userId} or re.status='신고' "
+			+ "	GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status "
+			+ "	ORDER BY re.modifiedDate DESC;")
+	List<ReviewDTO> getReviewsStatus(@Param("userId") String userId); 
 	
 	@Update("UPDATE Reviews " 
-			+ "SET content = #{content}, rating = #{rating}, createDate = NOW() " 
-			+ "WHERE reviewNo = #{reviewNo}")
+			+ "SET address = #{address}, userId=#{userId}, content = #{content}, modifiedDate = NOW(), status='일반' " 
+			+ "WHERE reviewNo = #{reviewNo} ")
 	int updateReview(ReviewDTO reviewDTO);
 	
 	//////가게 상세 페이지 불러오기(리뷰용)
-	@Select("SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
-			+ "re.userId, re.content, re.modifiedDate, re.status "
-			+ "FROM test_freemeal AS tf "
-			+ "INNER JOIN Reviews AS re "
-			+ "ON tf.address = re.address "
-			+ "WHERE tf.address = '서울특별시 강동구 성내동 556' "
-			+ "GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status; ")
+	@Select("	SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
+			+ "			re.reviewNo, re.userId, re.content, re.modifiedDate,re.createDate, re.status "
+			+ "			FROM test_freemeal AS tf "
+			+ "			INNER JOIN Reviews AS re "
+			+ "			ON tf.address = re.address "
+			+ "			WHERE tf.address = '서울특별시 강동구 성내동 556' AND STATUS ='일반'"
+			+ "			GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status"
+			+ " 		ORDER BY re.modifiedDate DESC; ")
 	List<ReviewDTO> FindStoreOne();
+	   
+	@Insert("INSERT INTO Reviews (address, userId, content, createDate, modifiedDate) " +
+	        "VALUES (#{address}, #{userId}, #{content}, NOW(), NOW())")
+	int insertReview(ReviewDTO reviews); 
 	
-//////가게 상세 리뷰 불러오기 
-//	@Select("SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
-//			+ "re.userId, re.content, re.modifiedDate, re.status "
-//			+ "FROM test_freemeal AS tf "
-//			+ "INNER JOIN Reviews AS re "
-//			+ "ON tf.address = re.address "
-//			+ "WHERE tf.address = '서울특별시 강동구 성내동 556' "
-//			+ "GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status; ")
-//	List<ReviewDTO> FindStoreReview(); 
+	@Update("UPDATE Reviews SET STATUS = '신고' WHERE reviewNo =#{reviewNo} ")
+	int updateReport(ReviewDTO reviewNo);
 	
+	
+
 }
 

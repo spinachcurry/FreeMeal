@@ -1,5 +1,5 @@
 package com.app.service;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
@@ -32,6 +32,7 @@ public class LoginService {
 	
 	@Autowired
 	private UserMapper userMapper;
+	private ObjectMapper objectMapper;
 	
 	public UserResultDTO findByUser(UserDTO userDTO) {
 	    // 매퍼를 호출하여 사용자 정보를 가져옴
@@ -131,19 +132,44 @@ public class LoginService {
   public void updateUser(UserDTO userDTO) {
         userMapper.updateUser(userDTO);
     }   
-	//리뷰 받아오기
-    public List<ReviewDTO> getReviewsByStatus(String userId) {
-        return userMapper.findReviewsByStatus(userId);
-    }
-    //리뷰 업데이트하기
+  public LoginService(ObjectMapper objectMapper) {
+      this.objectMapper = objectMapper;
+  } 
+  //리뷰 받아오기  (유저)
+  public String getReviewsByStatus(String userId) {
+      List<ReviewDTO> reviews = userMapper.findReviewsByStatus(userId);
+      try {
+          return objectMapper.writeValueAsString(reviews);
+      } catch (Exception e) {
+          e.printStackTrace();
+          return "데이터 변환 중 오류가 발생했습니다.";
+      }
+  }
+  //리뷰 받아오기  (관리자) 
+  public String getReviewsStatus(String userId) {
+      List<ReviewDTO> reviews = userMapper.getReviewsStatus(userId);
+      try {
+          return objectMapper.writeValueAsString(reviews);
+      } catch (Exception e) {
+          e.printStackTrace();
+          return "데이터 변환 중 오류가 발생했습니다.";
+      }
+  }
+    //개인 리뷰 업데이트하기
     public boolean updateReview(ReviewDTO reviewDTO) {
         int updatedRows = userMapper.updateReview(reviewDTO);
         return updatedRows > 0;
     }
 	   
   //가게 상세리뷰 받아오기 
-    public List<ReviewDTO> findStoreReviews() {
+    public List<ReviewDTO> getAllReviews() {
         return userMapper.FindStoreOne();
+    }  // 리뷰 작성(상점) 
+    public int addReview(ReviewDTO review) {
+        return userMapper.insertReview(review);
+    } 
+    //리뷰신고
+    public int updateReport(ReviewDTO reviewNo) {
+        return userMapper.updateReport(reviewNo);
     }
-	    
 }

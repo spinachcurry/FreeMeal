@@ -15,6 +15,11 @@ import lombok.NoArgsConstructor;
 public class ReviewDTO {
 	
 	private List<StoreDTO> store;
+	private String title;
+    private String address;
+    private String category;
+    private Integer totalPrice;
+    private Integer totalParty;
 	private int reviewNo;                  // 리뷰 ID
     private String storeId;                // 스토어 ID
     private String userId;                 // 사용자 ID
@@ -24,6 +29,7 @@ public class ReviewDTO {
     private LocalDateTime createDate;      // 생성일자
     private LocalDateTime modifiedDate;    // 수정일자
     private String status;           // 리뷰 상태
-	
+	 
+    
 
 }
