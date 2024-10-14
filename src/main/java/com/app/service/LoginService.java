@@ -179,4 +179,8 @@ public class LoginService {
     public int getDibsCount(String address) {
         return userMapper.countDibs(address);
     }
+    //찜 목록가져오기
+    public List<DidsDTO> getDibsByUserId(String userId) {
+        return userMapper.findDibsByUserId(userId);
+    }
 }
