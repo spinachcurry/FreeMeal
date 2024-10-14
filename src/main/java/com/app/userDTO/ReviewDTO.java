@@ -29,7 +29,13 @@ public class ReviewDTO {
     private LocalDateTime createDate;      // 생성일자
     private LocalDateTime modifiedDate;    // 수정일자
     private String status;           // 리뷰 상태
-	 
+    public String getModifiedDate() {
+        return modifiedDate != null ? modifiedDate.toString() : null;
+    }
+
+    public String getCreateDate() {
+        return createDate != null ? createDate.toString() : null;
+    }
     
 
 }

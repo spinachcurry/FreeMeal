@@ -363,37 +363,28 @@ public class LoginController {
     @GetMapping("/getReviewsByStatus")
     public ResponseEntity<?> getReviewsByStatus(@RequestParam("userId") String userId,
                                                 @RequestParam("status") String status) {
-        System.out.println("===========================" + userId);
-        System.out.println("===========================" + status);
-
         try {
-	            String reviews;
-	            
-	            if ("1".equals(status)||"2".equals(status)) {
-	                reviews = loginService.getReviewsByStatus(userId);
-	            } else if ("3".equals(status)) {
-	                reviews = loginService.getReviewsStatus(userId);
-	            } else {
-	                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 status 값입니다.");
-	            }
-	            
-	            if (reviews == null || reviews.isEmpty()) {
-	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
-	            }
-	            
-	            return ResponseEntity.ok(reviews);
-            
+            List<ReviewDTO> reviews;
+            if ("1".equals(status) || "2".equals(status)) {
+                reviews = loginService.getReviewsByStatus(userId);
+            } else if ("3".equals(status)) {
+                reviews = loginService.getReviewsStatus(userId);
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 status 값입니다.");
+            }
+            if (reviews == null || reviews.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
+            }
+            return ResponseEntity.ok(reviews);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
         }
     }
-
-    
+ 
     // 리뷰 수정 요청 처리
     @PostMapping("/updateReview")
     public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO) { 
@@ -547,7 +538,7 @@ public class LoginController {
         try { 
             return ResponseEntity.ok(count);
         } catch (Exception e) {
-        	System.out.println("count----------------------------"+count);
+        	System.out.println("count----------------------------1"+count);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }

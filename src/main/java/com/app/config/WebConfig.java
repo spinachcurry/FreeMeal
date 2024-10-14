@@ -8,6 +8,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 	
@@ -31,6 +33,11 @@ public class WebConfig implements WebMvcConfigurer {
 	                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 	                .allowedHeaders("*")
 	                .allowCredentials(true);
+	    }
+	    
+	    @Bean
+	    public ObjectMapper objectMapper() {
+	        return new ObjectMapper();
 	    }
 	}
 	 

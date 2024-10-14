@@ -1,5 +1,7 @@
 package com.app.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
@@ -35,6 +37,12 @@ public class LoginService {
 	@Autowired
 	private UserMapper userMapper;
 	private ObjectMapper objectMapper;
+	  @Autowired
+	    public LoginService(UserMapper userMapper, ObjectMapper objectMapper) {
+	        this.userMapper = userMapper;
+	        this.objectMapper = objectMapper;
+	        this.objectMapper.registerModule(new JavaTimeModule()); // Java 8 Time Module 등록
+	    }
 	
 	public UserResultDTO findByUser(UserDTO userDTO) {
 	    // 매퍼를 호출하여 사용자 정보를 가져옴
@@ -134,27 +142,14 @@ public class LoginService {
   public void updateUser(UserDTO userDTO) {
         userMapper.updateUser(userDTO);
     }   
-  
-  //리뷰 받아오기  (유저)
-  public String getReviewsByStatus(String userId) {
-      List<ReviewDTO> reviews = userMapper.findReviewsByStatus(userId);
-      try {
-          return objectMapper.writeValueAsString(reviews);
-      } catch (Exception e) {
-          e.printStackTrace();
-          return "데이터 변환 중 오류가 발생했습니다.";
-      }
-  }
-  //리뷰 받아오기  (관리자) 
-  public String getReviewsStatus(String userId) {
-      List<ReviewDTO> reviews = userMapper.getReviewsStatus(userId);
-      try {
-          return objectMapper.writeValueAsString(reviews);
-      } catch (Exception e) {
-          e.printStackTrace();
-          return "데이터 변환 중 오류가 발생했습니다.";
-      }
-  }
+   //리뷰받아오기 유저 
+	 public List<ReviewDTO> getReviewsByStatus(String userId) {
+	        return userMapper.findReviewsByStatus(userId);
+	    }
+	//리뷰받아오기 관리자
+    public List<ReviewDTO> getReviewsStatus(String userId) {
+        return userMapper.getReviewsStatus(userId);
+    }
     //개인 리뷰 업데이트하기
     public boolean updateReview(ReviewDTO reviewDTO) {
         int updatedRows = userMapper.updateReview(reviewDTO);
