@@ -384,20 +384,7 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
         }
     }
- //찜하기 목록 불러오기
-    @GetMapping("/getDibsByUserId")
-    public ResponseEntity<List<DidsDTO>> getDibsByUserId(@RequestParam("userId") String userId) {
-        try {
-            List<DidsDTO> dibsList = loginService.getDibsByUserId(userId);
-            if (dibsList.isEmpty()) {
-                return ResponseEntity.noContent().build();  // 데이터가 없을 때
-            }
-            return ResponseEntity.ok(dibsList);  // 성공적으로 데이터를 가져왔을 때
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();  // 오류가 발생했을 때
-        }
-    }
+ 
     
     // 리뷰 수정 요청 처리
     @PostMapping("/updateReview")
@@ -548,15 +535,27 @@ public class LoginController {
     public ResponseEntity<Integer> getDibsCount(@RequestParam("address") String address) {
     	
     	int count = loginService.getDibsCount(address);
-    	System.out.println("count----------------------------"+count);
         try { 
             return ResponseEntity.ok(count);
         } catch (Exception e) {
-        	System.out.println("count----------------------------1"+count);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
+  //찜하기 목록 불러오기
+    @GetMapping("/getDibsByUserId")
+    public ResponseEntity<List<DidsDTO>> getDibsByUserId(@RequestParam("userId") String userId) {
+        try {
+            List<DidsDTO> dibsList = loginService.getDibsByUserId(userId);
+            System.out.println(dibsList+"---------------------------------");
+            if (dibsList.isEmpty()) {
+                return ResponseEntity.noContent().build();  // 데이터가 없을 때
+            }
+            return ResponseEntity.ok(dibsList);  // 성공적으로 데이터를 가져왔을 때
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();  // 오류가 발생했을 때
+        }
+    }
 
     
 	//토큰용 

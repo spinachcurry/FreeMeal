@@ -51,7 +51,7 @@ public interface UserMapper {
 	 //리뷰(유저용)신고미포
 	@Select( " SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
 						+ "	re.reviewNo, re.userId, re.content, re.modifiedDate, re.status "
-						+ "	FROM test_freemeal AS tf "
+						+ "	FROM freemeal AS tf "
 						+ "	INNER JOIN Reviews AS re  "
 						+ "	ON tf.address = re.address  "
 						+ "	WHERE re.userId = #{userId} AND re.STATUS ='일반' "
@@ -61,7 +61,7 @@ public interface UserMapper {
 	//리뷰(관리자)신고만
 	@Select( " SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
 			+ "	re.reviewNo, re.userId, re.content, re.modifiedDate, re.status "
-			+ "	FROM test_freemeal AS tf "
+			+ "	FROM freemeal AS tf "
 			+ "	INNER JOIN Reviews AS re  "
 			+ "	ON tf.address = re.address  "
 			+ "	WHERE re.userId = #{userId} or re.status='신고' "
@@ -77,7 +77,7 @@ public interface UserMapper {
 	//////가게 상세 페이지리뷰 불러오기(리뷰용)
 	@Select("	SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
 			+ "			re.reviewNo, re.userId, re.content, re.modifiedDate,re.createDate, re.status "
-			+ "			FROM test_freemeal AS tf "
+			+ "			FROM freemeal AS tf "
 			+ "			INNER JOIN Reviews AS re "
 			+ "			ON tf.address = re.address "
 			+ "			WHERE tf.address = #{address} AND STATUS ='일반'"
@@ -101,13 +101,13 @@ public interface UserMapper {
 			+ "WHERE userId=#{userId} and address =#{address} and  STATUS = '1' ")
 	List<DidsDTO> selectDibs(@Param("userId") String userId, @Param("address") String address) ;
 	//찜 카운트
-	@Select("SELECT COUNT(userId) AS COUNT " +
-	        "FROM Dibs " +
-	        "WHERE STATUS = '1' AND address = #{address}")
+	@Select("SELECT COUNT(userId) AS COUNT " 
+			+ "FROM Dibs " 
+			+ "WHERE STATUS = '1' AND address = #{address}")
 	int countDibs(@Param("address") String address);
-	
+	//찜목록 불러오기;
 	@Select ("SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, did.* "
-			+ "			 FROM test_freemeal AS tf "
+			+ "			 FROM freemeal AS tf "
 			+ "		 	 INNER JOIN Dibs AS did "
 			+ "			 ON tf.address = did.address "
 			+ "			 WHERE did.STATUS = '1' AND did.userId =#{userId} "

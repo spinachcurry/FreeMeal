@@ -1,8 +1,7 @@
 package com.app.userDTO;
-
-import java.util.List; 
-import org.springframework.data.domain.jaxb.SpringDataJaxb.SortDto;
-
+ 
+import java.util.List;  
+import com.app.dto.StoreDTO; 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,11 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DidsDTO {
-	
-	private List<SortDto> Store;
+	 
 	private String userId;
 	private String address;
-	private int status;    
-	
+	private int status; 
+	private int totalPrice;
+	private String title;
+	private String category;
+	 
 
 }
