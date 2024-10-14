@@ -51,6 +51,21 @@ public class StoreController {
 		return storeService.storeNearby(location);
 	}
 	
+	//메인 페이지에서 전체 소팅 후 검색 기능 >> 프론트 그려야함
+	@GetMapping("/searchStore")
+	public List<StoreDTO> searchStore(@RequestParam("") Map<String, Object> keykeyword) {
+		log.info("keyword: {}", keykeyword);
+		return storeService.searchStore(keykeyword);
+	}
+	
+	//해당 음식점 고유 title , areaNm 으로 찾아서 가게가 가지고 있는 link만 가져오도록 >> 프론트로 돌려주기
+//	@PostMapping("/storeLink")
+//	public List<StoreDTO> storeTitle(@RequestParam Map<String, Object> storeinfo) {
+//		log.info("storeTitle:{}", storeinfo);
+//		return storeService.storeLink(storeinfo);
+//	}
+//	
+	
 	
 }
 

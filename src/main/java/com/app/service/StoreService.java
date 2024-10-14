@@ -25,7 +25,7 @@ public class StoreService {
 			List<StoreDTO> list = storeMapper.storeDetail(title);
 			if(list.size() < 1) {
 				return StoreDTO.builder()
-						.title("그런 가게는 없습니다.")
+						.title("")
 						.build();
 			}else {
 				return list.get(0);
@@ -51,6 +51,20 @@ public class StoreService {
 		return bigMap;
 	}
 	
+	//메인 페이지 >> 전체 소팅 가게 검색
+	public List<StoreDTO> searchStore(Map<String, Object> keykeyword) {
+		if("전체".equals(keykeyword.get("areaNm"))) {
+//			log.info("keykeyword:{}", storeMapper.searchStore2(keykeyword.get("keyword")));
+			return storeMapper.searchStore2(keykeyword.get("keyword"));
+		}else {
+//			log.info("keyword:{}", storeMapper.searchStore(keykeyword));
+			return storeMapper.searchStore(keykeyword);
+		}
+	}
+		
+	//가게 링크불러오기~!
+//	public List<StoreDTO> storeLink(Map<String, Object> storeinfo) {
+//		log.info("storeinfo:{}" , storeinfo);
+//		return storeMapper.storeLink(storeinfo);
+//	}	
 }
-	
-	
