@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.app.component.WebCrawling;
+import com.app.dto.crawling.KageDTO;
 import com.app.mapper.DataMapper;
 import com.app.service.DataService;
 
@@ -66,14 +67,14 @@ public class DataController {
 	@Autowired
 	private WebCrawling webCrawling;
 
-	@GetMapping(value="/")
-	public String test() {
-		return dataService.insertData();
-	}
+//	@GetMapping(value="/")
+//	public String test() {
+//		return dataService.insertData();
+//	}
 
 	@GetMapping("/crawling")
-	public Map<String, Object> crawling() {
-		return webCrawling.getImages();
+	public KageDTO crawling() {
+		return webCrawling.getImageAndMenu();
 	}
 	
 }
