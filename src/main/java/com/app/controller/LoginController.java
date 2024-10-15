@@ -178,20 +178,18 @@ public class LoginController {
 	 @PostMapping("/signup")
 	 @ResponseBody
 	 public ResponseEntity<?> signup(@RequestBody UserDTO userDTO, HttpServletRequest req) {
-	     // UserResultDTO를 사용하여 가입 결과를 저장
+	      
 	     UserResultDTO userResultDTO = loginService.signup(userDTO);
-
-	     // 가입 성공 여부에 따른 처리
+ 
 	     if (userResultDTO.isStatus()) {
-	         // 성공 메시지를 반환
+	     
 	         return ResponseEntity.ok().body("회원가입이 완료되었습니다.");
 	     } else {
-	         // 중복된 아이디일 경우
+	         
 	         if ("중복된 아이디가 있습니다.".equals(userResultDTO.getMessage())) {
 	             return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap("error", "중복된 아이디가 있습니다."));
-	         }
-
-	         // 기타 실패 시에도 실패 메시지를 반환
+	         } 
+	       
 	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", userResultDTO.getMessage()));
 	     }
 	 }
@@ -243,7 +241,7 @@ public class LoginController {
 
         return "html/updateUserInfo";
     }
-     
+     ////
     @ResponseBody
     @PostMapping("/updateUser")
     public Map<String, Object> updateUser( 
@@ -280,8 +278,7 @@ public class LoginController {
                 System.out.println("File successfully uploaded to: " + profileImageUrl);
 
             } catch (IOException e) {
-                e.printStackTrace();
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드에 실패했습니다: " + e.getMessage());
+                e.printStackTrace(); 
                 resultMap.put("msg", "파일 업로드에 실패했습니다: " + e.getMessage());
                 check = false;
             }
@@ -307,7 +304,7 @@ public class LoginController {
         }     
         return resultMap;
     }
-
+////
     private String getFileExtension(String originalFilename) {
         // 파일 확장자 추출 로직 수정
         if (originalFilename != null && originalFilename.contains(".")) {
@@ -350,7 +347,6 @@ public class LoginController {
  
 	//토큰용 
     private String setToken(Map<String, String> paramMap) {
-		  
 		// 유효 날짜 생성
 		Calendar date = Calendar.getInstance();
 		date.add(Calendar.MINUTE, 10);
