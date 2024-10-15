@@ -3,6 +3,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -37,14 +38,14 @@ public class LoginService {
 	@Autowired
 	private UserMapper userMapper;
 	private ObjectMapper objectMapper;
-	  @Autowired
+	
 	    public LoginService(UserMapper userMapper, ObjectMapper objectMapper) {
 	        this.userMapper = userMapper;
 	        this.objectMapper = objectMapper;
 	        this.objectMapper.registerModule(new JavaTimeModule()); // Java 8 Time Module 등록
 	    }
 	
-	public UserResultDTO findByUser(UserDTO userDTO) {
+	    public UserResultDTO findByUser(UserDTO userDTO) {
 	    // 매퍼를 호출하여 사용자 정보를 가져옴
 	    List<UserDTO> users = userMapper.findOne(userDTO.getUserId()); // findOne 매퍼 호출
 
@@ -138,49 +139,9 @@ public class LoginService {
 
 	        return userResultDTO;
 	    }
- 
+ //유저정보 수정
   public void updateUser(UserDTO userDTO) {
         userMapper.updateUser(userDTO);
     }   
-   //리뷰받아오기 유저 
-	 public List<ReviewDTO> getReviewsByStatus(String userId) {
-	        return userMapper.findReviewsByStatus(userId);
-	    }
-	//리뷰받아오기 관리자
-    public List<ReviewDTO> getReviewsStatus(String userId) {
-        return userMapper.getReviewsStatus(userId);
-    }
-    //개인 리뷰 업데이트하기
-    public boolean updateReview(ReviewDTO reviewDTO) {
-        int updatedRows = userMapper.updateReview(reviewDTO);
-        return updatedRows > 0;
-    } 
-    //가게 상세리뷰 받아오기 
-    public List<ReviewDTO> getAllReviews(@Param("address") String address) {
-        return userMapper.FindStoreOne(address);
-    }  
-    // 리뷰 작성(상점) 
-    public int addReview(ReviewDTO review) {
-        return userMapper.insertReview(review);
-    } 
-    //리뷰신고
-    public int updateReport(ReviewDTO reviewNo) {
-        return userMapper.updateReport(reviewNo);
-    }
-    //찜하기
-    public int addDibs(String userId, String address, int didStatus) {
-        return userMapper.insertDibs(userId, address, didStatus);
-    }
-  //찜하기 이미 찜했을 때
-    public List<DidsDTO> selectDibs(String userId, String address) {
-        return userMapper.selectDibs(userId, address);
-    }
-    //찜 카운트
-    public int getDibsCount(String address) {
-        return userMapper.countDibs(address);
-    }
-    //찜 목록가져오기
-    public List<DidsDTO> getDibsByUserId(String userId) {
-        return userMapper.findDibsByUserId(userId);
-    }
+
 }

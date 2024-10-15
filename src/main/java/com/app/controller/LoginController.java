@@ -11,14 +11,10 @@ import java.io.FileInputStream;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
-
-import com.app.userDTO.DidsDTO;
-import com.app.userDTO.ReviewDTO;
 import com.app.userDTO.UserDTO;
 import com.app.userDTO.UserResultDTO;
 
@@ -37,8 +33,6 @@ import com.app.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -47,8 +41,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.GetMapping; 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -203,15 +196,15 @@ public class LoginController {
 	     }
 	 }
 
-	    @PostMapping("/logout")
-	    public String logout(HttpServletRequest req) {
-	        // 세션 무효화 (세션 내 모든 데이터를 삭제)
-	        HttpSession session = req.getSession();
-	        session.invalidate();
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest req) {
+        // 세션 무효화 (세션 내 모든 데이터를 삭제)
+        HttpSession session = req.getSession();
+        session.invalidate();
 
-	        log.info("로그아웃 완료, 세션 무효화됨.");
-	        return "redirect:mainDetail";  // 로그인 페이지로 리다이렉트
-	    }
+        log.info("로그아웃 완료, 세션 무효화됨.");
+        return "redirect:mainDetail";  // 로그인 페이지로 리다이렉트
+    }
 	     
     @GetMapping("/updateUserInfo")
     public String updateUserInfo(HttpServletRequest req, Model model) {
@@ -275,7 +268,6 @@ public class LoginController {
                     System.out.println("Directory does not exist. Creating directory...");
                     directory.mkdirs();
                 }
-
                 String fileExtension = getFileExtension(profileImage.getOriginalFilename());
                 String fileName = UUID.randomUUID().toString() + "." + fileExtension;
 
@@ -307,15 +299,12 @@ public class LoginController {
 	        userDTO.setReview(review);
 	        userDTO.setPassword(password);
 	        userDTO.setProfileImageUrl(profileImageUrl);
-	
 	        // 서비스 단 호출
 	        loginService.updateUser(userDTO);
 	        System.out.println("Profile update successful.");
-	
 	        // 프로필 업데이트가 성공적으로 완료된 경우
 	        resultMap = getUserData(req);
-        }
-                
+        }     
         return resultMap;
     }
 
@@ -358,206 +347,7 @@ public class LoginController {
     	}
         return response;
     }
-
-    //리뷰 불러오기Review
-    @GetMapping("/getReviewsByStatus")
-    public ResponseEntity<?> getReviewsByStatus(@RequestParam("userId") String userId,
-                                                @RequestParam("status") String status) {
-        try {
-            List<ReviewDTO> reviews;
-            if ("1".equals(status) || "2".equals(status)) {
-                reviews = loginService.getReviewsByStatus(userId);
-            } else if ("3".equals(status)) {
-                reviews = loginService.getReviewsStatus(userId);
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 status 값입니다.");
-            }
-            if (reviews == null || reviews.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰가 없습니다.");
-            }
-            return ResponseEntity.ok(reviews);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰를 가져오는 중 서버 오류가 발생했습니다.");
-        }
-    }
  
-    
-    // 리뷰 수정 요청 처리
-    @PostMapping("/updateReview")
-    public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO) { 
-        try {
-            // 리뷰 업데이트 수행
-            boolean isUpdated = loginService.updateReview(reviewDTO);
-
-            if (isUpdated) {
-                // 업데이트 성공
-                return ResponseEntity.ok().body("리뷰가 성공적으로 수정되었습니다.");
-            } else {
-                // 업데이트 실패 (예: 해당 리뷰가 존재하지 않는 경우)
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없습니다.");
-            }
-        } catch (Exception e) {
-            // 예외 처리 및 오류 응답
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                 .body("리뷰를 수정하는 중 오류가 발생했습니다.");
-        }
-    }
-
-  //가게상세 리뷰 불러오기
-    // 리뷰 목록을 반환하는 GET 엔드포인트
-    @GetMapping("/getReviews")
-    public ResponseEntity<List<ReviewDTO>> getReviews(@RequestParam("address") String address) {
-        List<ReviewDTO> reviews = loginService.getAllReviews(address); 
-        
-        if (reviews.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(reviews);
-    }
-
-    // 새로운 리뷰를 추가하는 POST 엔드포인트
-    @PostMapping("/addReview")
-    public ResponseEntity<String> addReview(@RequestBody ReviewDTO review) {
-        try {
-            int insertedCount = loginService.addReview(review);
-            if (insertedCount > 0) { 
-                return ResponseEntity.ok("리뷰가 성공적으로 추가되었습니다.");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body("리뷰 추가에 실패했습니다.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("리뷰를 추가하는 중 오류가 발생했습니다.");
-        }
-    }
- // 리뷰 수정 요청 처리
-    @PostMapping("/report")
-    public ResponseEntity<String> reportReview(@RequestBody ReviewDTO reviewNo) {
-        try {
-            int result = loginService.updateReport(reviewNo);
-            
-            if (result > 0) {
-                return ResponseEntity.ok("리뷰가 성공적으로 신고되었습니다.");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("리뷰 신고에 실패했습니다.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("리뷰 신고 처리 중 오류가 발생했습니다.");
-        }
-    }
-    //	찜하기
-    @PostMapping("/addDids")
-    public ResponseEntity<String> addDibs(
-            @RequestParam("userId") String userId,
-            @RequestParam("address") String address,
-            @RequestParam("didStatus") int didStatus) {
-    	log.info("데이터 값확인:"+userId+"|"+address+"|"+didStatus);
-        try {
-            int result = loginService.addDibs(userId, address, didStatus);
-            if (result > 0) {
-                return ResponseEntity.ok("Dibs successfully added.");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add dibs.");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-        }
-    }
-    //찜하기 확인용
-    @GetMapping("/didCheck")
-    public ResponseEntity<String> checkDibs(
-            @RequestParam("userId") String userId,
-            @RequestParam("address") String address) {
-        System.out.println("Checking dibs status for userId: " + userId + ", address: " + address);
-
-        try {
-            List<DidsDTO> didStatusList = loginService.selectDibs(userId, address);
-
-            if (!didStatusList.isEmpty()) {
-                DidsDTO didStatus = didStatusList.get(0);
-
-                if (didStatus.getStatus() == 1) {
-                    System.out.println("Already dibbed.");
-                    return ResponseEntity.ok("이미 찜한 상태입니다.");
-                } else {
-                    System.out.println("Not dibbed.");
-                    return ResponseEntity.ok("찜한 상태가 아닙니다.");
-                }
-            } else {
-                System.out.println("No dibs record found.");
-                return ResponseEntity.ok("찜한 상태가 아닙니다.");
-            }
-        } catch (Exception e) {
-            System.out.println("Error occurred: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("오류가 발생했습니다: " + e.getMessage());
-        }
-    }
-//찜하기 취소 토글
-    @PostMapping("/toggleDibs")
-    public ResponseEntity<String> toggleDibs(
-            @RequestParam("userId") String userId,
-            @RequestParam("address") String address,
-            @RequestParam("didStatus") int didStatus) { // 1 for add, 0 for remove
-        System.out.println("Toggling dibs for userId: " + userId + ", address: " + address + ", status: " + didStatus);
-
-        try {
-            if (didStatus == 1) {
-                // Add dibs
-                loginService.addDibs(userId, address, 1);
-                System.out.println("Dibs added successfully.");
-                return ResponseEntity.ok("찜하기가 성공적으로 추가되었습니다.");
-            } else if (didStatus == 0) {
-                // Remove dibs
-                loginService.addDibs(userId, address, 0);
-                System.out.println("Dibs removed successfully.");
-                return ResponseEntity.ok("찜하기가 해제되었습니다.");
-            } else {
-                System.out.println("Invalid dibs status.");
-                return ResponseEntity.badRequest().body("잘못된 상태 값입니다.");
-            }
-        } catch (Exception e) {
-            System.out.println("Error occurred: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("오류가 발생했습니다: " + e.getMessage());
-        }
-    }
-    //찜 카운트
-    @GetMapping("/count")
-    public ResponseEntity<Integer> getDibsCount(@RequestParam("address") String address) {
-    	
-    	int count = loginService.getDibsCount(address);
-        try { 
-            return ResponseEntity.ok(count);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
-  //찜하기 목록 불러오기
-    @GetMapping("/getDibsByUserId")
-    public ResponseEntity<List<DidsDTO>> getDibsByUserId(@RequestParam("userId") String userId) {
-        try {
-            List<DidsDTO> dibsList = loginService.getDibsByUserId(userId);
-            System.out.println(dibsList+"---------------------------------");
-            if (dibsList.isEmpty()) {
-                return ResponseEntity.noContent().build();  // 데이터가 없을 때
-            }
-            return ResponseEntity.ok(dibsList);  // 성공적으로 데이터를 가져왔을 때
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();  // 오류가 발생했을 때
-        }
-    }
-
-    
 	//토큰용 
     private String setToken(Map<String, String> paramMap) {
 		  
