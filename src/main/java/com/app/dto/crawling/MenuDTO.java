@@ -14,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MenuDTO {
-	private String menu;
+	private String name;
 	private String category;
 	private String price;
 	private String image;

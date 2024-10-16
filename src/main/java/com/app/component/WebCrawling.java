@@ -12,6 +12,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.stereotype.Component;
 
 import com.app.dto.crawling.KageDTO;
+import com.app.dto.crawling.MenuDTO;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,6 +36,9 @@ public class WebCrawling {
 		driver = new ChromeDriver();
 		
 		KageDTO store = new KageDTO();
+		List<MenuDTO> storeMenu = new ArrayList<>();
+		List<String> storeImage = new ArrayList<>();
+		
 		try {
 			driver.get(root_url + areaNm + " " + storeNm);
 			driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
@@ -75,23 +79,43 @@ public class WebCrawling {
 						
 			List<WebElement> menuList = driver.findElements(By.className("gkWf3"));
 			if(menuList.size() > 0) {
+				//카테고리별로 정리된 경우
+				for(WebElement li : menuList) {
+					
+				}
 				
 			}else {
 				//더보기 버튼 다 누르기
 				while(driver.findElements(By.className("fvwqf")).size() > 0) {
 					driver.findElement(By.className("fvwqf")).click();
 				}
+				//메뉴 리스트
 				menuList = driver.findElements(By.className("E2jtL"));
-				for(WebElement menu : menuList) {
-					log.info("메뉴 이름: {}", menu.findElement(By.className("lPzHi")).getText());
-					log.info("메뉴 가격: {}", menu.findElement(By.className("GXS1X")).getText());
-					//log.info("메뉴 설명: {}", menu.findElement(By.className("lPzHi")).getText());
-					log.info("이미지 주소: {}", menu.findElement(By.tagName("img")).getAttribute("src"));
+				
+				for(WebElement li : menuList) {
+					
+					MenuDTO menu = new MenuDTO();
+					//이름
+					if(li.findElements(By.className("lPzHi")).size() > 0)
+						menu.setName(li.findElement(By.className("lPzHi")).getText());
+					//가격
+					if(li.findElements(By.className("GXS1X")).size() > 0)
+						menu.setPrice(li.findElement(By.className("GXS1X")).getText());
+					//설명
+					if(li.findElements(By.className("kPogF")).size() > 0)
+						menu.setDescription(li.findElement(By.className("kPogF")).getText());
+					//이미지 주소
+					if(li.findElements(By.tagName("img")).size() > 0) {
+						String src = li.findElement(By.tagName("img")).getAttribute("src");
+						if(!"https://g-place.pstatic.net/assets/shared/images/menu_icon_noimg_food.png".equals(src))
+							menu.setImage(src);
+					}
 				}
 			}
 			
 			//tabList.get(4).click();
 		}finally {
+			//driver.close();
 			//driver.quit();
 		}
 		
