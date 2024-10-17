@@ -52,8 +52,8 @@ public class StoreController {
 	}
 	
 	//메인 페이지에서 전체 소팅 후 검색 기능 >> 프론트 그려야함
-	@GetMapping("/searchStore")
-	public List<StoreDTO> searchStore(@RequestParam("") Map<String, Object> keykeyword) {
+	@PostMapping("/searchStore")
+	public List<StoreDTO> searchStore(@RequestBody Map<String, Object> keykeyword) {
 		log.info("keyword: {}", keykeyword);
 		return storeService.searchStore(keykeyword);
 	}

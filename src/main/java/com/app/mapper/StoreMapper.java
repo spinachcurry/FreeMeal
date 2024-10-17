@@ -51,11 +51,11 @@ public interface StoreMapper {
 			+ "GROUP BY `title`, `areaNm` limit 10")
 	public List<StoreDTO> storeNearby(Map<String, Double> location);
 
-	//전체 >> 가게명이나 카테고리 검색(ex: 강동구 카페)
+	//가게명이나 카테고리 검색(ex: 강동구 카페)
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freemeal "
-			+ "WHERE `title` LIKE #{keyword} OR `category` LIKE #{keyword} AND `areaNm` = #{areaNm} " 
+			+ "WHERE (`title` LIKE #{keyword} OR `category` LIKE #{keyword}) AND `areaNm` = #{areaNm} " 
 			+ "GROUP BY `title`, `areaNm` ")
 	public List<StoreDTO> searchStore(Map<String, Object> keykeyword);
 	
@@ -66,10 +66,6 @@ public interface StoreMapper {
 			+ "WHERE `title` LIKE #{keyword} OR `category` LIKE #{keyword} " 
 			+ "GROUP BY `title`, `areaNm` ")
 	public List<StoreDTO> searchStore2(Object keyword);
-	
-	
-	
-	
 	
 	//가게 정보가 담긴 링크 가져오기^^;
 //	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
