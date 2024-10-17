@@ -10,12 +10,13 @@ import org.apache.ibatis.annotations.Update;
 
 import com.app.dto.DataDTO;
 import com.app.dto.RawDataDTO;
+import com.app.dto.StoreDTO;
 
 @Mapper
 public interface DataMapper {
 	
 	// 기본적인 매뻐 완성!
-	@Insert("INSERT INTO test_freemeal (`title`,`link`, `category`, `description`, `telephone`, `address`, `roadAddress`, `lng`, `lat`, `price`,`party`,`visitDate`) "
+	@Insert("INSERT INTO freeMeal (`title`,`link`, `category`, `description`, `telephone`, `address`, `roadAddress`, `lng`, `lat`, `price`,`party`,`visitDate`) "
 			+ "VALUE (#{title},#{link},#{category},#{description},#{telephone},#{address},#{roadAddress},#{lng},#{lat},#{price},#{party},#{visitDate})")
 	public int setOwnData(DataDTO ownDTO); 
 	
@@ -38,9 +39,22 @@ public interface DataMapper {
 	public int check(int no);
 	
 	//mapx, mapy 소수점 단위 맞춤 뭐리
-	@Update("UPDATE test_freemeal SET lng = (lng / 10000000), lat = (lat / 10000000)")
+	@Update("UPDATE freeMeal SET lng = (lng / 10000000), lat = (lat / 10000000)")
 	public int mapLocation();
 	
+	@Insert("INSERT INTO `store_menu` (`storeNm`, `areaNm`, `category`, `name`, `price`, `image`, `description`) "
+			+ "VALUE (#{storeNm}, #{areaNm}, #{category}, #{name}, #{price}, #{image}, #{description})")
+	public int insertMenu(Map<String, Object> map);
 	
+	@Insert("INSERT INTO `store_image` (`storeNm`, `areaNm`, `imageURL`) "
+			+ "VALUE (#{storeNm}, #{areaNm}, #{imageURL})")
+	public int insertImage(Map<String, Object> map);
+	
+	@Select("SELECT * FROM `finished_store`")
+	public List<StoreDTO> findFinishedStore();
+	
+	@Insert("INSERT INTO `finished_store` (`title`, `areaNm`) "
+			+ "VALUE (#{title}, #{areaNm})")
+	public int insertFinished_store(Map<String, Object> map);
 }
 

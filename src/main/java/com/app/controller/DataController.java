@@ -15,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.app.component.WebCrawling;
+import com.app.dto.StoreDTO;
 import com.app.dto.crawling.KageDTO;
 import com.app.mapper.DataMapper;
 import com.app.service.DataService;
@@ -58,23 +59,24 @@ public class DataController {
 	        return ResponseEntity.ok(responseBody);
 		}
 
-	@Autowired
-	private DataMapper dataMapper;
 	
 	@Autowired
 	private DataService dataService;
-	
-	@Autowired
-	private WebCrawling webCrawling;
 
 //	@GetMapping(value="/")
 //	public String test() {
 //		return dataService.insertData();
 //	}
-
+	
+	@Autowired
+	private WebCrawling webCrawling;
+	
 	@GetMapping("/crawling")
-	public KageDTO crawling() {
-		return webCrawling.getImageAndMenu();
+	public String crawling() {
+		//webCrawling.process(StoreDTO.builder().areaNm("강동구").title("24시 카페 주디자인").build());
+		
+		dataService.insertMenuAndImge();
+		return "메뉴, 사진 네이버에서 따오기";
 	}
 	
 }

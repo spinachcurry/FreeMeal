@@ -17,6 +17,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class KageDTO {
 	private String storeNm;
-	private List<MenuDTO> menu;
+	private String areaNm;
+	private List<MenuDTO> menuItems;
 	private List<String> imgURLs;
 }
