@@ -49,6 +49,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-tomcat'
 	
+	//크롤링을 위한 셀레니움
+	implementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '4.25.0'
 }
 
 tasks.named('test') {

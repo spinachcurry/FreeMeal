@@ -16,11 +16,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.app.component.WebCrawling;
 import com.app.dto.DataDTO;
 import com.app.dto.GsonDTO;
 import com.app.dto.ItemDTO;
 import com.app.dto.RawDataDTO;
+import com.app.dto.StoreDTO;
+import com.app.dto.crawling.KageDTO;
+import com.app.dto.crawling.MenuDTO;
 import com.app.mapper.DataMapper;
+import com.app.mapper.StoreMapper;
 import com.google.gson.Gson;
 
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +136,7 @@ public class DataService {
 			return "오류 났슈.";
 		}
 	}
-
+		
 	private String naverSearchList(String text) {
 		String clientId = "Mybp3tJ8oOogHiifoV6Y";
 		String clientSecret = "mntjlH4J1B";
@@ -159,5 +164,56 @@ public class DataService {
 	        return responseEntity.getBody();
 		}
 	
+	@Autowired
+	private StoreMapper storeMapper;
+	@Autowired
+	private WebCrawling webCrawling;
 	
+	public void insertMenuAndImge() {
+		
+		List<StoreDTO> storeList = storeMapper.storeList();
+		List<StoreDTO> finishedList = dataMapper.findFinishedStore();
+		for(StoreDTO store : storeList) {
+			
+			boolean check = false;
+			for(StoreDTO finished : finishedList) {
+				if(finished.getTitle().equals(store.getTitle())
+						&& finished.getAreaNm().equals(store.getAreaNm())) {
+									check = true;
+									break;
+				}						
+			}
+			
+			if(check) continue;
+			
+			KageDTO kage = webCrawling.process(store);			
+			
+			for(MenuDTO item : kage.getMenuItems()) {
+				Map<String, Object> menu = new HashMap<>();
+				menu.put("storeNm", kage.getStoreNm());
+				menu.put("areaNm", kage.getAreaNm());
+				menu.put("category", item.getCategory());
+				menu.put("name", item.getName());
+				menu.put("price", item.getPrice());
+				menu.put("image", item.getImage());
+				menu.put("description", item.getDescription());
+				//메뉴 입력
+				dataMapper.insertMenu(menu);
+			}
+			for(String imageURL : kage.getImgURLs()) {
+				Map<String, Object> image = new HashMap<>();
+				image.put("storeNm", kage.getStoreNm());
+				image.put("areaNm", kage.getAreaNm());
+				image.put("imageURL", imageURL);
+				//이미지 입력
+				dataMapper.insertImage(image);
+			}
+			
+			Map<String, Object> finished_store = new HashMap<>();
+			finished_store.put("title", store.getTitle());
+			finished_store.put("areaNm", store.getAreaNm());
+			dataMapper.insertFinished_store(finished_store);
+		}
+		
+	}	
 }
