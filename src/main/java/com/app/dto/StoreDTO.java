@@ -27,4 +27,6 @@ public class StoreDTO {
 	double lat;
 	int totalPrice;
 	int totalParty;
+
 }
+

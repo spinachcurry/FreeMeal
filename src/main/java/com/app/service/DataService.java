@@ -20,7 +20,12 @@ import com.app.dto.DataDTO;
 import com.app.dto.GsonDTO;
 import com.app.dto.ItemDTO;
 import com.app.dto.RawDataDTO;
+
+import com.app.dto.StoreDTO;
+import com.app.dto.crawling.KageDTO;
+import com.app.dto.crawling.MenuDTO;
 import com.app.mapper.DataMapper;
+import com.app.mapper.StoreMapper;
 import com.google.gson.Gson;
 
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +82,7 @@ public class DataService {
 				
 				for(ItemDTO nItem : nData.getItems()) {
 					String category = nItem.getCategory().split(">")[0];
-					if(!"한식".equals(category)  && !"음식점".equals(category) && !"분식".equals(category)) continue;
+					if(!"한식".equals(category)  && !"음식점".equals(category) && !"분식".equals(category) && !"카페".equals(category)) continue;
 					if(!nItem.getAddress().contains(getOne.getAreaNm())) continue; //네이버 데이터 & rawData 내의 지역 불일치하면 다음으로 긔긔
 			
 					//dto 빌드 >> for 문 멈추기!
@@ -89,8 +94,8 @@ public class DataService {
 							.telephone(nItem.getTelephone())
 							.address(nItem.getAddress())
 							.roadAddress(nItem.getRoadAddress())
-							.lng(nItem.getMapx())
-							.lat(nItem.getMapy())
+							.lng(nItem.getMapx() / 10000000)
+							.lat(nItem.getMapy() / 10000000)
 							//raw data 에서 온 항목
 							.price(getOne.getPrice())
 							.party(getOne.getParty())
@@ -113,7 +118,7 @@ public class DataService {
 			}
 			
 			// 지도 소수점 변경
-			int updateCount = dataMapper.mapLocation();
+			//int updateCount = dataMapper.mapLocation();
 //			log.info("맵 위치 경로 소수점 변경 횟수 : {}", updateCount);
 			
 			//카운팅은 이미 종료! >>
@@ -159,5 +164,57 @@ public class DataService {
 	        return responseEntity.getBody();
 		}
 	
+	@Autowired
+	private StoreMapper storeMapper;
+	@Autowired
+	private WebCrawling webCrawling;
 	
+	public void insertMenuAndImge() {
+		
+		List<StoreDTO> storeList = storeMapper.storeList();
+		List<StoreDTO> finishedList = dataMapper.findFinishedStore();
+		for(StoreDTO store : storeList) {
+			
+			boolean check = false;
+			for(StoreDTO finished : finishedList) {
+				if(finished.getTitle().equals(store.getTitle())
+						&& finished.getAreaNm().equals(store.getAreaNm())) {
+									check = true;
+									break;
+				}						
+			}
+			
+			if(check) continue;
+			
+			KageDTO kage = webCrawling.process(store);			
+			
+			for(MenuDTO item : kage.getMenuItems()) {
+				Map<String, Object> menu = new HashMap<>();
+				menu.put("storeNm", kage.getStoreNm());
+				menu.put("areaNm", kage.getAreaNm());
+				menu.put("category", item.getCategory());
+				menu.put("name", item.getName());
+				menu.put("price", item.getPrice());
+				menu.put("image", item.getImage());
+				menu.put("description", item.getDescription());
+				//메뉴 입력
+				dataMapper.insertMenu(menu);
+			}
+			for(String imageURL : kage.getImgURLs()) {
+				Map<String, Object> image = new HashMap<>();
+				image.put("storeNm", kage.getStoreNm());
+				image.put("areaNm", kage.getAreaNm());
+				image.put("imageURL", imageURL);
+				//이미지 입력
+				dataMapper.insertImage(image);
+			}
+			
+			Map<String, Object> finished_store = new HashMap<>();
+			finished_store.put("title", store.getTitle());
+			finished_store.put("areaNm", store.getAreaNm());
+			dataMapper.insertFinished_store(finished_store);
+		}
+		
+	}	
+
 }

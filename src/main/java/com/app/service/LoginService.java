@@ -1,4 +1,5 @@
 package com.app.service;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -37,6 +38,7 @@ public class LoginService {
 	
 	@Autowired
 	private UserMapper userMapper;
+
 	private ObjectMapper objectMapper;
 	
 	    public LoginService(UserMapper userMapper, ObjectMapper objectMapper) {
@@ -139,9 +141,19 @@ public class LoginService {
 
 	        return userResultDTO;
 	    }
- //유저정보 수정
+
   public void updateUser(UserDTO userDTO) {
         userMapper.updateUser(userDTO);
-    }   
+    }
+  
+// 	//리뷰 받아오기
+//     public List<ReviewDTO> getReviewsByStatus(String userId) {
+//         return userMapper.findReviewsByStatus(userId);
+//     }
+//     //리뷰 업데이트하기
+//     public boolean updateReview(ReviewDTO reviewDTO) {
+//         int updatedRows = userMapper.updateReview(reviewDTO);
+//         return updatedRows > 0;
+//     }
 
 }

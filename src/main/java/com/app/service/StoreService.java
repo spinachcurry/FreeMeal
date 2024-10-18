@@ -53,7 +53,22 @@ public class StoreService {
 		return bigMap;
 	}
 
-	
+	//메인 페이지 검색>> 가게명 or 지역 검색(ex 강동구 카페)
+	public List<StoreDTO> searchStore(Map<String, Object> keykeyword) {
+		keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
+		if("전체".equals(keykeyword.get("areaNm"))) {
+			log.info("keykeyword:{}", keykeyword.toString());
+			return storeMapper.searchStore2(keykeyword.get("keyword"));
+		}else {
+			log.info("keyword:{}", keykeyword.toString());
+			return storeMapper.searchStore(keykeyword);
+		}
+	}
+		
+	//가게 링크불러오기~!
+//	public List<StoreDTO> storeLink(Map<String, Object> storeinfo) {
+//		log.info("storeinfo:{}" , storeinfo);
+//		return storeMapper.storeLink(storeinfo);
+//	}	
 }
-	
-	
+

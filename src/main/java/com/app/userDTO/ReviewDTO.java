@@ -2,7 +2,6 @@ package com.app.userDTO;
  
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.app.dto.StoreDTO;
 
 import lombok.AllArgsConstructor;
@@ -14,13 +13,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReviewDTO {
 	
-	private List<StoreDTO> store;
-	private String title;
+	  private List<StoreDTO> store;
+	  private String title;
     private String address;
     private String category;
     private Integer totalPrice;
     private Integer totalParty;
-	private int reviewNo;                  // 리뷰 ID
+	  private int reviewNo;                  // 리뷰 ID
     private String storeId;                // 스토어 ID
     private String userId;                 // 사용자 ID
     private String menuId;                 // 메뉴 ID (선택 사항)
@@ -29,6 +28,7 @@ public class ReviewDTO {
     private LocalDateTime createDate;      // 생성일자
     private LocalDateTime modifiedDate;    // 수정일자
     private String status;           // 리뷰 상태
+
     public String getModifiedDate() {
         return modifiedDate != null ? modifiedDate.toString() : null;
     }
@@ -36,6 +36,5 @@ public class ReviewDTO {
     public String getCreateDate() {
         return createDate != null ? createDate.toString() : null;
     }
-    
 
 }
