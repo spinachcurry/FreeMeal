@@ -56,10 +56,16 @@ public class StoreService {
 		keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
 		if("전체".equals(keykeyword.get("areaNm"))) {
 			log.info("keykeyword:{}", keykeyword.toString());
-			return storeMapper.searchStore2(keykeyword.get("keyword"));
+			if("party".equals(keykeyword.get("criteria")))
+				return storeMapper.searchAllStoreParty(keykeyword);
+			else
+				return storeMapper.searchAllStoreCash(keykeyword);
 		}else {
 			log.info("keyword:{}", keykeyword.toString());
-			return storeMapper.searchStore(keykeyword);
+			if("party".equals(keykeyword.get("criteria")))
+				return storeMapper.searchByStoreParty(keykeyword);
+			else
+				return storeMapper.searchByStoreCash(keykeyword);
 		}
 	}
 		

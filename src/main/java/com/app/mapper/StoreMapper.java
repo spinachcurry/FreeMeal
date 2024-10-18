@@ -51,21 +51,55 @@ public interface StoreMapper {
 			+ "GROUP BY `title`, `areaNm` limit 10")
 	public List<StoreDTO> storeNearby(Map<String, Double> location);
 
-	//가게명이나 카테고리 검색(ex: 강동구 카페)
+	//가게명이나 카테고리 검색(ex: 강동구 카페) >> 방문자 순
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freemeal "
 			+ "WHERE (`title` LIKE #{keyword} OR `category` LIKE #{keyword}) AND `areaNm` = #{areaNm} " 
-			+ "GROUP BY `title`, `areaNm` ")
-	public List<StoreDTO> searchStore(Map<String, Object> keykeyword);
+			+ "GROUP BY `title`, `areaNm` "
+			+ "ORDER BY `totalParty` DESC ")
+	public List<StoreDTO> searchByStoreParty(Map<String, Object> keykeyword);
 	
-	//전체 검색
+	//가게명이나 카테고리 검색(ex: 강동구 카페) >> 돈 쓴 순
+	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
+			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
+			+ "FROM freemeal "
+			+ "WHERE (`title` LIKE #{keyword} OR `category` LIKE #{keyword}) AND `areaNm` = #{areaNm} " 
+			+ "GROUP BY `title`, `areaNm` "
+			+ "ORDER BY `totalPrice` DESC ")
+	public List<StoreDTO> searchByStoreCash(Map<String, Object> keykeyword);
+	
+	//전체창에서 검색>> 지역 선택 X >> 방문자 순
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freemeal "
 			+ "WHERE `title` LIKE #{keyword} OR `category` LIKE #{keyword} " 
-			+ "GROUP BY `title`, `areaNm` ")
-	public List<StoreDTO> searchStore2(Object keyword);
+			+ "GROUP BY `title`, `areaNm` "
+			+ "ORDER BY `totalParty` DESC ")
+	public List<StoreDTO> searchAllStoreParty(Map<String, Object> keyword);
+	
+	//전체창에서 검색>> 지역 선택 X  >> 돈 쓴 순
+	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
+			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
+			+ "FROM freemeal "
+			+ "WHERE `title` LIKE #{keyword} OR `category` LIKE #{keyword} " 
+			+ "GROUP BY `title`, `areaNm` "
+			+ "ORDER BY `totlaPrice` DESC ")
+	public List<StoreDTO> searchAllStoreCash(Map<String, Object> keyword);
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	//가게 정보가 담긴 링크 가져오기^^;
 //	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
