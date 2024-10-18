@@ -2,6 +2,7 @@ package com.app.controller;
 
 import java.net.URI;
 import java.nio.charset.Charset;
+
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.app.component.WebCrawling;
 import com.app.dto.StoreDTO;
 import com.app.dto.crawling.KageDTO;
+
 import com.app.mapper.DataMapper;
 import com.app.service.DataService;
 
@@ -58,15 +60,14 @@ public class DataController {
 	        
 	        return ResponseEntity.ok(responseBody);
 		}
-
 	
 	@Autowired
 	private DataService dataService;
 
-//	@GetMapping(value="/")
-//	public String test() {
-//		return dataService.insertData();
-//	}
+	@GetMapping(value="/")
+	public String test() {
+		return dataService.insertData();
+	}
 	
 	@Autowired
 	private WebCrawling webCrawling;

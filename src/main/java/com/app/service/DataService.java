@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.app.component.WebCrawling;
 import com.app.dto.DataDTO;
 import com.app.dto.GsonDTO;
 import com.app.dto.ItemDTO;
 import com.app.dto.RawDataDTO;
+
 import com.app.dto.StoreDTO;
 import com.app.dto.crawling.KageDTO;
 import com.app.dto.crawling.MenuDTO;
@@ -136,7 +136,7 @@ public class DataService {
 			return "오류 났슈.";
 		}
 	}
-		
+
 	private String naverSearchList(String text) {
 		String clientId = "Mybp3tJ8oOogHiifoV6Y";
 		String clientSecret = "mntjlH4J1B";
@@ -216,4 +216,5 @@ public class DataService {
 		}
 		
 	}	
+
 }

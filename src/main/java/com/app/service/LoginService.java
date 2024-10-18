@@ -1,10 +1,15 @@
 package com.app.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import com.app.mapper.UserMapper;
+import com.app.userDTO.DidsDTO;
 import com.app.userDTO.ReviewDTO;
 import com.app.userDTO.RoleDTO;
 import com.app.userDTO.UserDTO;
@@ -32,8 +38,16 @@ public class LoginService {
 	
 	@Autowired
 	private UserMapper userMapper;
+
+	private ObjectMapper objectMapper;
 	
-	public UserResultDTO findByUser(UserDTO userDTO) {
+	    public LoginService(UserMapper userMapper, ObjectMapper objectMapper) {
+	        this.userMapper = userMapper;
+	        this.objectMapper = objectMapper;
+	        this.objectMapper.registerModule(new JavaTimeModule()); // Java 8 Time Module 등록
+	    }
+	
+	    public UserResultDTO findByUser(UserDTO userDTO) {
 	    // 매퍼를 호출하여 사용자 정보를 가져옴
 	    List<UserDTO> users = userMapper.findOne(userDTO.getUserId()); // findOne 매퍼 호출
 
@@ -127,19 +141,19 @@ public class LoginService {
 
 	        return userResultDTO;
 	    }
- 
+
   public void updateUser(UserDTO userDTO) {
         userMapper.updateUser(userDTO);
-    }   
-	//리뷰 받아오기
-    public List<ReviewDTO> getReviewsByStatus(String userId) {
-        return userMapper.findReviewsByStatus(userId);
     }
-    //리뷰 업데이트하기
-    public boolean updateReview(ReviewDTO reviewDTO) {
-        int updatedRows = userMapper.updateReview(reviewDTO);
-        return updatedRows > 0;
-    }
-	    
-	    
+  
+// 	//리뷰 받아오기
+//     public List<ReviewDTO> getReviewsByStatus(String userId) {
+//         return userMapper.findReviewsByStatus(userId);
+//     }
+//     //리뷰 업데이트하기
+//     public boolean updateReview(ReviewDTO reviewDTO) {
+//         int updatedRows = userMapper.updateReview(reviewDTO);
+//         return updatedRows > 0;
+//     }
+
 }

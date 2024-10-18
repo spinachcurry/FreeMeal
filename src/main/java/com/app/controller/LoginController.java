@@ -1,8 +1,5 @@
 package com.app.controller;
 
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -11,7 +8,7 @@ import java.io.FileInputStream;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -25,9 +22,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+
 import io.jsonwebtoken.io.Decoders; 
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 import com.app.Utill.JWTUtility;
 import com.app.service.LoginService;
@@ -35,7 +33,7 @@ import com.app.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
-  
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -44,9 +42,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -55,9 +56,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "http://localhost:3000")// React 클라이언트 주소 
 public class LoginController {
 	
-	@Autowired
-	private LoginService loginService;
-	 // 파일 저장 경로를 application.properties에서 불러오기
+    @Autowired
+    private LoginService loginService;
+	  // 파일 저장 경로를 application.properties에서 불러오기
     @Value("${file.upload-dir}")
     private String uploadDir;
     
@@ -74,85 +75,8 @@ public class LoginController {
 		      e.printStackTrace();
 		      return ResponseEntity.notFound().build();
 		    }
-    }
- 
-    @GetMapping("/mainDetail")
-    public String mainDetail(HttpServletRequest req, Model model) {
-        // 세션에서 사용자 정보와 JWT 토큰을 가져옴
-        HttpSession session = req.getSession(false);  // 세션이 없으면 null을 반환
-        String user_Nnm = null;
-        String userId = null;
-        String phone = null;
-        String password = null;
-        String email = null;
-        String profileImageUrl = null; 
-        String jwtToken = null;  // JWT 토큰도 가져오기review
-
-        if (session != null) {
-            userId = (String) session.getAttribute("userId");
-            user_Nnm = (String) session.getAttribute("user_Nnm");  // 닉네임 가져오기
-            phone = (String) session.getAttribute("phone");        // 전화번호 가져오기
-            email = (String) session.getAttribute("email");        // 이메일 가져오기
-            password = (String) session.getAttribute("password");  // 비밀번호 가져오기
-            profileImageUrl = (String) session.getAttribute("profileImageUrl"); 
-            jwtToken = (String) session.getAttribute("jwtToken");  // JWT 토큰을 세션에서 가져옴
-        }
-
-        // 세션 정보가 있을 경우에만 모델에 추가하여 View로 전달
-        model.addAttribute("user_Nnm", user_Nnm);
-        model.addAttribute("userId", userId);
-        model.addAttribute("phone", phone);
-        model.addAttribute("email", email); 
-        model.addAttribute("password", password);
-        model.addAttribute("profileImageUrl", profileImageUrl);
-        model.addAttribute("jwtToken", jwtToken);  // JWT 토큰도 모델에 추가
-
-        log.info(jwtToken);  // 로그로 사용자 정보 출력
-        
-        // 로그인 여부와 관계없이 mainDetail 페이지를 반환
-        return "html/mainDetail";
-    }
+    }        
     
-    
-    @GetMapping("/myPage")
-    public String myPage(HttpServletRequest req, Model model) {
-        // 세션에서 사용자 정보와 JWT 토큰을 가져옴
-        HttpSession session = req.getSession(false);  // 세션이 없으면 null을 반환
-        String user_Nnm = null;
-        String userId = null;
-        String phone = null;
-        String password = null;
-        String email = null; 
-        String profileImageUrl = null;
-        String jwtToken = null;  // JWT 토큰도 가져오기
-
-        if (session != null) {
-            userId = (String) session.getAttribute("userId");
-            user_Nnm = (String) session.getAttribute("user_Nnm");  // 닉네임 가져오기
-            phone = (String) session.getAttribute("phone");        // 전화번호 가져오기
-            email = (String) session.getAttribute("email");        // 이메일 가져오기
-            password = (String) session.getAttribute("password");  // 비밀번호 가져오기
-            profileImageUrl = (String) session.getAttribute("profileImageUrl");  // 비밀번호 가져오기
-            jwtToken = (String) session.getAttribute("jwtToken");  // JWT 토큰을 세션에서 가져옴
-        }
-
-        // 세션 정보가 있을 경우에만 모델에 추가하여 View로 전달
-        model.addAttribute("user_Nnm", user_Nnm);
-        model.addAttribute("userId", userId);
-        model.addAttribute("phone", phone);
-        model.addAttribute("email", email);
-        model.addAttribute("password", password);
-        model.addAttribute("profileImageUrl", profileImageUrl);
-        model.addAttribute("jwtToken", jwtToken);  // JWT 토큰도 모델에 추가
-
-        log.info(jwtToken);  // 로그로 사용자 정보 출력
-    	return "html/myPage";
-    } 
-    
-    @GetMapping("login")
-	public String login() { 
-		return "html/login";
-	}
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         UserResultDTO userResultDTO = loginService.findByUser(userDTO);
@@ -170,17 +94,10 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 틀렸습니다.");
         }
     }
- 
-	 @GetMapping("signup")
-	    public String signup(HttpServletRequest req) {   
-	        req.getSession().removeAttribute("duplicateError"); 
-	        req.getSession().removeAttribute("errorMessage");
-	    	return "html/signup";
-	    }
-	    
+	   
 	 @PostMapping("/signup")
-	 @ResponseBody
 	 public ResponseEntity<?> signup(@RequestBody UserDTO userDTO, HttpServletRequest req) {
+     
 	     // UserResultDTO를 사용하여 가입 결과를 저장
 	     UserResultDTO userResultDTO = loginService.signup(userDTO);
 
@@ -194,60 +111,21 @@ public class LoginController {
 	             return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap("error", "중복된 아이디가 있습니다."));
 	         }
 
-	         // 기타 실패 시에도 실패 메시지를 반환
-	         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", userResultDTO.getMessage()));
-	     }
+	        // 기타 실패 시에도 실패 메시지를 반환
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", userResultDTO.getMessage()));
+	    }
 	 }
 
-	    @PostMapping("/logout")
-	    public String logout(HttpServletRequest req) {
-	        // 세션 무효화 (세션 내 모든 데이터를 삭제)
-	        HttpSession session = req.getSession();
-	        session.invalidate();
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest req) {
+        // 세션 무효화 (세션 내 모든 데이터를 삭제)
+        HttpSession session = req.getSession();
+        session.invalidate();
 
-	        log.info("로그아웃 완료, 세션 무효화됨.");
-	        return "redirect:mainDetail";  // 로그인 페이지로 리다이렉트
-	    }
-	     
-    @GetMapping("/updateUserInfo")
-    public String updateUserInfo(HttpServletRequest req, Model model) {
-        // 세션에서 사용자 정보와 JWT 토큰을 가져옴
-        HttpSession session = req.getSession(false);  // 세션이 없으면 null을 반환
-        String user_Nnm = null;
-        String userId = null;
-        String phone = null;
-        String password = null; 
-        String profileImageUrl = null; 
-        String email = null;
-        String review = null;
-        String jwtToken = null;  // JWT 토큰도 가져오기 review
-
-        if (session != null) {
-            userId = (String) session.getAttribute("userId");
-            user_Nnm = (String) session.getAttribute("user_Nnm");  // 닉네임 가져오기
-            phone = (String) session.getAttribute("phone");        // 전화번호 가져오기
-            email = (String) session.getAttribute("email");        // 이메일 가져오기
-            review = (String) session.getAttribute("review");        // 한마디 가져오기
-            password = (String) session.getAttribute("password");  // 비밀번호 가져오기
-            profileImageUrl = (String) session.getAttribute("profileImageUrl");  // 비밀번호 가져오기
-            jwtToken = (String) session.getAttribute("jwtToken");  // JWT 토큰을 세션에서 가져옴
-        }
-
-        // 세션 정보가 있을 경우에만 모델에 추가하여 View로 전달
-        model.addAttribute("user_Nnm", user_Nnm);
-        model.addAttribute("userId", userId);
-        model.addAttribute("phone", phone);
-        model.addAttribute("email", email);
-        model.addAttribute("review", review);
-        model.addAttribute("password", password);
-        model.addAttribute("profileImageUrl", profileImageUrl);
-        model.addAttribute("jwtToken", jwtToken);  // JWT 토큰도 모델에 추가 
-        log.info(jwtToken);  // 로그로 사용자 정보 출력
-
-        return "html/updateUserInfo";
+        log.info("로그아웃 완료, 세션 무효화됨.");
+        return "redirect:mainDetail";  // 로그인 페이지로 리다이렉트
     }
-     
-    @ResponseBody
+
     @PostMapping("/updateUser")
     public Map<String, Object> updateUser( 
             HttpServletRequest req,
@@ -259,8 +137,9 @@ public class LoginController {
             @RequestParam("password") String password, 
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             Model model) {
-    	Map<String, Object> resultMap = new HashMap<>();
-    	boolean check = true;
+      
+    	  Map<String, Object> resultMap = new HashMap<>();
+    	  boolean check = true;
         String uploadDir = System.getProperty("user.dir") + "/uploads/";
         String profileImageUrl = null;
 
@@ -284,12 +163,12 @@ public class LoginController {
                 System.out.println("File successfully uploaded to: " + profileImageUrl);
 
             } catch (IOException e) {
-                e.printStackTrace();
-//                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드에 실패했습니다: " + e.getMessage());
+              
+                e.printStackTrace();              
                 resultMap.put("msg", "파일 업로드에 실패했습니다: " + e.getMessage());
                 check = false;
             }
-        } 
+        }
 
         resultMap.put("state", check);
         
@@ -303,18 +182,16 @@ public class LoginController {
 	        userDTO.setReview(review);
 	        userDTO.setPassword(password);
 	        userDTO.setProfileImageUrl(profileImageUrl);
-	
+          
 	        // 서비스 단 호출
 	        loginService.updateUser(userDTO);
 	        System.out.println("Profile update successful.");
-	
 	        // 프로필 업데이트가 성공적으로 완료된 경우
 	        resultMap = getUserData(req);
-        }
-                
+        }     
         return resultMap;
     }
-
+  
     private String getFileExtension(String originalFilename) {
         // 파일 확장자 추출 로직 수정
         if (originalFilename != null && originalFilename.contains(".")) {
@@ -324,9 +201,7 @@ public class LoginController {
         }
     }
 
-//    @ResponseBody
-//    @GetMapping("/getUserData")
-    public Map<String, Object> getUserData(HttpServletRequest request) {
+    private Map<String, Object> getUserData(HttpServletRequest request) {
     	Map<String, Object> response = new HashMap<>();
     	response.put("status", false);
     	// 세션에서 userId를 가져옴
@@ -335,9 +210,9 @@ public class LoginController {
     	if(token != null && isValidToken(token)) {
     		
 	        String userId = getUser(token);
-	        // 세션에 userId가 없을 경우, 로그인되지 않은 상태로 처리
-	        if (userId == null) {
-	//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        
+	        // 세션에 userId가 없을 경우, 로그인되지 않은 상태로 처리        
+	        if (userId == null) { 
 	        	response.put("status", false);
 	        } else {
 		        // UserDTO 객체를 생성하고 userId를 설정
@@ -351,11 +226,10 @@ public class LoginController {
 		            response.put("user", userResultDTO.getUserDTO());
 		        } 
 	        }
-
-		} else { 
-			response.put("msg", "사용자 Token이 만료 되었습니다.");
-    	}
-        return response;
+		  } else { 
+			  response.put("msg", "사용자 Token이 만료되었습니다.");
+      }
+      return response;
     }
 
     //리뷰 불러오기Review
@@ -406,7 +280,6 @@ public class LoginController {
 //		String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";
 //		SecretKey key = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(strKey));
 //		SecretKey key = Keys.hmacShaKeyFor("shellfolder123456789DevJWT123456789".getBytes());
-		
 		// 유효 날짜 생성
 		Calendar date = Calendar.getInstance();
 		date.add(Calendar.MINUTE, 10);

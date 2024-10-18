@@ -56,5 +56,6 @@ public interface DataMapper {
 	@Insert("INSERT INTO `finished_store` (`title`, `areaNm`) "
 			+ "VALUE (#{title}, #{areaNm})")
 	public int insertFinished_store(Map<String, Object> map);
+
 }
 

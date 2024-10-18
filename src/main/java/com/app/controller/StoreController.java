@@ -37,7 +37,7 @@ public class StoreController {
 	public List<StoreDTO> storeList() {
 		return storeMapper.storeList();
 	}
-	
+
 	//가게 상세 페이지 >> 프론트에서 돌려주면 보여주는 것!
 	@GetMapping("/storeDetail")
 	public StoreDTO storeDetail(@RequestParam("store") String title) {
@@ -66,8 +66,5 @@ public class StoreController {
 //	}
 //	
 	
-	
 }
-
-	
 
