@@ -139,7 +139,7 @@ public class WebCrawling {
 							WebElement class_text = li.findElement(By.className("tit"));
 							String full_text = class_text.getText();
 							String trash_text = "";
-							if(class_text.findElements(By.className("ico_group")).size() > 0);
+							if(class_text.findElements(By.className("ico_group")).size() > 0)
 								trash_text = class_text.findElement(By.className("ico_group")).getText();
 							if("".equals(trash_text)) {
 								menu.setName(full_text);
