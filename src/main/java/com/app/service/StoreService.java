@@ -1,6 +1,5 @@
 package com.app.service;
 
-import java.io.Console;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,34 +25,47 @@ public class StoreService {
 			List<StoreDTO> list = storeMapper.storeDetail(title);
 			if(list.size() < 1) {
 				return StoreDTO.builder()
-						.title("그런 가게는 없습니다.")
+						.title("")
 						.build();
 			}else {
 				return list.get(0);
 			}
 	}
 	
-	public Map<String, List<StoreDTO>> storeNearby(Map<String, Object> location) {
+	//메인페이지 >> 내 근처 가게
+	public Map<String, List<StoreDTO>> storeNearby(Map<String, Object> location){
+		
 		Map<String, List<StoreDTO>> bigMap = new HashMap<>(); 
 		
 		double range = 0.5;
 		Map<String, Double> nearMap = new HashMap<>();
-		System.out.println("------" + nearMap);
-		log.info("--1" + nearMap);
-		
-		nearMap.put("maxLng", Double.valueOf(location.get("longitude").toString()) + range);	
-		nearMap.put("minLng", Double.valueOf(location.get("longitude").toString()) - range);	
-		nearMap.put("maxLat", Double.valueOf(location.get("latitude").toString()) + range);	
-		nearMap.put("minLat", Double.valueOf(location.get("latitude").toString()) - range);	
-		
-		log.info("Calculated nearMap values: {}", nearMap);
+		nearMap.put("maxLng", (double)location.get("longitude") + range);	
+		nearMap.put("minLng", (double)location.get("longitude") - range);	
+		nearMap.put("maxLat", (double)location.get("latitude") + range);	
+		nearMap.put("minLat", (double)location.get("latitude") - range);	
+//		log.info("여긴 어때?: {}", map);
+//		log.info("가게: {}", storeMapper.storeNearby(map));
 		bigMap.put("nearbyStore", storeMapper.storeNearby(nearMap));
 		bigMap.put("highPrice", storeMapper.highPrice());
 		bigMap.put("footStores", storeMapper.footStores());
 		return bigMap;
 	}
-
 	
+	//메인 페이지 검색>> 가게명 or 지역 검색(ex 강동구 카페)
+	public List<StoreDTO> searchStore(Map<String, Object> keykeyword) {
+		keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
+		if("전체".equals(keykeyword.get("areaNm"))) {
+			log.info("keykeyword:{}", keykeyword.toString());
+			return storeMapper.searchStore2(keykeyword.get("keyword"));
+		}else {
+			log.info("keyword:{}", keykeyword.toString());
+			return storeMapper.searchStore(keykeyword);
+		}
+	}
+		
+	//가게 링크불러오기~!
+//	public List<StoreDTO> storeLink(Map<String, Object> storeinfo) {
+//		log.info("storeinfo:{}" , storeinfo);
+//		return storeMapper.storeLink(storeinfo);
+//	}	
 }
-	
-	

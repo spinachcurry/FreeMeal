@@ -1,23 +1,3 @@
-package com.app.service;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
-import org.apache.ibatis.annotations.Param;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-
 import com.app.mapper.UserMapper;
 import com.app.userDTO.DidsDTO;
 import com.app.userDTO.ReviewDTO;
@@ -82,7 +62,7 @@ public class LoginService {
 	            userDTO.setReview("This is a sample review.");
 	        }
 	        if (userDTO.getProfileImageUrl() == null) {
-	            userDTO.setProfileImageUrl("/uploads/default.png");
+	            userDTO.setProfileImageUrl("user1.png");
 	        }
 
 	        try {

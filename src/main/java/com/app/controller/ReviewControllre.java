@@ -53,24 +53,19 @@ public class ReviewControllre {
     @PostMapping("/updateReview")
     public ResponseEntity<?> updateReview(@RequestBody ReviewDTO reviewDTO) { 
         try {
-            // 리뷰 업데이트 수행
             boolean isUpdated = reviewService.updateReview(reviewDTO);
 
             if (isUpdated) {
-                // 업데이트 성공
                 return ResponseEntity.ok().body("리뷰가 성공적으로 수정되었습니다.");
             } else {
-                // 업데이트 실패 (예: 해당 리뷰가 존재하지 않는 경우)
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없습니다.");
             }
         } catch (Exception e) {
-            // 예외 처리 및 오류 응답
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body("리뷰를 수정하는 중 오류가 발생했습니다.");
         }
     }
-
     // 리뷰 목록을 반환하는 GET 엔드포인트
     @GetMapping("/getReviews")
     public ResponseEntity<List<ReviewDTO>> getReviews(@RequestParam("address") String address) {
@@ -98,6 +93,7 @@ public class ReviewControllre {
                     .body("리뷰를 추가하는 중 오류가 발생했습니다.");
         }
     }
+    
  // 리뷰 수정 요청 처리
     @PostMapping("/report")
     public ResponseEntity<String> reportReview(@RequestBody ReviewDTO reviewNo) {

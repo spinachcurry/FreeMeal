@@ -82,8 +82,8 @@ public class LoginController {
         String phone = null;
         String password = null;
         String email = null;
-        String profileImageUrl = null; 
-        String jwtToken = null;  // JWT 토큰도 가져오기review
+        String profileImageUrl = null;
+        String jwtToken = null;
 
         if (session != null) {
             userId = (String) session.getAttribute("userId");
@@ -146,10 +146,6 @@ public class LoginController {
     	return "html/myPage";
     } 
     
-    @GetMapping("login")
-	public String login() { 
-		return "html/login";
-	}
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
         UserResultDTO userResultDTO = loginService.findByUser(userDTO);
@@ -167,13 +163,6 @@ public class LoginController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("아이디 또는 비밀번호가 틀렸습니다.");
         }
     }
- 
-	 @GetMapping("signup")
-	    public String signup(HttpServletRequest req) {   
-	        req.getSession().removeAttribute("duplicateError"); 
-	        req.getSession().removeAttribute("errorMessage");
-	    	return "html/signup";
-	    }
 	    
 	 @PostMapping("/signup")
 	 @ResponseBody
@@ -182,7 +171,6 @@ public class LoginController {
 	     UserResultDTO userResultDTO = loginService.signup(userDTO);
  
 	     if (userResultDTO.isStatus()) {
-	     
 	         return ResponseEntity.ok().body("회원가입이 완료되었습니다.");
 	     } else {
 	         
@@ -413,4 +401,4 @@ public class LoginController {
 	    return false;
 	}
     
-}
+} 
