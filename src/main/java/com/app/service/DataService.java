@@ -77,7 +77,7 @@ public class DataService {
 				
 				for(ItemDTO nItem : nData.getItems()) {
 					String category = nItem.getCategory().split(">")[0];
-					if(!"한식".equals(category)  && !"음식점".equals(category) && !"분식".equals(category)) continue;
+					if(!"한식".equals(category)  && !"음식점".equals(category) && !"분식".equals(category) && !"카페".equals(category)) continue;
 					if(!nItem.getAddress().contains(getOne.getAreaNm())) continue; //네이버 데이터 & rawData 내의 지역 불일치하면 다음으로 긔긔
 			
 					//dto 빌드 >> for 문 멈추기!
@@ -89,8 +89,8 @@ public class DataService {
 							.telephone(nItem.getTelephone())
 							.address(nItem.getAddress())
 							.roadAddress(nItem.getRoadAddress())
-							.lng(nItem.getMapx())
-							.lat(nItem.getMapy())
+							.lng(nItem.getMapx() / 10000000)
+							.lat(nItem.getMapy() / 10000000)
 							//raw data 에서 온 항목
 							.price(getOne.getPrice())
 							.party(getOne.getParty())
@@ -113,7 +113,7 @@ public class DataService {
 			}
 			
 			// 지도 소수점 변경
-			int updateCount = dataMapper.mapLocation();
+			//int updateCount = dataMapper.mapLocation();
 //			log.info("맵 위치 경로 소수점 변경 횟수 : {}", updateCount);
 			
 			//카운팅은 이미 종료! >>
