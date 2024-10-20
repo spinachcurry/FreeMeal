@@ -70,18 +70,7 @@ public class ReviewService {
 		    } catch (IllegalArgumentException e) {
 		        return ResponseEntity.badRequest().body(e.getMessage());
 		    }
-		} 
-		    // 리뷰 수정 로직
-//		    private ResponseEntity<?> handleUpdateReview(Map<String, Object> requestBody) {
-//		        ReviewDTO reviewDTO = new ReviewDTO();
-//		        reviewDTO.setReviewNo((Integer) requestBody.get("reviewNo"));
-//		        reviewDTO.setUserId((String) requestBody.get("userId"));
-//		        reviewDTO.setAddress((String) requestBody.get("address"));
-//		        reviewDTO.setContent((String) requestBody.get("content"));
-//		        reviewDTO.setRating((Integer) requestBody.get("rating"));
-//		        
-//		        return updateReview(reviewDTO);
-//		    } 
+		}  
 		    // 리뷰 조회 메서드
 		    public List<ReviewDTO> getReviewsByStatus(String userId) {
 		        return reviewMapper.findReviewsByStatus(userId); // 기존 매퍼 호출
