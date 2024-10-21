@@ -32,8 +32,8 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest; 
+import io.jsonwebtoken.security.Keys; 
+import jakarta.servlet.http.HttpServletRequest;  
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -161,8 +161,6 @@ public class LoginService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("error", userResultDTO.getMessage()));
         }
     }
- 
-
     private String getUser(String token) {
 		return getToken(token).get("name", String.class);
 	}
@@ -202,7 +200,6 @@ public class LoginService {
 			  response.put("msg", "사용자 Token이 만료되었습니다.");
       }
       return response;
-    } 
     public String getTokenFromHeader(String token) {
 	    String[] strArray = token.split(" ");
 	    if("Bearer".toUpperCase().equals(strArray[0].toUpperCase())) return strArray[1];
@@ -259,8 +256,7 @@ public class LoginService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
+    } 
 
     private SecretKey getKey() {
         String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";

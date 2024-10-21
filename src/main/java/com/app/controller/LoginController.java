@@ -2,7 +2,7 @@ package com.app.controller;
 
 import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
-import com.app.dto.UserDTO;
+import com.app.dto.UserDTO; 
 import com.app.dto.UserResultDTO;
 import com.app.service.LoginService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,7 @@ public class LoginController {
 
     @GetMapping("/view")
     public ResponseEntity<?> view(@RequestParam("url") String url) {
-        return loginService.viewFile(url);
+        return loginService.viewFile(url); 
     }
 
     @PostMapping("/userAction")
@@ -39,6 +39,5 @@ public class LoginController {
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
             Model model) {
         return loginService.updateUser(req, userId, user_Nnm, phone, email, review, password, profileImage);
-    }
- 
+    } 
 }

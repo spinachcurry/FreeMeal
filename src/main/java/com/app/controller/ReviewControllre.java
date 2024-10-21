@@ -22,5 +22,5 @@ public class ReviewControllre {
 	@PostMapping("/reviewAction")
 	public ResponseEntity<?> reviewAction(@RequestBody Map<String, Object> requestBody) {
 	    return reviewService.handleReviewAction(requestBody);
-	}  
-}
+	}   
+} 
