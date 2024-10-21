@@ -84,15 +84,7 @@ public class LoginService {
         }
 
         return response;
-    }
-
-    // 사용자 정보 조회
-    public UserResultDTO getUserInfoByToken(String token) {
-        String userId = getUserIdFromToken(token);
-        return findOne(UserDTO.builder().userId(userId).build());
-    } 
-    // 사용자 정보를 조회하는 메서드
-    
+    }  
     public UserResultDTO findByUser(UserDTO userDTO) {
         UserDTO users = userMapper.findOne(userDTO.getUserId());
 
