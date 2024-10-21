@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.StoreDTO;
+import com.app.mapper.GetStoreMapper;
 import com.app.mapper.StoreMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,9 @@ public class StoreService {
 
 	@Autowired
 	private StoreMapper storeMapper;
+	
+	@Autowired
+	private GetStoreMapper getstoreMapper;
 	
 	//가게 상세 페이지
 	public StoreDTO storeDetail(String title) {
@@ -45,9 +49,11 @@ public class StoreService {
 		nearMap.put("minLat", (double)location.get("latitude") - range);	
 //		log.info("여긴 어때?: {}", map);
 //		log.info("가게: {}", storeMapper.storeNearby(map));
-		bigMap.put("nearbyStore", storeMapper.storeNearby(nearMap));
-		bigMap.put("highPrice", storeMapper.highPrice());
-		bigMap.put("footStores", storeMapper.footStores());
+		
+		bigMap.put("nearbyStore", setMenuAndImages(storeMapper.storeNearby(nearMap)));
+		bigMap.put("highPrice", setMenuAndImages(storeMapper.highPrice()));		
+		bigMap.put("footStores", setMenuAndImages(storeMapper.footStores()));
+			
 		return bigMap;
 	}
 	
@@ -57,21 +63,24 @@ public class StoreService {
 		if("전체".equals(keykeyword.get("areaNm"))) {
 			log.info("keykeyword:{}", keykeyword.toString());
 			if("party".equals(keykeyword.get("criteria")))
-				return storeMapper.searchAllStoreParty(keykeyword);
+				return setMenuAndImages(storeMapper.searchAllStoreParty(keykeyword));
 			else
-				return storeMapper.searchAllStoreCash(keykeyword);
+				return setMenuAndImages(storeMapper.searchAllStoreCash(keykeyword));
 		}else {
 			log.info("keyword:{}", keykeyword.toString());
 			if("party".equals(keykeyword.get("criteria")))
-				return storeMapper.searchByStoreParty(keykeyword);
+				return setMenuAndImages(storeMapper.searchByStoreParty(keykeyword));
 			else
-				return storeMapper.searchByStoreCash(keykeyword);
+				return setMenuAndImages(storeMapper.searchByStoreCash(keykeyword));
 		}
 	}
+	
+	private List<StoreDTO> setMenuAndImages(List<StoreDTO> stores){
+		for(StoreDTO store : stores) {
+			store.setMenuItems(getstoreMapper.getStoreMenu(store));
+			store.setImgURLs(getstoreMapper.getStoreImg(store));
+		}
+		return stores;
+	}
 		
-	//가게 링크불러오기~!
-//	public List<StoreDTO> storeLink(Map<String, Object> storeinfo) {
-//		log.info("storeinfo:{}" , storeinfo);
-//		return storeMapper.storeLink(storeinfo);
-//	}	
 }
