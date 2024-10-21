@@ -1,34 +1,46 @@
 package com.app.controller;
 
 import org.springframework.web.multipart.MultipartFile;
-import java.util.Map;
-import com.app.dto.UserDTO; 
+ 
+import com.app.dto.UserDTO;
 import com.app.dto.UserResultDTO;
 import com.app.service.LoginService;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
+import jakarta.servlet.http.HttpServletRequest;  
+
+import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.http.ResponseEntity; 
+
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader; 
+ 
+  @RestController 
 public class LoginController {
 
     @Autowired
     private LoginService loginService;
-
+    
     @GetMapping("/view")
     public ResponseEntity<?> view(@RequestParam("url") String url) {
-        return loginService.viewFile(url); 
+        return loginService.getFileAsResponse(url);
     }
 
-    @PostMapping("/userAction")
-    public ResponseEntity<?> userAction(@RequestBody Map<String, Object> requestBody, HttpServletRequest req) {
-        return loginService.processUserAction(requestBody, req);
-    } 
-      
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(loginService.login(userDTO));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(loginService.signup(userDTO));
+    }
+ 
     @PostMapping("/updateUser")
-    public Map<String, Object> updateUser(
+    public ResponseEntity<?> updateUser(
             HttpServletRequest req,
             @RequestParam("userId") String userId,
             @RequestParam("user_Nnm") String user_Nnm,
@@ -37,7 +49,7 @@ public class LoginController {
             @RequestParam("review") String review,
             @RequestParam("password") String password,
             @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
-            Model model) {
-        return loginService.updateUser(req, userId, user_Nnm, phone, email, review, password, profileImage);
+            @RequestParam("status") String status) {  // status 추가
+        return ResponseEntity.ok(loginService.updateUserProfile(req, userId, user_Nnm, phone, email, review, password, profileImage, status));
     } 
 }
