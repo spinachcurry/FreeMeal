@@ -87,7 +87,7 @@ SELECT COUNT(*) FROM Users WHERE userId = 'nono'
 			
  SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, 
 			re.userId, re.content, re.modifiedDate, re.status 
-			FROM freemeal AS tf 
+			FROM test_freemeal AS tf 
 			INNER JOIN Reviews AS re 
 			ON tf.address = re.address 
 			WHERE re.userId = 'momo'
@@ -96,7 +96,7 @@ SELECT COUNT(*) FROM Users WHERE userId = 'nono'
 			
 			SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty,
 			re.userId, re.content, re.modifiedDate,re.createDate, re.status 
-			FROM freemeal AS tf 
+			FROM test_freemeal AS tf 
 			INNER JOIN Reviews AS re 
 			ON tf.address = re.address 
 			WHERE tf.address = '서울특별시 강동구 성내동 556' AND STATUS ='일반'
@@ -104,7 +104,7 @@ SELECT COUNT(*) FROM Users WHERE userId = 'nono'
 			
 			SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, 
 		 	re.reviewNo, re.userId, re.content, re.modifiedDate,re.createDate, re.status 
-			 FROM freemeal AS tf 
+			 FROM test_freemeal AS tf 
 		 	 INNER JOIN Reviews AS re 
 			 ON tf.address = re.address 
 			 	WHERE re.STATUS ='일반'
@@ -128,7 +128,7 @@ insert into Reviews
 
 
  SELECT  tf.title,tf.link, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty 
-			FROM freemeal AS tf
+			FROM test_freemeal AS tf
 				GROUP BY tf.title, tf.address, tf.category
 				
   INSERT INTO Dibs SET userId='dddd' , address ='서울특별시 강남구 청담동 79 Trinity 빌딩 지하1층' , STATUS = '1'
@@ -146,26 +146,19 @@ FROM Dibs
 WHERE STATUS = '1' AND address ='서울특별시 강남구 청담동 28-13' ;
 
 SELECT tf.*, did.userId ,did.STATUS
-FROM freemeal AS tf 
+FROM test_freemeal AS tf 
 		 	 INNER JOIN Dibs AS did
 		 	 	ON tf.address = did.address 
 WHERE did.STATUS = '1' AND did.userId ='momo' ;
 
 	SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, did.*
-			 FROM freemeal AS tf 
+			 FROM test_freemeal AS tf 
 		 	 INNER JOIN Dibs AS did 
 			 ON tf.address = did.address  
 			 WHERE did.STATUS = '1' AND did.userId ='momo'
 		 	GROUP BY tf.title, tf.address, tf.category
 			 
-SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, 
-			re.reviewNo, re.userId, re.content, re.modifiedDate, re.status 
-			FROM freemeal AS tf 
-				INNER JOIN Reviews AS re  
-			ON tf.address = re.address  
-			WHERE re.userId = '관리자' or re.status='신고' 
-			GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status 
-			ORDER BY re.modifiedDate DESC;
+
 
 INSERT INTO Dibs (userId, address, status) VALUES ('dddd', '1', '0')  
 	         ON DUPLICATE KEY UPDATE STATUS = '1'

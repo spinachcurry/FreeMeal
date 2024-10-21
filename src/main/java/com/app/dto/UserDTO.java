@@ -1,20 +1,21 @@
-package com.app.userDTO;
+package com.app.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import org.springframework.data.annotation.Transient;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Data  
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "사용자 DTO")
 public class UserDTO {
 	
-	private List<RoleDTO> userRoles; 
+	private RoleDTO userRoles; 
 	private int userNo;
 	private String userId;
     private String password;
@@ -27,6 +28,5 @@ public class UserDTO {
     private String status;
     private String review;
     private String profileImageUrl;
-	
 
 }

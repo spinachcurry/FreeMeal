@@ -1,4 +1,4 @@
-package com.app.userDTO;
+package com.app.dto;
 // LoginResponseDTO.java
 public class LoginResponseDTO {
     private boolean status;

@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
 public class StoreController {
 
 	@Autowired
@@ -37,7 +36,7 @@ public class StoreController {
 	public List<StoreDTO> storeList() {
 		return storeMapper.storeList();
 	}
-	
+
 	//가게 상세 페이지 >> 프론트에서 돌려주면 보여주는 것!
 	@GetMapping("/storeDetail")
 	public StoreDTO storeDetail(@RequestParam("store") String title) {
@@ -66,7 +65,5 @@ public class StoreController {
 //	}
 //	
 	
-	
 }
 
-	

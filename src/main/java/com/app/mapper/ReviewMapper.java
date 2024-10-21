@@ -8,8 +8,8 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
-import com.app.userDTO.DidsDTO;
-import com.app.userDTO.ReviewDTO; 
+import com.app.dto.DidsDTO;
+import com.app.dto.ReviewDTO; 
 
 @Mapper
 public interface ReviewMapper {
@@ -62,9 +62,8 @@ public interface ReviewMapper {
 	        + " ON DUPLICATE KEY UPDATE status = #{status} ")
 	int insertDibs(@Param("userId") String userId, @Param("address") String address, @Param("status") int status);
 	//찜을 했을 때
-	@Select("SELECT * FROM Dibs "
-			+ "WHERE userId=#{userId} and address =#{address} and  STATUS = '1' ")
-	List<DidsDTO> selectDibs(@Param("userId") String userId, @Param("address") String address) ;
+	@Select("SELECT * FROM Dibs WHERE userId=#{userId} and address =#{address} and  STATUS = '1' ")
+	List<DidsDTO> selectDibs(@Param("userId") String userId, @Param("address") String address) ; 
 	//찜 카운트
 	@Select("SELECT COUNT(userId) AS COUNT " 
 			+ "FROM Dibs " 

@@ -1,7 +1,7 @@
-package com.app.userDTO;
+package com.app.dto;
  
-import java.util.List;  
-import com.app.dto.StoreDTO; 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
