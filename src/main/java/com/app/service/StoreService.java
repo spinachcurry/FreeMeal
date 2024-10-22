@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.StoreDTO;
+import com.app.mapper.GetStoreMapper;
 import com.app.mapper.StoreMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,9 @@ public class StoreService {
 
 	@Autowired
 	private StoreMapper storeMapper;
+	
+	@Autowired
+	private GetStoreMapper getstoreMapper;
 	
 	//가게 상세 페이지
 	public StoreDTO storeDetail(String title) {
@@ -38,18 +42,18 @@ public class StoreService {
 		
 		double range = 0.5;
 		Map<String, Double> nearMap = new HashMap<>();
-		System.out.println("------" + nearMap);
-		log.info("--1" + nearMap);
+
+		nearMap.put("maxLng", (double)location.get("longitude") + range);	
+		nearMap.put("minLng", (double)location.get("longitude") - range);	
+		nearMap.put("maxLat", (double)location.get("latitude") + range);	
+		nearMap.put("minLat", (double)location.get("latitude") - range);	
+//		log.info("여긴 어때?: {}", map);
+//		log.info("가게: {}", storeMapper.storeNearby(map));
 		
-		nearMap.put("maxLng", Double.valueOf(location.get("longitude").toString()) + range);	
-		nearMap.put("minLng", Double.valueOf(location.get("longitude").toString()) - range);	
-		nearMap.put("maxLat", Double.valueOf(location.get("latitude").toString()) + range);	
-		nearMap.put("minLat", Double.valueOf(location.get("latitude").toString()) - range);	
+		bigMap.put("nearbyStore", setMenuAndImages(storeMapper.storeNearby(nearMap)));
+		bigMap.put("highPrice", setMenuAndImages(storeMapper.highPrice()));		
+		bigMap.put("footStores", setMenuAndImages(storeMapper.footStores()));
 		
-		log.info("Calculated nearMap values: {}", nearMap);
-		bigMap.put("nearbyStore", storeMapper.storeNearby(nearMap));
-		bigMap.put("highPrice", storeMapper.highPrice());
-		bigMap.put("footStores", storeMapper.footStores());
 		return bigMap;
 	}
 
@@ -58,17 +62,25 @@ public class StoreService {
 		keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
 		if("전체".equals(keykeyword.get("areaNm"))) {
 			log.info("keykeyword:{}", keykeyword.toString());
-			return storeMapper.searchStore2(keykeyword.get("keyword"));
+			if("party".equals(keykeyword.get("criteria")))
+				return setMenuAndImages(storeMapper.searchAllStoreParty(keykeyword));
+			else
+				return setMenuAndImages(storeMapper.searchAllStoreCash(keykeyword));
 		}else {
 			log.info("keyword:{}", keykeyword.toString());
-			return storeMapper.searchStore(keykeyword);
+			if("party".equals(keykeyword.get("criteria")))
+				return setMenuAndImages(storeMapper.searchByStoreParty(keykeyword));
+			else
+				return setMenuAndImages(storeMapper.searchByStoreCash(keykeyword));
 		}
 	}
-		
-	//가게 링크불러오기~!
-//	public List<StoreDTO> storeLink(Map<String, Object> storeinfo) {
-//		log.info("storeinfo:{}" , storeinfo);
-//		return storeMapper.storeLink(storeinfo);
-//	}	
+	
+	private List<StoreDTO> setMenuAndImages(List<StoreDTO> stores){
+		for(StoreDTO store : stores) {
+			store.setMenuItems(getstoreMapper.getStoreMenu(store));
+			store.setImgURLs(getstoreMapper.getStoreImg(store));
+		}
+		return stores;
+	}
 }
 
