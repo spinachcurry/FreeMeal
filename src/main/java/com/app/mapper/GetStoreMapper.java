@@ -16,11 +16,11 @@ public interface GetStoreMapper {
 	public int test();
 	
 	//특정 가게 메뉴판(이미지) 가져옴
-	@Select("SELECT * FROM store_menu WHERE `storeNm`=#{title} AND `areaNm` = #{areaNm} ")
+	@Select("SELECT * FROM store_menu WHERE `storeNm`=#{title} AND `areaNm` = #{areaNm} limit 50")
 	public List<MenuDTO> getStoreMenu(StoreDTO store);
 	
 	//특정 가게 이미지(업체 제공 이미지 >> 메뉴 사진 or 매장 사진 or 사장 얼굴 등)
-	@Select("SELECT `imageURL` FROM store_image WHERE `storeNm`=#{title} AND `areaNm` = #{areaNm} ")
+	@Select("SELECT `imageURL` FROM store_image WHERE `storeNm`=#{title} AND `areaNm` = #{areaNm} limit 50")
 	public List<String> getStoreImg(StoreDTO storeImg);
 
 
