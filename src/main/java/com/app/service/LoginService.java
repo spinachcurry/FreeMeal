@@ -107,9 +107,6 @@ public class LoginService {
             .build();
     }
 
-    /**
-     * 회원가입 처리
-     */
     @Transactional
     public UserResultDTO signup(UserDTO userDTO) {
         UserResultDTO userResultDTO = new UserResultDTO();
@@ -136,10 +133,7 @@ public class LoginService {
 
         return userResultDTO;
     }
-
-    /**
-     * 사용자 정보 업데이트 처리
-     */
+     // 사용자 정보 업데이트 처리
     public Map<String, Object> updateUserProfile(HttpServletRequest req, String userId, String user_Nnm, String phone, String email,
                                                  String review, String password, MultipartFile profileImage, String status) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -166,10 +160,7 @@ public class LoginService {
         }
         return resultMap;
     }
-
-    /**
-     * 프로필 이미지 저장 메서드
-     */
+    // 프로필 이미지 저장 메서드
     private String saveProfileImage(MultipartFile profileImage) throws IOException {
         String fileName = UUID.randomUUID().toString() + "." + getFileExtension(profileImage.getOriginalFilename());
         Path destinationDir = Paths.get(uploadDir);
@@ -186,7 +177,6 @@ public class LoginService {
                 ? originalFilename.substring(originalFilename.lastIndexOf(".") + 1)
                 : "";
     }
-
     // 토큰 생성
     public String generateToken(Map<String, String> paramMap) {
         Calendar date = Calendar.getInstance();
@@ -213,7 +203,6 @@ public class LoginService {
         String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";
         return Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(strKey));
     }
-
     // 사용자 정보 조회
     public UserResultDTO findOne(UserDTO userDTO) {
         UserDTO user = userMapper.findOne(userDTO.getUserId());
