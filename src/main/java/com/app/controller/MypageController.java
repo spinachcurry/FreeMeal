@@ -63,12 +63,12 @@ public class MypageController {
             @RequestParam("status") String status) {  // status 추가
         return ResponseEntity.ok(loginService.updateUserProfile(req, userId, user_Nnm, phone, email, review, password, profileImage, status));
     }  
-	    // 모든 찜 관련 기능 처리
+	// 모든 찜 관련 기능 처리
 	@PostMapping("/handleDibs")
     public ResponseEntity<?> handleDibs(@RequestBody Map<String, Object> requestBody) {
           return didsService.handleDibs(requestBody);
     } 
-	//리뷰 관련
+	//모든 리뷰 관련
 	@PostMapping("/reviewAction")
 	public ResponseEntity<?> reviewAction(@RequestBody Map<String, Object> requestBody) {
 	    return reviewService.handleReviewAction(requestBody);
