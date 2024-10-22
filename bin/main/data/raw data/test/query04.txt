@@ -1,0 +1,88 @@
+let
+	wait = (seconds as number, action as function) =>
+		if (List.Count(List.Generate(() => DateTimeZone.LocalNow() + #duration(0, 0, 0, seconds), (x) => DateTimeZone.LocalNow() < x,  (x) => x)) = 0) then null else action(),
+	Pause = wait(3, DateTime.LocalNow),
+	OriginalSource = Excel.Workbook(File.Contents("D:\Data\Raw Data\강남구\중대재해예방과\2023년 9월 업무추진비 사용 내역(중대재해예방실)(최종).xls"), null, true),
+	Source = Table.SelectRows(OriginalSource, each not Text.Contains([Name], "$'FilterDatabase") and not Text.Contains([Name], "$'Print_Titles")),
+	SheetNameList = List.Generate(() => [x = 0, y = Source{x}[Name]], each [x] < Table.RowCount(Source), each [x = [x] + 1, y = Source{x}[Name]], each [y]),
+	makeTable = (oneTable as table, name as text) =>
+		let
+			NullIndexDelTable = Table.RemoveMatchingRows(oneTable, {[Column1 = null], [Column1 = ""]}, "Column1"),
+			RawColumnList = Table.ColumnNames(NullIndexDelTable),
+			deleteNullColumn = (myTable as table, myColumn as list, offset as number) =>
+				if offset < List.Count(myColumn) then
+					if List.NonNullCount(Table.Column(myTable, myColumn{offset})) = 0 then
+						@deleteNullColumn(Table.RemoveColumns(myTable, myColumn{offset}), myColumn, offset + 1)
+					else
+						@deleteNullColumn(myTable, myColumn, offset + 1)
+				else
+					myTable,
+			NullColumnDelTable = deleteNullColumn(NullIndexDelTable, RawColumnList, 0),
+			LastRow = List.Count(Table.ToList(NullColumnDelTable)),
+			countNull = (myList as list, offset as number) =>
+				if offset < List.Count(myList) then
+					if myList{offset} = null or myList{offset} = "" then
+						@countNull(myList, offset + 1) + 1
+					else
+						@countNull(myList, offset + 1)
+				else 0,
+			deleteNullRows = (myTable as table, offset as number, end as number) =>
+				if offset < end then
+					if countNull(Record.FieldValues(myTable{offset}), 0) > 3 then
+						@deleteNullRows(Table.RemoveRows(myTable, offset), offset, end - 1)
+					else
+						@deleteNullRows(myTable, offset + 1, end)
+				else 
+					myTable,
+			NullDeletedTable = deleteNullRows(NullColumnDelTable, 0, LastRow),
+			PromotedHeaders = Table.PromoteHeaders(NullDeletedTable, [PromoteAllScalars=true]),
+			ColumnList = Table.ColumnNames(PromotedHeaders),
+			SpaceErasedColumnList = List.Generate(() => [x = 0, y = Text.Remove(Text.Clean(ColumnList{x}), " ")], each [x] < List.Count(ColumnList), each [x = [x] + 1, y = Text.Remove(Text.Clean(ColumnList{x}), " ")], each [y] ),
+			exchangeColumn = (colText as text) =>
+				if Text.Contains(colText, "장소") or Text.Contains(colText, "가맹점") or Text.Contains(colText, "사용처") then "장소"
+				else if Text.Contains(colText, "목적") or Text.Contains(colText, "내역") then "목적"
+				else if Text.Contains(colText, "부서") then "부서"
+				else if Text.Contains(colText, "방법") then "방법"
+				else if Text.Contains(colText, "인원") then "인원"
+				else if Text.Contains(colText, "액") then "금액"
+				else if Text.Contains(colText, "순번") then "연번"
+				else if Text.Contains(colText, "일") then "날짜"
+				else if Text.Contains(colText, "시") then "시간"
+				else colText,
+			NewColumnList = List.Generate(() => [x = 0, y = exchangeColumn(SpaceErasedColumnList{x})], each [x] < List.Count(SpaceErasedColumnList), each [x = [x] + 1, y = exchangeColumn(SpaceErasedColumnList{x})], each [y]),
+			HeaderPairList = List.Generate(() => [x = 0, y = {ColumnList{x}, NewColumnList{x}}], each [x] < List.Count(NewColumnList), each [x = [x] + 1, y = {ColumnList{x}, NewColumnList{x}}], each [y]),
+			RenamedTable = Table.RenameColumns(PromotedHeaders, HeaderPairList),
+			UserAddedTable = 
+				if List.Contains(NewColumnList, "사용자") then RenamedTable
+				else if Text.Contains(name, "sheet", Comparer.OrdinalIgnoreCase) then RenamedTable
+				else Table.AddColumn(RenamedTable, "사용자", each name, type text),
+			ColumnUnifiedTable = if List.Contains(NewColumnList, "부서") then UserAddedTable else Table.AddColumn(UserAddedTable, "부서", each "가족정책과", type text),
+			extractNumber = (rowText) => if Type.Is(Value.Type(rowText), type text) then Text.Select(rowText, {"0".."9"}) else rowText,
+			TransfromedTable = Table.TransformColumns(ColumnUnifiedTable,
+					{
+						{"연번", Number.From},
+						{"인원", each extractNumber(_)},
+						{"날짜", Text.From},
+						{"시간", Text.From},
+						{"금액", each extractNumber(_)},
+						{"장소", Text.Clean}
+					},
+					Text.From,
+					MissingField.UseNull
+				),
+			TypeTransfromedTable = Table.TransformColumnTypes(TransfromedTable,
+					{
+						{"연번", Int64.Type},
+						{"인원", Int64.Type},
+						{"날짜", type date},
+						{"시간", type time},
+						{"금액", Currency.Type}
+					}
+				),
+			ErrorCorrectedTable = Table.ReplaceErrorValues(TypeTransfromedTable, {{"날짜", null}, {"시간", null}})
+		in
+			ErrorCorrectedTable,
+	TableList = List.Generate(() => [x = 0, y = makeTable(Source{x}[Data], SheetNameList{x})], each [x] < List.Count(SheetNameList), each [x = [x] + 1, y = makeTable(Source{x}[Data], SheetNameList{x})], each [y]),
+	CombinedTable = Table.Combine(TableList)
+in
+	CombinedTable
