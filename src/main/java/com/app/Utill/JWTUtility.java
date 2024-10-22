@@ -1,4 +1,4 @@
-package com.app.Utill;
+package com.app.utill;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -1,5 +1,6 @@
 package com.app.service;
 
+import java.io.Console;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,20 +30,19 @@ public class StoreService {
 			List<StoreDTO> list = storeMapper.storeDetail(title);
 			if(list.size() < 1) {
 				return StoreDTO.builder()
-						.title("")
+						.title("그런 가게는 없습니다.")
 						.build();
 			}else {
 				return list.get(0);
 			}
 	}
 	
-	//메인페이지 >> 내 근처 가게
-	public Map<String, List<StoreDTO>> storeNearby(Map<String, Object> location){
-		
+	public Map<String, List<StoreDTO>> storeNearby(Map<String, Object> location) {
 		Map<String, List<StoreDTO>> bigMap = new HashMap<>(); 
 		
 		double range = 0.5;
 		Map<String, Double> nearMap = new HashMap<>();
+
 		nearMap.put("maxLng", (double)location.get("longitude") + range);	
 		nearMap.put("minLng", (double)location.get("longitude") - range);	
 		nearMap.put("maxLat", (double)location.get("latitude") + range);	
@@ -53,10 +53,10 @@ public class StoreService {
 		bigMap.put("nearbyStore", setMenuAndImages(storeMapper.storeNearby(nearMap)));
 		bigMap.put("highPrice", setMenuAndImages(storeMapper.highPrice()));		
 		bigMap.put("footStores", setMenuAndImages(storeMapper.footStores()));
-			
+		
 		return bigMap;
 	}
-	
+
 	//메인 페이지 검색>> 가게명 or 지역 검색(ex 강동구 카페)
 	public List<StoreDTO> searchStore(Map<String, Object> keykeyword) {
 		keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
@@ -82,5 +82,5 @@ public class StoreService {
 		}
 		return stores;
 	}
-		
 }
+

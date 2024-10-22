@@ -1,145 +1,222 @@
 package com.app.service;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-
+import com.app.dto.RoleDTO;
+import com.app.dto.UserDTO;
+import com.app.dto.UserResultDTO;
+import com.app.mapper.UserMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-
-import com.app.mapper.UserMapper;
-import com.app.userDTO.ReviewDTO;
-import com.app.userDTO.RoleDTO;
-import com.app.userDTO.UserDTO;
-import com.app.userDTO.UserResultDTO;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
- 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import javax.crypto.SecretKey;
+
 @Service
 @Slf4j
 public class LoginService {
-	
-	@Autowired
-	private UserMapper userMapper;
-	
-	public UserResultDTO findByUser(UserDTO userDTO) {
-	    // 매퍼를 호출하여 사용자 정보를 가져옴
-	    List<UserDTO> users = userMapper.findOne(userDTO.getUserId()); // findOne 매퍼 호출
 
-	    boolean status = false;
-	    String message = "유효한 사용자가 없습니다.";
-	    UserDTO foundUser = null;
+    @Autowired
+    private UserMapper userMapper;
 
-	    if (users != null && !users.isEmpty()) {
-	        foundUser = users.get(0); // 첫 번째 사용자 정보 가져오기
-	        status = true;
-	        message = foundUser.getUserId() + "님 환영합니다.";
+    @Autowired
+    private ObjectMapper objectMapper;
 
-	        // 사용자 권한 목록 가져오기
-	        List<RoleDTO> roles = userMapper.findByRoles(foundUser.getStatus());
-	        foundUser.setUserRoles(roles); // 권한 설정
-	    }
-
-	    return UserResultDTO.builder()
-	            .status(status)
-	            .message(message)
-	            .userDTO(foundUser)
-	            .build();
-	} 
-	
-	    @Transactional
-	    public UserResultDTO signup(UserDTO userDTO) {
-	        UserResultDTO userResultDTO = new UserResultDTO();
-
-	        // 기본값 설정
-	        if (userDTO.getStatus() == null) {
-	            userDTO.setStatus("1");
-	        }
-	        if (userDTO.getReview() == null) {
-	            userDTO.setReview("This is a sample review.");
-	        }
-	        if (userDTO.getProfileImageUrl() == null) {
-	            userDTO.setProfileImageUrl("/uploads/default.png");
-	        }
-
-	        try {
-	            // 아이디 중복 체크
-	            int count = userMapper.checkUserIdDuplicate(userDTO.getUserId());
-	            if (count > 0) {
-	                // 중복된 아이디일 경우, 실패로 처리
-	                userResultDTO.setStatus(false);
-	                userResultDTO.setMessage("중복된 아이디가 있습니다.");
-	                return userResultDTO;
-	            }
-
-	            // 회원가입 처리
-	            int result = userMapper.signup(userDTO);
-	            if (result > 0) {
-	                // 성공적으로 가입된 경우
-	                userResultDTO.setStatus(true);
-	                userResultDTO.setMessage("회원가입이 완료되었습니다.");
-	                userResultDTO.setUserDTO(userDTO); // 등록된 사용자 정보 설정
-	            } else {
-	                // 실패한 경우
-	                userResultDTO.setStatus(false);
-	                userResultDTO.setMessage("회원가입에 실패하였습니다.");
-	            }
-	        } catch (Exception e) {
-	            // 예외 발생 시 로그로 기록하고 실패 메시지 설정
-	            log.error("회원가입 중 오류 발생 - 파라미터 값: {}", userDTO, e);
-	            userResultDTO.setStatus(false);
-	            userResultDTO.setMessage("회원가입에 실패하였습니다. 오류 메시지: " + e.getMessage());
-	        }
-
-	        return userResultDTO;
-	    } 
-	    
-	    public UserResultDTO findOne(UserDTO userDTO) {
-	        UserResultDTO userResultDTO = new UserResultDTO();
-
-	        // 매퍼 호출하여 사용자 정보 가져오기
-	        List<UserDTO> userInfo = userMapper.findOne(userDTO.getUserId());
-
-	        if (userInfo != null && !userInfo.isEmpty()) {
-	            UserDTO user = userInfo.get(0); // 첫 번째 사용자의 정보를 가져옴
-
-	            // 사용자 권한 목록 가져오기
-	            List<RoleDTO> roles = userMapper.findByRoles(user.getStatus()); // 권한 정보 조회
-	            user.setUserRoles(roles); // UserDTO 객체에 권한 설정
-
-	            // UserResultDTO에 정보 채우기
-	            userResultDTO.setUserDTO(user);
-	            userResultDTO.setStatus(true); // 찾은 결과가 있으므로 상태를 true로 설정
-	        } else {
-	            userResultDTO.setStatus(false); // 사용자를 찾지 못했을 경우 상태를 false로 설정
-	        }
-
-	        return userResultDTO;
-	    }
+    @Value("${file.upload-dir}")
+    private String uploadDir;
  
-  public void updateUser(UserDTO userDTO) {
-        userMapper.updateUser(userDTO);
-    }   
-	//리뷰 받아오기
-    public List<ReviewDTO> getReviewsByStatus(String userId) {
-        return userMapper.findReviewsByStatus(userId);
+ //  파일을 클라이언트에 반환하는 메서드 */
+    public ResponseEntity<?> getFileAsResponse(String url) {
+        try {
+            String path = uploadDir.concat("/").concat(url);
+            File file = new File(path);
+
+            if (file.exists()) {
+                return ResponseEntity.ok()
+                    .contentLength(file.length())
+                    .contentType(MediaType.parseMediaType(Files.probeContentType(file.toPath()))) // 동적 MIME 타입 설정
+                    .body(new InputStreamResource(new FileInputStream(file)));
+            } else {
+                return ResponseEntity.notFound().build(); // 파일이 없을 경우 404 반환
+            }
+        } catch (Exception e) {
+            log.error("파일 불러오기 실패: ", e);
+            return ResponseEntity.status(500).body("파일을 불러오는 중 오류가 발생했습니다.");
+        }
+    } 
+     //  사용자 로그인 처리 
+    public Map<String, Object> login(UserDTO userDTO) {
+        UserResultDTO userResultDTO = findByUser(userDTO);
+        Map<String, Object> response = new HashMap<>();
+
+        if (userResultDTO.isStatus()) {
+            String jwtToken = generateToken(Collections.singletonMap("name", userDTO.getUserId()));
+            response.put("status", true);
+            response.put("user", userResultDTO.getUserDTO());
+            response.put("jwtToken", jwtToken);
+        } else {
+            response.put("status", false);
+            response.put("message", "아이디 또는 비밀번호가 틀렸습니다.");
+        }
+
+        return response;
+    }  
+    public UserResultDTO findByUser(UserDTO userDTO) {
+        UserDTO users = userMapper.findOne(userDTO.getUserId());
+
+        boolean status = false;
+        String message = "유효한 사용자가 없습니다.";
+
+        if (users != null) {
+            status = true;
+            message = users.getUserId() + "님 환영합니다.";
+
+            // 사용자 권한 목록 설정
+            RoleDTO roles = userMapper.findByRoles(users.getUserNo());
+            users.setUserRoles(roles);
+        }
+
+        return UserResultDTO.builder()
+            .status(status)
+            .message(message)
+            .userDTO(users)
+            .build();
     }
-    //리뷰 업데이트하기
-    public boolean updateReview(ReviewDTO reviewDTO) {
-        int updatedRows = userMapper.updateReview(reviewDTO);
-        return updatedRows > 0;
+
+    @Transactional
+    public UserResultDTO signup(UserDTO userDTO) {
+        UserResultDTO userResultDTO = new UserResultDTO();
+        if (userMapper.checkUserIdDuplicate(userDTO.getUserId()) > 0) {
+            userResultDTO.setStatus(false);
+            userResultDTO.setMessage("중복된 아이디가 있습니다.");
+            return userResultDTO;
+        }
+
+        // 기본 설정값 추가
+        userDTO.setProfileImageUrl(userDTO.getProfileImageUrl() != null ? userDTO.getProfileImageUrl() : "/uploads/default.png");
+        userDTO.setReview(userDTO.getReview() != null ? userDTO.getReview() : "This is a sample review.");
+        userDTO.setStatus(userDTO.getStatus() != null ? userDTO.getStatus() : "1");
+
+        int result = userMapper.signup(userDTO);
+        if (result > 0) {
+            userResultDTO.setStatus(true);
+            userResultDTO.setMessage("회원가입이 완료되었습니다.");
+            userResultDTO.setUserDTO(userDTO);
+        } else {
+            userResultDTO.setStatus(false);
+            userResultDTO.setMessage("회원가입에 실패하였습니다.");
+        }
+
+        return userResultDTO;
     }
-	    
-	    
+     // 사용자 정보 업데이트 처리
+    public Map<String, Object> updateUserProfile(HttpServletRequest req, String userId, String user_Nnm, String phone, String email,
+                                                 String review, String password, MultipartFile profileImage, String status) {
+        Map<String, Object> resultMap = new HashMap<>();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setUserId(userId);
+        userDTO.setUser_Nnm(user_Nnm);
+        userDTO.setPhone(phone);
+        userDTO.setEmail(email);
+        userDTO.setReview(review);
+        userDTO.setPassword(password);
+        userDTO.setStatus(status);
+
+        try {
+            if (profileImage != null && !profileImage.isEmpty()) {
+                userDTO.setProfileImageUrl(saveProfileImage(profileImage));
+            }
+            userMapper.updateUser(userDTO);
+            resultMap.put("status", true);
+            resultMap.put("user", userDTO);
+        } catch (Exception e) {
+            log.error("업데이트 중 오류 발생: ", e);
+            resultMap.put("status", false);
+            resultMap.put("message", "업데이트에 실패했습니다: " + e.getMessage());
+        }
+        return resultMap;
+    }
+    // 프로필 이미지 저장 메서드
+    private String saveProfileImage(MultipartFile profileImage) throws IOException {
+        String fileName = UUID.randomUUID().toString() + "." + getFileExtension(profileImage.getOriginalFilename());
+        Path destinationDir = Paths.get(uploadDir);
+        if (!Files.exists(destinationDir)) {
+            Files.createDirectories(destinationDir); // 디렉토리가 없으면 생성
+        }
+        File destinationFile = new File(destinationDir.toString(), fileName);
+        profileImage.transferTo(destinationFile);
+        return fileName;
+    }
+
+    private String getFileExtension(String originalFilename) {
+        return originalFilename != null && originalFilename.contains(".")
+                ? originalFilename.substring(originalFilename.lastIndexOf(".") + 1)
+                : "";
+    }
+    // 토큰 생성
+    public String generateToken(Map<String, String> paramMap) {
+        Calendar date = Calendar.getInstance();
+        date.add(Calendar.MINUTE, 10);
+
+        return Jwts.builder()
+                .setClaims(paramMap)
+                .setIssuer("BackProject")
+                .setExpiration(date.getTime())
+                .signWith(getSecretKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String getUserIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(getSecretKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("name", String.class);
+    }
+
+    private SecretKey getSecretKey() {
+        String strKey = "c2hlbGxmb2xkZXIxMjM0NTY3ODlEZXZKV1QxMjM0NTY3ODk=";
+        return Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(strKey));
+    }
+    // 사용자 정보 조회
+    public UserResultDTO findOne(UserDTO userDTO) {
+        UserDTO user = userMapper.findOne(userDTO.getUserId());
+        UserResultDTO userResultDTO = new UserResultDTO();
+
+        if (user != null) {
+            RoleDTO roles = userMapper.findByRoles(user.getUserNo());
+            user.setUserRoles(roles);
+            userResultDTO.setUserDTO(user);
+            userResultDTO.setStatus(true);
+        } else {
+            userResultDTO.setStatus(false);
+        }
+
+        return userResultDTO;
+    }
 }

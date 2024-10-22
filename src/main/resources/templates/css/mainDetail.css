@@ -1,0 +1,206 @@
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.header{
+ font-size: 120px;
+    /* background-color: #ff0000; */
+    color: #000000;
+    text-align: center;
+    padding: 20px 0;
+}
+.s9-4 {
+  height:80px;
+  padding: 20px;
+  font-size: 1.4rem;
+  font-weight: bold; 
+  border-radius: 50px;
+  }
+.gf {
+  font-family: "Nanum Brush Script", cursive; 
+  font-style: normal;
+  font-size: 80px;  
+  margin-right:1vw;
+}   
+.divDw {
+  width : 25vw;
+  height: 100px;
+  padding-top: 40px; 
+  padding-left:10vw; 
+    
+}
+.divDw1 { 
+  width : 100%;
+  height: 336px;
+  background-color:#FAFAFA; 
+  padding:50px; 
+  padding-left:18%; 
+}
+.divDw2 {
+width:200px;
+height:200px;   
+border-width:5px; 
+margin-left:20px; 
+float: left;
+text-align: center;   
+}  
+ .divDw3 { 
+margin-top:140px;
+padding-left:16%; 
+} 
+.divBtn1{  
+	padding:10px;
+  padding-left:15vw; 
+  margin-bottom: 15px;  
+  top: 0;
+  position: sticky;
+  background: #fff;
+  /*border-bottom: 1px solid #ccc;  하단에 경계를 추가하여 상단에 고정된 것처럼 보이게 설정 */
+  z-index: 800;
+}
+
+.img1{
+width:200px;
+height:200px; 
+border-radius:50%; 
+border-width:5px; 
+}
+.gf1 {
+ font-size: 10px;
+ color:gray; 
+}
+.gf1:hover {
+    background-color: #fdb3b3;
+}
+.gff {
+  font-family: "Nanum Brush Script", cursive;
+  /*font-weight: 400;*/
+  font-style: normal;
+  font-size: 50px;
+} 
+.gfff {
+  font-family: "Nanum Brush Script", cursive;
+  /*font-weight: 400;*/
+  font-style: normal;
+  font-size: 30px;
+} 
+.row img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+} 
+footer{
+    border-top: 1px solid #e4e4e4;
+    background-color:#f8f9fa;
+    padding:1rem 0;
+    margin:1rem 0;
+} 
+.footer-message{
+    font-weight: bold;
+    font-size:0.9rem;
+    color:#545e6f;
+    margin-bottom:0.3rem;
+    margin:0 0 0 0.6rem;
+}
+.footer-contact{
+    font-size:0.9rem;
+    color:#545e6f;
+    margin:0.6rem;
+} 
+
+@media (max-width: 1200px) {
+	
+	 .divDw {
+	 width : 0vw;
+	 height: 100px;
+	 padding-left:10vw;  
+	} 
+	.divDw1 { 
+	  width : 100%;
+	  height:220px;
+	  background-color:#FAFAFA; 
+	  padding:50px; 
+	  padding-left:18%; 
+	}
+	.divDw2 {
+	width:13%;
+	height:100px;   
+	margin-left:30px; 
+	float: left;
+	text-align: center; 
+	}
+	.img1{
+	width:110px;
+	height:110px; 
+	border-radius:50%; 
+	border-width:5px; 
+	}
+	}
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .icon {
+    max-width: 60px;    
+    }
+}
+
+/* 자주가는 동네핫플 */  
+
+    .container {
+        width: 80%;
+        margin: 0 auto;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .slider {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+    }
+
+    .slider .collection-item {
+        margin: 10px;
+        width: 300px;
+        text-align: center;
+        background-color: white;
+        /* border-radius: 50px; */
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .slider .collection-item img {
+        width: 100%;
+        height: 200px;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        object-fit: cover;
+    }
+
+    /* Hover 효과 */
+    .slider .collection-item:hover {
+        transform: scale(1.05); /* 사이즈 변경 없이 확대 */
+    }
+
+    /*슬라이더 컨트롤 버튼*/
+    .prev, .next {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .prev {
+        left: 0;
+    }
+
+    .next {
+        right: 0;
+    }
+
+    .space{
+        height: 80px;
+    }
+    
