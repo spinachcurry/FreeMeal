@@ -1,7 +1,5 @@
 package com.app.dto;
- 
-import java.util.List;
-
+  
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +15,11 @@ public class DidsDTO {
 	private int totalPrice;
 	private String title;
 	private String category;
+	private String imgURL;
+	private String price;
+	private String name;
+	private String roadAddress;
+	
 	 
 
 }

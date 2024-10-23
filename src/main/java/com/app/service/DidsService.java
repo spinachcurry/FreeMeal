@@ -19,26 +19,40 @@ public class DidsService {
 	
 	  // 전체 요청 핸들링
 	public ResponseEntity<?> handleDibs(Map<String, Object> requestBody) {
-	    // Map에서 값 추출
-	    String action = (String) requestBody.get("action");
-	    String userId = (String) requestBody.get("userId");
-	    String address = (String) requestBody.get("address");
-	    Integer didStatus = requestBody.get("didStatus") != null ? (Integer) requestBody.get("didStatus") : null;
+        // Map에서 값 추출
+        String action = (String) requestBody.get("action");
+        String userId = (String) requestBody.get("userId");
+        String address = (String) requestBody.get("address");
+        Integer didStatus = requestBody.get("didStatus") != null ? (Integer) requestBody.get("didStatus") : null;
 
-	    // action 값에 따라 다른 로직을 처리
-	    switch (action) {
-	        case "toggle":
-	            return toggleDibs(userId, address, didStatus);
-	        case "check":
-	            return checkDibs(userId, address);
-	        case "count":
-	            return getDibsCount(address);
-	        case "list":
-	            return getDibsByUserId(userId);
-	        default:
-	            return ResponseEntity.badRequest().body("Invalid action specified");
-	    }
-	}  
+        // action 값에 따라 다른 로직을 처리
+        switch (action) {
+            case "toggle":
+                return toggleDibs(userId, address, didStatus);
+            case "check":
+                return checkDibs(userId, address);
+            case "count":
+                return getDibsCount(address);
+            case "list":
+                return getDibsByUserId(userId);
+            case "menu":  // 메뉴 조회 액션 처리
+                return getMenuByAddress(address);
+            default:
+                return ResponseEntity.badRequest().body("Invalid action specified");
+        }
+    }
+	//디테일 메뉴판 불러오기 
+    public ResponseEntity<List<DidsDTO>> getMenuByAddress(String address) {
+        List<DidsDTO> menu = reviewMapper.oneMenu(address);
+
+        // 데이터가 존재하지 않으면 404 Not Found 반환
+        if (menu.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(menu);
+        }
+
+        // 데이터가 있으면 200 OK와 함께 반환
+        return ResponseEntity.ok(menu);
+    }
     // 찜하기 / 취소 토글
     private ResponseEntity<String> toggleDibs(String userId, String address, int didStatus) {
         try {
@@ -95,4 +109,5 @@ public class DidsService {
           return ResponseEntity.internalServerError().build();
       }
   } 
+  
 }

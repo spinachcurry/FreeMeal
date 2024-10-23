@@ -1,5 +1,9 @@
 package com.app.dto;
 
+import java.util.List;
+
+import com.app.dto.crawling.MenuDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +31,6 @@ public class StoreDTO {
 	double lat;
 	int totalPrice;
 	int totalParty;
-
+	private List<MenuDTO> menuItems;
+	private List<String> imgURLs;
 }
-

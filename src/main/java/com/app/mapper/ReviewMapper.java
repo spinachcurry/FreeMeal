@@ -70,12 +70,25 @@ public interface ReviewMapper {
 			+ "WHERE STATUS = '1' AND address = #{address}")
 	int countDibs(@Param("address") String address);
 	//찜목록 불러오기;
-	@Select ("SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, did.* "
-			+ "	FROM freemeal AS tf "
-			+ "	INNER JOIN Dibs AS did "
-			+ "	ON tf.address = did.address "
-			+ "	WHERE did.STATUS = '1' AND did.userId =#{userId} "
-			+ "	GROUP BY tf.title, tf.address, tf.category" )
+	@Select ("SELECT "
+			+ "    tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty,did.*, sm.imageURL as imgURL "
+			+ "FROM freemeal AS tf "
+			+ "INNER JOIN Dibs AS did ON tf.address = did.address "
+			+ "LEFT JOIN store_image AS sm ON sm.storeNm = tf.title "
+			+ "WHERE "
+			+ "did.STATUS = '1' AND did.userId = #{userId}"
+			+ "GROUP BY "
+			+ "tf.title, tf.address, tf.category " )
 	List<DidsDTO> findDibsByUserId(@Param("userId") String userId);
+	//디테일 메뉴판
+	@Select (" "
+			+ "SELECT sm.price, sm.name, tf.title, tf.address, tf.category, tf.lng, tf.lat, tf.roadAddress "
+			+ "FROM freemeal AS tf "
+			+ "LEFT JOIN store_menu AS sm ON sm.storeNm = tf.title "
+			+ "WHERE tf.address =  #{address} "
+			+ "GROUP BY sm.name LIMIT 7 " )
+	List<DidsDTO> oneMenu(@Param("address") String address);
+
+	
 	
 }

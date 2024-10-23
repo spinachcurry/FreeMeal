@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -57,13 +58,5 @@ public class StoreController {
 		return storeService.searchStore(keykeyword);
 	}
 	
-	//해당 음식점 고유 title , areaNm 으로 찾아서 가게가 가지고 있는 link만 가져오도록 >> 프론트로 돌려주기
-//	@PostMapping("/storeLink")
-//	public List<StoreDTO> storeTitle(@RequestParam Map<String, Object> storeinfo) {
-//		log.info("storeTitle:{}", storeinfo);
-//		return storeService.storeLink(storeinfo);
-//	}
-//	
 	
 }
-

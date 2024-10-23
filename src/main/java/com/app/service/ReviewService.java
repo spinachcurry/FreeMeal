@@ -127,4 +127,5 @@ public class ReviewService {
 	    public int updateReport(ReviewDTO reviewNo) {
 	        return reviewMapper.updateReport(reviewNo);
 	    }   
+	    
 } 

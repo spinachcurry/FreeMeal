@@ -2,25 +2,23 @@ package com.app.controller;
 
 import org.springframework.web.multipart.MultipartFile;
  
-import com.app.dto.UserDTO;
-import com.app.dto.UserResultDTO;
+import com.app.dto.UserDTO; 
 import com.app.service.DidsService;
 import com.app.service.LoginService;
 import com.app.service.ReviewService;
 
 import jakarta.servlet.http.HttpServletRequest;
-
+ 
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.http.ResponseEntity; 
 
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.GetMapping; 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestBody; 
 import org.springframework.web.bind.annotation.RequestMapping; 
  
   @RestController 
@@ -63,14 +61,15 @@ public class MypageController {
             @RequestParam("status") String status) {  // status 추가
         return ResponseEntity.ok(loginService.updateUserProfile(req, userId, user_Nnm, phone, email, review, password, profileImage, status));
     }  
-	// 모든 찜 관련 기능 처리
-	@PostMapping("/handleDibs")
-    public ResponseEntity<?> handleDibs(@RequestBody Map<String, Object> requestBody) {
-          return didsService.handleDibs(requestBody);
-    } 
 	//모든 리뷰 관련
 	@PostMapping("/reviewAction")
 	public ResponseEntity<?> reviewAction(@RequestBody Map<String, Object> requestBody) {
 	    return reviewService.handleReviewAction(requestBody);
 	} 
+	// 모든 찜 관련 기능 처리
+	@PostMapping("/handleDibs")
+	public ResponseEntity<?> handleDibs(@RequestBody Map<String, Object> requestBody) {
+		return didsService.handleDibs(requestBody);
+	}     
+	   
 }
