@@ -33,6 +33,7 @@ public class StoreDTO {
 	int totalParty;
 	private List<MenuDTO> menuItems;
 	private List<String> imgURLs;
-
+	private double bills;
+	private double feet;
 }
 
