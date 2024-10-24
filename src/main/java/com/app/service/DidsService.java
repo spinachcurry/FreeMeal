@@ -23,6 +23,7 @@ public class DidsService {
         String action = (String) requestBody.get("action");
         String userId = (String) requestBody.get("userId");
         String address = (String) requestBody.get("address");
+        String storeNm = (String) requestBody.get("storeNm");
         Integer didStatus = requestBody.get("didStatus") != null ? (Integer) requestBody.get("didStatus") : null;
 
         // action 값에 따라 다른 로직을 처리
@@ -37,10 +38,20 @@ public class DidsService {
                 return getDibsByUserId(userId);
             case "menu":  // 메뉴 조회 액션 처리
                 return getMenuByAddress(address);
+            case "img":  // 메뉴 조회 액션 처리
+                return getMenuByAddress(storeNm);
             default:
                 return ResponseEntity.badRequest().body("Invalid action specified");
         }
     }
+	//메뉴판 이미지
+	 public ResponseEntity<List<DidsDTO>> getMenuimg(String storeNm) {
+	        List<DidsDTO> menu = reviewMapper.menuImg(storeNm); 
+	        if (menu.isEmpty()) {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(menu);
+	        } 
+	        return ResponseEntity.ok(menu);
+	    }
 	//디테일 메뉴판 불러오기 
     public ResponseEntity<List<DidsDTO>> getMenuByAddress(String address) {
         List<DidsDTO> menu = reviewMapper.oneMenu(address);

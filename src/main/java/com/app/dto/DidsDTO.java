@@ -19,6 +19,8 @@ public class DidsDTO {
 	private String price;
 	private String name;
 	private String roadAddress;
+	private String sotreNm;
+	private String imageURL;
 	
 	 
 

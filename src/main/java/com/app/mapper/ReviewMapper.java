@@ -81,14 +81,15 @@ public interface ReviewMapper {
 			+ "tf.title, tf.address, tf.category " )
 	List<DidsDTO> findDibsByUserId(@Param("userId") String userId);
 	//디테일 메뉴판
-	@Select (" "
-			+ "SELECT sm.price, sm.name, tf.title, tf.address, tf.category, tf.lng, tf.lat, tf.roadAddress "
+	@Select (" SELECT sm.price, sm.name, tf.title, tf.address, tf.category, tf.lng, tf.lat, tf.roadAddress "
 			+ "FROM freemeal AS tf "
 			+ "LEFT JOIN store_menu AS sm ON sm.storeNm = tf.title "
 			+ "WHERE tf.address =  #{address} "
 			+ "GROUP BY sm.name LIMIT 7 " )
-	List<DidsDTO> oneMenu(@Param("address") String address);
-
-	
+	List<DidsDTO> oneMenu(@Param("address") String address); 
+	@Select ("SELECT "
+			+ "FROM store_image "
+			+ "WHERE storeNm = #{storeNm} " )
+	List<DidsDTO> menuImg(@Param("storeNm") String storeNm);
 	
 }
