@@ -25,9 +25,9 @@ public interface StoreMapper {
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freeMeal "
-			+ "WHERE title = #{title} " 
+			+ "WHERE title = #{title} and areaNm = #{areaNm} " 
 			+ "GROUP BY `title`, `areaNm`" )
-	public List<StoreDTO> storeDetail(String title);
+	public List<StoreDTO> storeDetail(Object object);
 	
 	//가게 상세 페이지 >> 가격별(내림차순) 정렬 쿼리
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "

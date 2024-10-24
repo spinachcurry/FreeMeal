@@ -24,14 +24,15 @@ public class StoreService {
 	private GetStoreMapper getstoreMapper;
 	
 	//가게 상세 페이지
-	public StoreDTO storeDetail(String title) {
-			log.info("나오세요 : {}");
-			List<StoreDTO> list = storeMapper.storeDetail(title);
+	public StoreDTO storeDetail(Map<String, Object> map) {
+			log.info("나오세요 : {}", map.get("params"));
+			List<StoreDTO> list = storeMapper.storeDetail(map.get("params"));
 			if(list.size() < 1) {
 				return StoreDTO.builder()
 						.title("그런 가게는 없습니다.")
 						.build();
 			}else {
+				log.info("가져 왔나? : {}", list);
 				return list.get(0);
 			}
 	}
