@@ -81,7 +81,8 @@ public class DataService {
 				//네이버 데이터 5개 짜리 향상된 for문		
 				DataDTO ourData = null;
 				
-				for(ItemDTO nItem : nData.getItems()) {
+				//for(ItemDTO nItem : nData.getItems()) {
+					ItemDTO nItem = nData.getItems().getFirst();
 					String category = nItem.getCategory().split(">")[0];
 					if(!"한식".equals(category)  && !"음식점".equals(category) && !"분식".equals(category) && !"카페".equals(category)) continue;
 					if(!nItem.getAddress().contains(getOne.getAreaNm())) continue; //네이버 데이터 & rawData 내의 지역 불일치하면 다음으로 긔긔
@@ -103,8 +104,8 @@ public class DataService {
 							.visitDate(getOne.getDate())
 							.areaNm(getOne.getAreaNm())
 							.build();
-					break;
-				}
+//					break;
+//				}
 				log.info("확인하며 공부하기^^ : {}", ourData);
 				
 		//			값이 null 이면 insert 안하도록 만들어보기
@@ -134,6 +135,10 @@ public class DataService {
 			return "오늘 " + callCount + "번까지 무탈히 잘 끝났슈.";
 		}
 		 catch (InterruptedException e) {
+			map.put("countdate", toDay);
+			map.put("count", callCount);
+			log.info("확인용: {}", map);
+			dataMapper.setCount(map);
 			return "오류 났슈.";
 		}
 	}

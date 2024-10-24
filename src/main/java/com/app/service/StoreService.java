@@ -1,6 +1,5 @@
 package com.app.service;
 
-import java.io.Console;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +24,15 @@ public class StoreService {
 	private GetStoreMapper getstoreMapper;
 	
 	//가게 상세 페이지
-	public StoreDTO storeDetail(String title) {
-			log.info("나오세요 : {}");
-			List<StoreDTO> list = storeMapper.storeDetail(title);
+	public StoreDTO storeDetail(Map<String, Object> map) {
+			log.info("나오세요 : {}", map.get("params"));
+			List<StoreDTO> list = storeMapper.storeDetail(map.get("params"));
 			if(list.size() < 1) {
 				return StoreDTO.builder()
 						.title("그런 가게는 없습니다.")
 						.build();
 			}else {
+				log.info("가져 왔나? : {}", list);
 				return list.get(0);
 			}
 	}
@@ -50,9 +50,9 @@ public class StoreService {
 //		log.info("여긴 어때?: {}", map);
 //		log.info("가게: {}", storeMapper.storeNearby(map));
 		
-		bigMap.put("nearbyStore", setMenuAndImages(storeMapper.storeNearby(nearMap)));
-		bigMap.put("highPrice", setMenuAndImages(storeMapper.highPrice()));		
-		bigMap.put("footStores", setMenuAndImages(storeMapper.footStores()));
+		bigMap.put("nearbyStore", getReadyForFront(storeMapper.storeNearby(nearMap)));
+		bigMap.put("highPrice", getReadyForFront(storeMapper.highPrice()));		
+		bigMap.put("footStores", getReadyForFront(storeMapper.footStores()));
 		
 		return bigMap;
 	}
@@ -63,24 +63,37 @@ public class StoreService {
 		if("전체".equals(keykeyword.get("areaNm"))) {
 			log.info("keykeyword:{}", keykeyword.toString());
 			if("party".equals(keykeyword.get("criteria")))
-				return setMenuAndImages(storeMapper.searchAllStoreParty(keykeyword));
+				return getReadyForFront(storeMapper.searchAllStoreParty(keykeyword));
 			else
-				return setMenuAndImages(storeMapper.searchAllStoreCash(keykeyword));
+				return getReadyForFront(storeMapper.searchAllStoreCash(keykeyword));
 		}else {
 			log.info("keyword:{}", keykeyword.toString());
 			if("party".equals(keykeyword.get("criteria")))
-				return setMenuAndImages(storeMapper.searchByStoreParty(keykeyword));
+				return getReadyForFront(storeMapper.searchByStoreParty(keykeyword));
 			else
-				return setMenuAndImages(storeMapper.searchByStoreCash(keykeyword));
+				return getReadyForFront(storeMapper.searchByStoreCash(keykeyword));
 		}
 	}
 	
-	private List<StoreDTO> setMenuAndImages(List<StoreDTO> stores){
+	private List<StoreDTO> getReadyForFront(List<StoreDTO> stores){
+		Map<String, Double> statistics = storeMapper.getStatistics("강남구");
+		double meanOfPrice = Double.parseDouble(String.valueOf(statistics.get("MeanOfPrice")));
+		double stdOfPrice = Double.parseDouble(String.valueOf(statistics.get("StdOfPrice")));
+		double meanOfParty = Double.parseDouble(String.valueOf(statistics.get("MeanOfParty")));
+		double stdOfParty = Double.parseDouble(String.valueOf(statistics.get("StdOfParty")));
 		for(StoreDTO store : stores) {
 			store.setMenuItems(getstoreMapper.getStoreMenu(store));
 			store.setImgURLs(getstoreMapper.getStoreImg(store));
+			store.setBills(2.5 +
+					((double)store.getTotalPrice() - meanOfPrice)/stdOfPrice
+						);
+			store.setFeet(2.5 +
+					((double)store.getTotalParty() - meanOfParty)/stdOfParty
+						);
+			log.info("가게 정보: {}", store);
 		}
 		return stores;
-	}
+	}	
+	
 }
 

@@ -39,9 +39,10 @@ public class StoreController {
 	}
 
 	//가게 상세 페이지 >> 프론트에서 돌려주면 보여주는 것!
-	@GetMapping("/storeDetail")
-	public StoreDTO storeDetail(@RequestParam("store") String title) {
-		return storeService.storeDetail(title);
+	@PostMapping("/storeDetail")
+	public StoreDTO storeDetail(@RequestBody Map<String, Object> map) {
+		log.info("이름: {}", map);
+		return storeService.storeDetail(map);
 	}
 	
 	//메인 페이지에 보여줄 3개의 大카테고리(지역별,가격별,방문별)
