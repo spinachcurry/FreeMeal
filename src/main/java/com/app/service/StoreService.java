@@ -26,7 +26,7 @@ public class StoreService {
 	//가게 상세 페이지
 	public StoreDTO storeDetail(Map<String, Object> map) {
 			log.info("나오세요 : {}", map.get("params"));
-			List<StoreDTO> list = storeMapper.storeDetail(map.get("params"));
+			List<StoreDTO> list = getReadyForFront(storeMapper.storeDetail(map.get("params")));
 			if(list.size() < 1) {
 				return StoreDTO.builder()
 						.title("그런 가게는 없습니다.")
@@ -59,7 +59,7 @@ public class StoreService {
 
 	//메인 페이지 검색>> 가게명 or 지역 검색(ex 강동구 카페)
 	public List<StoreDTO> searchStore(Map<String, Object> keykeyword) {
-		keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
+		//keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
 		if("전체".equals(keykeyword.get("areaNm"))) {
 			log.info("keykeyword:{}", keykeyword.toString());
 			if("party".equals(keykeyword.get("criteria")))
@@ -90,7 +90,7 @@ public class StoreService {
 			store.setFeet(2.5 +
 					((double)store.getTotalParty() - meanOfParty)/stdOfParty
 						);
-			log.info("가게 정보: {}", store);
+//			log.info("가게 정보: {}", store);
 		}
 		return stores;
 	}	

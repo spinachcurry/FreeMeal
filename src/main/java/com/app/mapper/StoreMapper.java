@@ -55,8 +55,8 @@ public interface StoreMapper {
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freemeal "
-			+ "WHERE ((`title` LIKE #{keyword} OR `category` LIKE #{keyword}) " 
-			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE #{keyword} GROUP BY `storeNm`, `areaNm`)) "
+			+ "WHERE ((`title` LIKE '%${keyword}%' OR `category` LIKE '%${keyword}%') " 
+			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE '%${keyword}%' GROUP BY `storeNm`, `areaNm`)) "
 			+ "AND `areaNm` = #{areaNm} "
 			+ "GROUP BY `title`, `areaNm` "
 			+ "ORDER BY `totalParty` DESC ")
@@ -66,8 +66,8 @@ public interface StoreMapper {
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freemeal "
-			+ "WHERE ((`title` LIKE #{keyword} OR `category` LIKE #{keyword}) "
-			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE #{keyword} GROUP BY `storeNm`, `areaNm`)) "
+			+ "WHERE ((`title` LIKE '%${keyword}%' OR `category` LIKE '%${keyword}%') "
+			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE '%${keyword}%' GROUP BY `storeNm`, `areaNm`)) "
 			+ "AND `areaNm` = #{areaNm} "
 			+ "GROUP BY `title`, `areaNm` "
 			+ "ORDER BY `totalPrice` DESC ")
@@ -77,8 +77,8 @@ public interface StoreMapper {
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freemeal "
-			+ "WHERE `title` LIKE #{keyword} OR `category` LIKE #{keyword} "
-			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE #{keyword} GROUP BY `storeNm`, `areaNm`) "
+			+ "WHERE `title` LIKE '%${keyword}%' OR `category` LIKE '%${keyword}%' "
+			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE '%${keyword}%' GROUP BY `storeNm`, `areaNm`) "
 			+ "GROUP BY `title`, `areaNm` "
 			+ "ORDER BY `totalParty` DESC ")
 	public List<StoreDTO> searchAllStoreParty(Map<String, Object> keyword);
@@ -87,11 +87,38 @@ public interface StoreMapper {
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freemeal "
-			+ "WHERE `title` LIKE #{keyword} OR `category` LIKE #{keyword} "
-			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE #{keyword} GROUP BY `storeNm`, `areaNm`) "
+			+ "WHERE `title` LIKE '%${keyword}%' OR `category` LIKE '%${keyword}%' "
+			+ "OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE '%${keyword}%' GROUP BY `storeNm`, `areaNm`) "
 			+ "GROUP BY `title`, `areaNm` "
 			+ "ORDER BY `totalPrice` DESC ")
 	public List<StoreDTO> searchAllStoreCash(Map<String, Object> keyword);
+	
+	@Select("""
+	    <script>
+	        SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, 
+			SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty 
+			FROM freemeal 
+			WHERE 1 = 1
+			<if test="areaNm != '전체'">
+				AND (`title` LIKE '%${keyword}%' OR `category` LIKE '%${keyword}%' 
+				 OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE '%${keyword}%' GROUP BY `storeNm`, `areaNm`)) 
+				AND `areaNm` = #{areaNm}
+			</if>
+			<if test="areaNm == '전체'">
+				AND `title` LIKE '%${keyword}%' OR `category` LIKE '%${keyword}%' 
+				OR (`title`, `areaNm`) IN (SELECT `storeNm`, `areaNm` FROM store_menu WHERE `name` LIKE '%${keyword}%' GROUP BY `storeNm`, `areaNm`)
+			</if> 
+			GROUP BY `title`, `areaNm` 
+	        <if test="criteria == 'party'">
+				ORDER BY `totalParty` DESC 
+	        </if>
+	        <if test="criteria == 'price'">
+				ORDER BY `totalPrice` DESC 
+	        </if>
+	        limit ${page}, ${size}
+	    </script>
+	""")
+	public List<StoreDTO> test1(Map<String, Object> params);
 	
 	//평균, 표준편차
 	@Select("SELECT AVG(`totalPrice`) AS `MeanOfPrice`, STDDEV(`totalPrice`) AS `StdOfPrice`,"

@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import com.app.dto.StoreDTO;
 import com.app.dto.crawling.KageDTO;
 
 import com.app.mapper.DataMapper;
+import com.app.mapper.StoreMapper;
 import com.app.service.DataService;
 
 import lombok.RequiredArgsConstructor;
@@ -106,6 +108,14 @@ public class DataController {
 		
 		dataService.insertMenuAndImge();
 		return "메뉴, 사진 네이버에서 따오기";
+	}
+	
+	@Autowired
+	private  StoreMapper storeMapper;
+	
+	@GetMapping("/test")
+	public List<StoreDTO> test(@RequestParam Map<String, Object> paramMap) {
+		return storeMapper.test1(paramMap);
 	}
 	
 }
