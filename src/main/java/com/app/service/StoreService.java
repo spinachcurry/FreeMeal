@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.dto.StatisticsDTO;
 import com.app.dto.StoreDTO;
 import com.app.mapper.GetStoreMapper;
 import com.app.mapper.StoreMapper;
@@ -51,45 +52,58 @@ public class StoreService {
 //		log.info("가게: {}", storeMapper.storeNearby(map));
 		
 		bigMap.put("nearbyStore", getReadyForFront(storeMapper.storeNearby(nearMap)));
-		bigMap.put("highPrice", getReadyForFront(storeMapper.highPrice()));		
+		bigMap.put("highPrice", getReadyForFront(storeMapper.highPrice()));
 		bigMap.put("footStores", getReadyForFront(storeMapper.footStores()));
 		
 		return bigMap;
 	}
 
 	//메인 페이지 검색>> 가게명 or 지역 검색(ex 강동구 카페)
-	public List<StoreDTO> searchStore(Map<String, Object> keykeyword) {
-		//keykeyword.replace("keyword", "%" + keykeyword.get("keyword") + "%");
-		if("전체".equals(keykeyword.get("areaNm"))) {
-			log.info("keykeyword:{}", keykeyword.toString());
-			if("party".equals(keykeyword.get("criteria")))
-				return getReadyForFront(storeMapper.searchAllStoreParty(keykeyword));
-			else
-				return getReadyForFront(storeMapper.searchAllStoreCash(keykeyword));
-		}else {
-			log.info("keyword:{}", keykeyword.toString());
-			if("party".equals(keykeyword.get("criteria")))
-				return getReadyForFront(storeMapper.searchByStoreParty(keykeyword));
-			else
-				return getReadyForFront(storeMapper.searchByStoreCash(keykeyword));
-		}
+	public Map<String, Object> searchStore(Map<String, Object> keykeyword) {
+		//테스트용
+		keykeyword.put("offset", 0);
+		keykeyword.put("size", 12);
+		
+		Map<String, Object> storeMap = new HashMap<>();
+		storeMap.put("offset", Integer.parseInt(String.valueOf(keykeyword.get("offset"))) + Integer.parseInt(String.valueOf(keykeyword.get("size"))));
+		storeMap.put("storeData", getReadyForFront(storeMapper.searchStore(keykeyword)));
+		return storeMap;
 	}
 	
 	private List<StoreDTO> getReadyForFront(List<StoreDTO> stores){
-		Map<String, Double> statistics = storeMapper.getStatistics("강남구");
-		double meanOfPrice = Double.parseDouble(String.valueOf(statistics.get("MeanOfPrice")));
-		double stdOfPrice = Double.parseDouble(String.valueOf(statistics.get("StdOfPrice")));
-		double meanOfParty = Double.parseDouble(String.valueOf(statistics.get("MeanOfParty")));
-		double stdOfParty = Double.parseDouble(String.valueOf(statistics.get("StdOfParty")));
+		List<StatisticsDTO> statistics = storeMapper.getStatistics();
+		Map<String, StatisticsDTO> statisticsMap = new HashMap<>();
+		//튀는 값 없애고 다시 통계값 가져오기
+		for(StatisticsDTO dto : statistics) {
+			StatisticsDTO refinedOne = storeMapper.getRefinedStatistics(dto).getFirst();
+			log.info("통계: {}", refinedOne);
+			statisticsMap.put(refinedOne.getAreaNm(), refinedOne);
+		}
+						
 		for(StoreDTO store : stores) {
 			store.setMenuItems(getstoreMapper.getStoreMenu(store));
 			store.setImgURLs(getstoreMapper.getStoreImg(store));
-			store.setBills(2.5 +
-					((double)store.getTotalPrice() - meanOfPrice)/stdOfPrice
-						);
-			store.setFeet(2.5 +
-					((double)store.getTotalParty() - meanOfParty)/stdOfParty
-						);
+			//평균과 표준편차
+			double meanOfPrice = statisticsMap.get(store.getAreaNm()).getMeanOfPrice();
+			double stdOfPrice = statisticsMap.get(store.getAreaNm()).getStdOfPrice();
+			double meanOfParty = statisticsMap.get(store.getAreaNm()).getMeanOfParty();
+			double stdOfParty = statisticsMap.get(store.getAreaNm()).getStdOfParty();
+			//치른 돈 정규화
+			double bills = 2.5 + ((double)store.getTotalPrice() - meanOfPrice)/stdOfPrice;
+			if(bills > 5.0)
+				bills = 5.0;
+			else if (bills < 0.0)
+				bills = 0.0;
+
+			//다녀간 발길 정규화	
+			double feet = 2.5 + ((double)store.getTotalParty() - meanOfParty)/stdOfParty;
+			if(feet > 5.0)
+				feet = 5.0;
+			else if(feet < 0.0)
+				feet = 0.0;
+					
+			store.setBills(bills);
+			store.setFeet(feet);
 //			log.info("가게 정보: {}", store);
 		}
 		return stores;

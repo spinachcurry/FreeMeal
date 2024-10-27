@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import com.app.dto.StatisticsDTO;
 import com.app.dto.StoreDTO;
 
 @Mapper
@@ -33,14 +34,14 @@ public interface StoreMapper {
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freeMeal GROUP BY `title`, `areaNm` "
-			+ "ORDER BY `totalPrice` DESC limit 20")
+			+ "ORDER BY `totalPrice` DESC limit 15")
 	public List<StoreDTO> highPrice();
 	
 	//가게 상세 페이지 >> 방문별 쿼리
 	@Select("SELECT `title`,`link`, `telephone`, `areaNm`, `lng`, `lat`, `address`, `roadAddress`, `category`, `description`, "
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freeMeal GROUP BY `title`, `areaNm` "
-			+ "ORDER BY `totalParty` DESC limit 20")
+			+ "ORDER BY `totalParty` DESC limit 15")
 	public List<StoreDTO> footStores();
 	
 	//내 근처 가게 목록
@@ -48,7 +49,7 @@ public interface StoreMapper {
 			+ "SUM(`price`) AS totalPrice, SUM(`party`) AS totalParty "
 			+ "FROM freeMeal "
 			+ "WHERE lng < #{maxLng} AND lng > #{minLng} AND lat < #{maxLat} AND lat > #{minLat} " 
-			+ "GROUP BY `title`, `areaNm` limit 20")
+			+ "GROUP BY `title`, `areaNm` limit 15")
 	public List<StoreDTO> storeNearby(Map<String, Double> location);
 
 	//가게명이나 카테고리 검색(ex: 강동구 카페) >> 방문자 순
@@ -115,21 +116,28 @@ public interface StoreMapper {
 	        <if test="criteria == 'price'">
 				ORDER BY `totalPrice` DESC 
 	        </if>
-	        limit ${page}, ${size}
+	        limit ${offset}, ${size}
 	    </script>
 	""")
-	public List<StoreDTO> test1(Map<String, Object> params);
+	public List<StoreDTO> searchStore(Map<String, Object> params);
 	
 	//평균, 표준편차
-	@Select("SELECT AVG(`totalPrice`) AS `MeanOfPrice`, STDDEV(`totalPrice`) AS `StdOfPrice`,"
-			+ "AVG(`totalParty`) AS `MeanOfParty`, STDDEV(`totalParty`) AS `StdOfParty` "
-			+ "FROM ( "
-			+ "SELECT * "
+	@Select("SELECT `areaNm`, AVG(`totalPrice`) AS `meanOfPrice`, STDDEV(`totalPrice`) AS `stdOfPrice`,"
+			+ "AVG(`totalParty`) AS `meanOfParty`, STDDEV(`totalParty`) AS `stdOfParty` "
 			+ "FROM (SELECT `title`, `areaNm`, SUM(`price`) AS `totalPrice`, SUM(`party`) AS `totalParty` "
 			+ "FROM freeMeal "
-			+ "WHERE `areaNm` = #{areaNm} "
 			+ "GROUP BY `title`, `areaNm`) AS `originalTable` "
-			+ "WHERE `totalPrice` > 999) AS `tableOfFreeMeal`")
-	public Map<String, Double> getStatistics(String areaNm);
+			+ "GROUP BY `areaNm`")
+	public List<StatisticsDTO> getStatistics();
+	
+	@Select("SELECT `areaNm`, AVG(`totalPrice`) AS `meanOfPrice`, STDDEV(`totalPrice`) AS `stdOfPrice`, "
+			+ "AVG(`totalParty`) AS `meanOfParty`, STDDEV(`totalParty`) AS `stdOfParty` "
+			+ "FROM (SELECT * FROM "
+			+ "(SELECT `title`, `areaNm`, SUM(`price`) AS `totalPrice`, SUM(`party`) AS `totalParty` "
+			+ "FROM freeMeal "
+			+ "WHERE `areaNm` = #{areaNm} "
+			+ "GROUP BY `title`) AS `originalTable` "
+			+ "WHERE `totalPrice` < 1.5 * ${stdOfPrice} + ${meanOfPrice}) AS `refinedTable`")
+	public List<StatisticsDTO> getRefinedStatistics(StatisticsDTO params);
 }	
 

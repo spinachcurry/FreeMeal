@@ -9,6 +9,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
 import org.springframework.stereotype.Component;
 
 import com.app.dto.StoreDTO;
@@ -26,11 +27,14 @@ public class WebCrawling {
 	
 	public KageDTO process(StoreDTO storeInfo){
 		driver = new ChromeDriver();
-		KageDTO kagedle;
+		KageDTO kagedle = null;
 		try {
 			
 			kagedle = getStore(storeInfo.getAreaNm(), storeInfo.getTitle());
 						
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}finally {
 			driver.close();
 			driver.quit();
@@ -39,7 +43,7 @@ public class WebCrawling {
 		return kagedle;
 	}
 	
-	private KageDTO getStore(String areaNm, String storeNm) {
+	private KageDTO getStore(String areaNm, String storeNm) throws InterruptedException {
 //		String areaNm = "강남구";
 //		String storeNm = "남도계절음식 무돌";
 		System.setProperty("webdriver.chrome.driver", "C:\\IDE\\chromedriver-win64\\chromedriver.exe");
@@ -49,7 +53,8 @@ public class WebCrawling {
 		List<String> storeImage = new ArrayList<>();
 	
 		driver.get(root_url + areaNm + " " + storeNm);
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
+		Thread.sleep(1000);
+		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(2));
 		
 		if(driver.findElements(By.cssSelector("iframe#entryIframe")).size() == 0) {
 			//검색 리스트로 열리면
@@ -83,6 +88,7 @@ public class WebCrawling {
 			driver.switchTo().defaultContent();
 		}
 		//가게 정보로 들어가기
+		Thread.sleep(2000);
 		driver.switchTo().frame(driver.findElement(By.cssSelector("iframe#entryIframe")));
 		List<WebElement> tabList = driver.findElements(By.cssSelector("[role='tab']"));
 		log.info("탭 개수: {}", tabList.size());
@@ -100,6 +106,8 @@ public class WebCrawling {
 						
 			List<WebElement> categoryList = driver.findElements(By.className("gkWf3"));
 			List<WebElement> tableList = driver.findElements(By.className("order_list_inner"));
+			int numOfmenu = 0;
+			
 			if(categoryList.size() > 0) {
 				//카테고리별로 정리된 경우
 				for(WebElement category : categoryList) {
@@ -108,7 +116,11 @@ public class WebCrawling {
 					if(category.findElements(By.className("place_section_header_title")).size() > 0)
 						category_title = category.findElement(By.className("place_section_header_title")).getText();
 					//메뉴 담기
-					storeMenu.addAll(getMenu(category, category_title));
+					Thread.sleep(1000);
+					List<MenuDTO> menuTable = getMenu(category, category_title);
+					numOfmenu += menuTable.size();
+					if(numOfmenu > 70) break;
+					storeMenu.addAll(menuTable);
 				}
 			}else if(tableList.size() > 0){
 				//네이버 주문
@@ -127,9 +139,11 @@ public class WebCrawling {
 						category = table.findElement(By.className("title")).getText();
 					//메뉴 리스트
 					List<WebElement> menuList = table.findElements(By.className("order_list_item"));
+					numOfmenu += menuList.size();
+					if(numOfmenu > 70) break;
 					
 					for(WebElement li : menuList) {
-						
+						Thread.sleep(1000);
 						MenuDTO menu = new MenuDTO();
 						//카테고리
 						if(!"".equals(category) && category != null)
@@ -162,26 +176,46 @@ public class WebCrawling {
 						log.info("메뉴: {}", menu.toString());
 						storeMenu.add(menu);
 					}
-				
+					
 				}
 				
 			}else {
-				WebElement table = driver.findElement(By.cssSelector("[data-nclicks-area-code='bmv']"));
-				//메뉴 담기
-				storeMenu.addAll(getMenu(table, ""));
+				if(driver.findElements(By.cssSelector("[data-nclicks-area-code='bmv']")).size() > 0) {
+					WebElement table = driver.findElement(By.cssSelector("[data-nclicks-area-code='bmv']"));
+					//메뉴 담기
+					Thread.sleep(1000);				
+					storeMenu.addAll(getMenu(table, ""));
+				}
 			}
 		}
 		//사진탭 클릭
-		tabList = driver.findElements(By.cssSelector("[role='tab']"));
+		if(driver.findElements(By.cssSelector("[role='tab']")).size() < 1) {
+			driver.navigate().back();
+			Thread.sleep(3000);
+		}
+		
 		if(indexOfPhoto > -1) {
+//			메뉴 탭이 많아서 안 보일 때
+			if(indexOfPhoto - indexOfMenu > 2) {
+				if(indexOfPhoto - indexOfMenu > 3) {
+					tabList = driver.findElements(By.cssSelector("[role='tab']"));
+					tabList.get(indexOfPhoto - 2).click();
+					Thread.sleep(1000);
+				}
+				tabList = driver.findElements(By.cssSelector("[role='tab']"));
+				tabList.get(indexOfPhoto - 1).click();
+				Thread.sleep(1000);
+			}
+			tabList = driver.findElements(By.cssSelector("[role='tab']"));
 			tabList.get(indexOfPhoto).click();
 			
 			List<WebElement> photoCategory = driver.findElements(By.className("Me4yK"));
 			
 			if(photoCategory.size() > 0) {
-				for(WebElement category : photoCategory) {					
+				for(WebElement category : photoCategory) {
 					if(category.findElement(By.tagName("span")).getText().contains("업체")) {
 						category.findElement(By.tagName("a")).click();
+						Thread.sleep(1000);
 						WebElement photoTable = driver.findElement(By.className("Nd2nM"));
 						List<WebElement> photos = photoTable.findElements(By.tagName("img"));
 						for(WebElement photo : photos) {

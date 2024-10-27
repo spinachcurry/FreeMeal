@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.app.dto.StoreDTO;
@@ -33,7 +31,7 @@ public class StoreController {
 	private StoreService storeService;
 
 	//전체 가게 목록
-	@GetMapping(value="/storeList")
+	@GetMapping("/storeList")
 	public List<StoreDTO> storeList() {
 		return storeMapper.storeList();
 	}
@@ -52,9 +50,9 @@ public class StoreController {
 		return storeService.storeNearby(location);
 	}
 	
-	//메인 페이지에서 전체 소팅 후 검색 기능 >> 프론트 그려야함
+	//메인 페이지에서 전체 소팅 후 검색 기능
 	@PostMapping("/searchStore")
-	public List<StoreDTO> searchStore(@RequestBody Map<String, Object> keykeyword) {
+	public Map<String, Object> searchStore(@RequestBody Map<String, Object> keykeyword) {
 		log.info("keyword: {}", keykeyword);
 		return storeService.searchStore(keykeyword);
 	}

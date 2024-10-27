@@ -19,11 +19,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.app.component.WebCrawling;
-import com.app.dto.StoreDTO;
-import com.app.dto.crawling.KageDTO;
 
 import com.app.mapper.DataMapper;
-import com.app.mapper.StoreMapper;
 import com.app.service.DataService;
 
 import lombok.RequiredArgsConstructor;
@@ -110,14 +107,13 @@ public class DataController {
 		return "메뉴, 사진 네이버에서 따오기";
 	}
 	
-	@Autowired
-	private  StoreMapper storeMapper;
+//	@Autowired
+//	private  StoreMapper storeMapper;
 	
-	@GetMapping("/test")
-	public List<StoreDTO> test(@RequestParam Map<String, Object> paramMap) {
-		return storeMapper.test1(paramMap);
-	}
+//	@GetMapping("/test")
+//	public List<StoreDTO> test(@RequestParam Map<String, Object> paramMap) {
+//		return storeMapper.test1(paramMap);
+//	}
 	
 }
-	
 
