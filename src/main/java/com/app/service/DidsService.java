@@ -35,10 +35,17 @@ public class DidsService {
 	            return getDibsCount(address);
 	        case "list":
 	            return getDibsByUserId(userId);
+	            case "menu":
+		            return getMenuResponse(address);
 	        default:
 	            return ResponseEntity.badRequest().body("Invalid action specified");
 	    }
 	}  
+	 private ResponseEntity<?> getMenuResponse(String address) {
+	        List<DidsDTO> menuList = reviewMapper.OneMenu(address);
+	        return ResponseEntity.ok(menuList);
+	    }
+	 
     // 찜하기 / 취소 토글
     private ResponseEntity<String> toggleDibs(String userId, String address, int didStatus) {
         try {
@@ -94,5 +101,7 @@ public class DidsService {
       } catch (Exception e) {
           return ResponseEntity.internalServerError().build();
       }
-  } 
+  }
+   
+    
 }
