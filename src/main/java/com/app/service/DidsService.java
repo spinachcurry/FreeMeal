@@ -16,6 +16,8 @@ public class DidsService {
 	 
 	@Autowired
 	private ReviewMapper reviewMapper;
+	@Autowired
+	private GetStoreMapper getStoreMapper;
 	
 	  // 전체 요청 핸들링
 	public ResponseEntity<?> handleDibs(Map<String, Object> requestBody) {
@@ -101,7 +103,5 @@ public class DidsService {
       } catch (Exception e) {
           return ResponseEntity.internalServerError().build();
       }
-  }
-   
-    
+  } 
 }
