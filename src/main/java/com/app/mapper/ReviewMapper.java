@@ -1,6 +1,7 @@
 package com.app.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -47,8 +48,9 @@ public interface ReviewMapper {
 			+ "	ON tf.address = re.address "
 			+ "	WHERE tf.address = #{address} AND STATUS ='일반'"
 			+ "	GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status"
-			+ " ORDER BY re.modifiedDate DESC; ")
-	List<ReviewDTO> FindStoreOne(@Param("address") String address);
+			+ " ORDER BY re.modifiedDate DESC"
+			+ " LIMIT ${offset}, ${size}")
+	List<ReviewDTO> FindStoreOne(Map<String, Object> params);
 	//리뷰쓰기
 	@Insert("INSERT INTO Reviews (address, userId, content, createDate, modifiedDate) " +
 	        "VALUES (#{address}, #{userId}, #{content}, NOW(), NOW())")

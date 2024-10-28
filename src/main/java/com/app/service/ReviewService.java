@@ -1,5 +1,6 @@
 package com.app.service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
  
@@ -44,8 +45,11 @@ public class ReviewService {
 		        return updateReview(reviewDTO);
 		    } else if ("getStoreReviews".equals(action)) {
 		        // 가게 상세리뷰 받아오기
-		        String address = (String) requestBody.get("address");
-		        return getAllReviews(address);
+		    	Map<String, Object> reviewMap = new HashMap<>();
+		    	reviewMap.put("offset", requestBody.get("offset"));
+		    	reviewMap.put("size", requestBody.get("size"));
+		    	reviewMap.put("address", requestBody.get("address"));
+		        return getAllReviews(reviewMap);
 		    } else if ("addReview".equals(action)) {
 		        // 리뷰 작성
 		        ReviewDTO reviewDTO = new ReviewDTO();
@@ -95,11 +99,14 @@ public class ReviewService {
 	        return reviewMapper.getReviewsStatus(userId);
 	    }
 	    //가게 상세리뷰 받아오기 
-	    public ResponseEntity<List<ReviewDTO>> getAllReviews(String address) {
-	        List<ReviewDTO> reviews = reviewMapper.FindStoreOne(address); 
-	        if (reviews.isEmpty()) {
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        } 
+	    public ResponseEntity<Map<String, Object>> getAllReviews(Map<String, Object> reviewMap) {
+//	        List<ReviewDTO> reviews = reviewMapper.FindStoreOne(reviewMap);
+//	        if (reviews.isEmpty()) {
+//	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+//	        }
+	        Map<String, Object> reviews = new HashMap<>();
+	        reviews.put("offset", Integer.parseInt(String.valueOf(reviewMap.get("offset")) + Integer.parseInt(String.valueOf(reviewMap.get("size")))));
+	        reviews.put("reviews", reviewMapper.FindStoreOne(reviewMap));
 	        return ResponseEntity.ok(reviews);
 	    }   
 	    // 리뷰 작성(상점) 
