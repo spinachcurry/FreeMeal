@@ -20,6 +20,7 @@ public class DidsDTO {
 	private String title;
 	private String areaNm;	
 	private String category; 
+	
 	private List<MenuDTO> menuItems;
 	private List<String> imgURLs;
 }

@@ -25,8 +25,7 @@ public interface GetStoreMapper {
 	public List<String> getStoreImg(StoreDTO storeImg);
 	//특정 가게 메뉴판(이미지) 가져옴
 	@Select("SELECT * FROM store_menu WHERE `storeNm`=#{title} AND `areaNm` = #{areaNm} limit 50")
-	public List<MenuDTO> getMenu(DidsDTO store);
-	
+	public List<MenuDTO> getMenu(DidsDTO store); 
 	//특정 가게 이미지(업체 제공 이미지 >> 메뉴 사진 or 매장 사진 or 사장 얼굴 등)
 	@Select("SELECT `imageURL` FROM store_image WHERE `storeNm`=#{title} AND `areaNm` = #{areaNm} limit 50")
 	public List<String> getImg(DidsDTO store);

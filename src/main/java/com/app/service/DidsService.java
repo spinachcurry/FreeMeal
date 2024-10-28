@@ -93,7 +93,7 @@ public class DidsService {
     public ResponseEntity<List<DidsDTO>> getDibsByUserId(String userId) {
       try {
           List<DidsDTO> dibsList = reviewMapper.findDibsByUserId(userId);
-          for(DidsDTO dib : dibsList) {
+          for(DidsDTO dib : dibsList) { 
         	  dib.setMenuItems(getStoreMapper.getMenu(dib));
         	  dib.setImgURLs(getStoreMapper.getImg(dib)); 
           }
