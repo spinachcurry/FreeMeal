@@ -77,5 +77,13 @@ public interface ReviewMapper {
 			+ "	WHERE did.STATUS = '1' AND did.userId =#{userId} "
 			+ "	GROUP BY tf.title, tf.address, tf.category" )
 	List<DidsDTO> findDibsByUserId(@Param("userId") String userId);
+	//메뉴판
+	@Select (" SELECT sm.price, sm.name, tf.title, tf.address, tf.category, tf.lng, tf.lat,tf.roadAddress "
+			+ "FROM freemeal AS tf "
+			+ "INNER JOIN store_menu AS sm ON sm.storeNm = tf.title "
+			+ "WHERE tf.address = #{address}"
+			+ "GROUP BY sm.name "
+			+ "LIMIT 7 " )
+	List<DidsDTO> OneMenu(@Param("address") String address);
 	
 }
