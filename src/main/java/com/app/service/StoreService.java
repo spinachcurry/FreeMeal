@@ -60,9 +60,6 @@ public class StoreService {
 
 	//메인 페이지 검색>> 가게명 or 지역 검색(ex 강동구 카페)
 	public Map<String, Object> searchStore(Map<String, Object> keykeyword) {
-		//테스트용
-		keykeyword.put("offset", 0);
-		keykeyword.put("size", 12);
 		
 		Map<String, Object> storeMap = new HashMap<>();
 		storeMap.put("offset", Integer.parseInt(String.valueOf(keykeyword.get("offset"))) + Integer.parseInt(String.valueOf(keykeyword.get("size"))));
