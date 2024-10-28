@@ -105,7 +105,7 @@ public class ReviewService {
 //	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 //	        }
 	        Map<String, Object> reviews = new HashMap<>();
-	        reviews.put("offset", Integer.parseInt(String.valueOf(reviewMap.get("offset")) + Integer.parseInt(String.valueOf(reviewMap.get("size")))));
+	        reviews.put("offset", Integer.parseInt(String.valueOf(reviewMap.get("offset"))) + Integer.parseInt(String.valueOf(reviewMap.get("size"))));
 	        reviews.put("reviews", reviewMapper.FindStoreOne(reviewMap));
 	        return ResponseEntity.ok(reviews);
 	    }   
