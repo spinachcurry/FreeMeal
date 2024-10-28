@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.DidsDTO;
+import com.app.mapper.GetStoreMapper;
 import com.app.mapper.ReviewMapper;
  
 @Service 
@@ -17,6 +18,8 @@ public class DidsService {
 	@Autowired
 	private ReviewMapper reviewMapper;
 	
+	@Autowired
+	private GetStoreMapper getStoreMapper;
 	  // 전체 요청 핸들링
 	public ResponseEntity<?> handleDibs(Map<String, Object> requestBody) {
 	    // Map에서 값 추출
@@ -34,11 +37,11 @@ public class DidsService {
 	        case "count":
 	            return getDibsCount(address);
 	        case "list":
-	            return getDibsByUserId(userId);
+	            return getDibsByUserId(userId); 
 	        default:
 	            return ResponseEntity.badRequest().body("Invalid action specified");
 	    }
-	}  
+	} 
     // 찜하기 / 취소 토글
     private ResponseEntity<String> toggleDibs(String userId, String address, int didStatus) {
         try {
@@ -90,9 +93,15 @@ public class DidsService {
     public ResponseEntity<List<DidsDTO>> getDibsByUserId(String userId) {
       try {
           List<DidsDTO> dibsList = reviewMapper.findDibsByUserId(userId);
+          for(DidsDTO dib : dibsList) {
+        	  dib.setMenuItems(getStoreMapper.getMenu(dib));
+        	  dib.setImgURLs(getStoreMapper.getImg(dib)); 
+          }
           return dibsList.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(dibsList);
       } catch (Exception e) {
           return ResponseEntity.internalServerError().build();
       }
-  } 
+  }
+   
+    
 }

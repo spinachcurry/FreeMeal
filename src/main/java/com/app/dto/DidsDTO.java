@@ -1,6 +1,8 @@
 package com.app.dto;
- 
+   
 import java.util.List;
+
+import com.app.dto.crawling.MenuDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +18,8 @@ public class DidsDTO {
 	private int status; 
 	private int totalPrice;
 	private String title;
-	private String category;
-	 
-
+	private String areaNm;	
+	private String category; 
+	private List<MenuDTO> menuItems;
+	private List<String> imgURLs;
 }

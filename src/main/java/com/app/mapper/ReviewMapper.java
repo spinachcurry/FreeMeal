@@ -70,12 +70,14 @@ public interface ReviewMapper {
 			+ "WHERE STATUS = '1' AND address = #{address}")
 	int countDibs(@Param("address") String address);
 	//찜목록 불러오기;
-	@Select ("SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, did.* "
+	@Select (" SELECT  tf.title, tf.areaNm, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, did.* ,si.imageURL"
 			+ "	FROM freemeal AS tf "
 			+ "	INNER JOIN Dibs AS did "
 			+ "	ON tf.address = did.address "
+			+ " LEFT JOIN store_image AS si ON si.storeNm = tf.title" 
 			+ "	WHERE did.STATUS = '1' AND did.userId =#{userId} "
-			+ "	GROUP BY tf.title, tf.address, tf.category" )
+			+ "	GROUP BY tf.title, tf.address, tf.category " )
 	List<DidsDTO> findDibsByUserId(@Param("userId") String userId);
+	 
 	
 }
