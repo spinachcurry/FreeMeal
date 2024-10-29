@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.app.dto.DidsDTO;
+import com.app.mapper.GetStoreMapper;
 import com.app.mapper.ReviewMapper;
  
 @Service 
@@ -37,8 +38,8 @@ public class DidsService {
 	            return getDibsCount(address);
 	        case "list":
 	            return getDibsByUserId(userId);
-	            case "menu":
-		            return getMenuResponse(address);
+            case "menu":
+	            return getMenuResponse(address);
 	        default:
 	            return ResponseEntity.badRequest().body("Invalid action specified");
 	    }
@@ -99,6 +100,10 @@ public class DidsService {
     public ResponseEntity<List<DidsDTO>> getDibsByUserId(String userId) {
       try {
           List<DidsDTO> dibsList = reviewMapper.findDibsByUserId(userId);
+          for(DidsDTO dto : dibsList) {
+        	  dto.setMenuItems(getStoreMapper.getMenu(dto));
+        	  dto.setImgURLs(getStoreMapper.getImg(dto));
+          }
           return dibsList.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(dibsList);
       } catch (Exception e) {
           return ResponseEntity.internalServerError().build();

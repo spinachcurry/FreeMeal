@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import com.app.dto.DidsDTO;
 import com.app.dto.StoreDTO;
 import com.app.dto.crawling.MenuDTO;
 

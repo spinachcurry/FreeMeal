@@ -19,8 +19,7 @@ public class DidsDTO {
 	private int totalPrice;
 	private String title;
 	private String areaNm;	
-	private String category; 
-	
+	private String category; 	
 	private List<MenuDTO> menuItems;
 	private List<String> imgURLs;
 }
