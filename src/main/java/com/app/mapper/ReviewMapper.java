@@ -21,7 +21,7 @@ public interface ReviewMapper {
 			+ "	FROM freemeal AS tf "
 			+ "	INNER JOIN Reviews AS re  "
 			+ "	ON tf.address = re.address  "
-			+ "	WHERE re.userId = #{userId} AND re.STATUS ='일반' "
+			+ "	WHERE re.userId = #{userId} AND re.STATUS ='일반' AND re.del = 0"
 			+ "	GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status "
 			+ "	ORDER BY re.modifiedDate DESC;")
 	List<ReviewDTO> findReviewsByStatus(@Param("userId") String userId); 
@@ -39,14 +39,19 @@ public interface ReviewMapper {
 	@Update("UPDATE Reviews " 
 			+ "SET address = #{address}, userId=#{userId}, content = #{content}, modifiedDate = NOW(), status='일반' " 
 			+ "WHERE reviewNo = #{reviewNo} ")
-	int updateReview(ReviewDTO reviewDTO); 
+	int updateReview(ReviewDTO reviewDTO);
+	//리뷰 삭제
+	@Update("UPDATE Reviews " 
+			+ "SET del = 1 " 
+			+ "WHERE reviewNo = ${reviewNo} ")
+	int deleteReview(int reviewNo);
 	//////가게 상세 페이지리뷰 불러오기(리뷰용)
 	@Select("	SELECT  tf.title, tf.address, tf.category, SUM(tf.price) AS totalPrice, SUM(tf.party) AS totalParty, "
 			+ "	re.reviewNo, re.userId, re.content, re.modifiedDate,re.createDate, re.status "
 			+ "	FROM freemeal AS tf "
 			+ "	INNER JOIN Reviews AS re "
 			+ "	ON tf.address = re.address "
-			+ "	WHERE tf.address = #{address} AND STATUS ='일반'"
+			+ "	WHERE tf.address = #{address} AND re.STATUS ='일반' AND re.del=0"
 			+ "	GROUP BY tf.title, tf.address, tf.category, re.userId, re.content, re.modifiedDate, re.status"
 			+ " ORDER BY re.modifiedDate DESC"
 			+ " LIMIT ${offset}, ${size}")

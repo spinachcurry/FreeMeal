@@ -43,6 +43,8 @@ public class ReviewService {
 		        reviewDTO.setContent((String) requestBody.get("content"));
 		        reviewDTO.setRating((Integer) requestBody.get("rating"));
 		        return updateReview(reviewDTO);
+		    } else if("deleteReview".equals(action)) {
+		    	return deleteReview(Integer.parseInt(String.valueOf(requestBody.get("reviewNo"))));
 		    } else if ("getStoreReviews".equals(action)) {
 		        // 가게 상세리뷰 받아오기
 		    	Map<String, Object> reviewMap = new HashMap<>();
@@ -75,25 +77,41 @@ public class ReviewService {
 		        return ResponseEntity.badRequest().body(e.getMessage());
 		    }
 		}  
-		    // 리뷰 조회 메서드
-		    public List<ReviewDTO> getReviewsByStatus(String userId) {
-		        return reviewMapper.findReviewsByStatus(userId); // 기존 매퍼 호출
-		    } 
-		    // 리뷰 수정 메서드
-		    public ResponseEntity<?> updateReview(ReviewDTO reviewDTO) {
-		        try {
-		            int updatedRows = reviewMapper.updateReview(reviewDTO);
-		            
-		            if (updatedRows > 0) {
-		                return ResponseEntity.ok().body("리뷰가 성공적으로 수정되었습니다.");
-		            } else {
-		                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없습니다.");
-		            }
-		        } catch (Exception e) {
-		            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-		                    .body("리뷰를 수정하는 중 오류가 발생했습니다.");
-		        }
-		    } 
+	    // 리뷰 조회 메서드
+	    public List<ReviewDTO> getReviewsByStatus(String userId) {
+	        return reviewMapper.findReviewsByStatus(userId); // 기존 매퍼 호출
+	    } 
+	    // 리뷰 수정 메서드
+	    public ResponseEntity<?> updateReview(ReviewDTO reviewDTO) {
+	        try {
+	            int updatedRows = reviewMapper.updateReview(reviewDTO);
+	            
+	            if (updatedRows > 0) {
+	                return ResponseEntity.ok().body("리뷰가 성공적으로 수정되었습니다.");
+	            } else {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없습니다.");
+	            }
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body("리뷰를 수정하는 중 오류가 발생했습니다.");
+	        }
+	    } 
+	    //리뷰 삭제
+	    public ResponseEntity<?> deleteReview(int reviewNo){
+	    	try {
+	            int updatedRows = reviewMapper.deleteReview(reviewNo);
+	            
+	            if (updatedRows > 0) {
+	                return ResponseEntity.ok().body("리뷰가 성공적으로 삭제되었습니다.");
+	            } else {
+	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("리뷰를 찾을 수 없습니다.");
+	            }
+	        } catch (Exception e) {
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+	                    .body("리뷰를 삭제하는 중 오류가 발생했습니다.");
+	        }
+	    }
+	    
 		//리뷰받아오기 관리자
 	    public List<ReviewDTO> getReviewsStatus(String userId) {
 	        return reviewMapper.getReviewsStatus(userId);
@@ -133,5 +151,7 @@ public class ReviewService {
 	    //리뷰신고
 	    public int updateReport(ReviewDTO reviewNo) {
 	        return reviewMapper.updateReport(reviewNo);
-	    }   
+	    }
+	    
+	    
 } 
